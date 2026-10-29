@@ -4,4 +4,64 @@
     <string name="coming_soon">Coming Soon</string>
     <string name="mock_home_banner">Movie\nDiscover your next story</string>
     <string name="mock_selection">Mock: %1$s</string>
+    <string name="intro_title_4">Ready to Start the Fun?</string>
+    <string name="intro_welcome_description">Join PandaPlay and step into a world full of movies, colors, and cozy vibes. Tap the button below and let\'s go!</string>
+    <string name="get_started">Get Started</string>
+    <string name="rating_description">Đánh giá</string>
+    <string name="sample_release_date" translatable="false">11/05</string>
+    <string name="mock_movie_wolf_princess">Never Reject a Wolf Princess</string>
+    <string name="view_all">View All</string>
+    <string name="sample_playback_time" translatable="false">00:02/02:39</string>
+    <string name="movie_tag_free">Free</string>
+    <string name="movie_information_description">Thông tin truyện</string>
+    <string name="sample_movie_rating" translatable="false">4.8</string>
+    <string name="intro_title_1">Welcome to HTPlay</string>
+    <string name="intro_description_1">Your cozy corner for movies, anytime and anywhere. Stream your favorites and enjoy every moment.</string>
+    <string name="intro_title_2">Endless Movies</string>
+    <string name="intro_description_2">From blockbusters to hidden gems, there\'s always something new to watch. Find your next favorite today.</string>
+    <string name="intro_title_3">Save Your Favorites</string>
+    <string name="intro_description_3">Build your own watchlist and pick up right where you left off. Your movies, always ready for you.</string>
+    <string name="intro_description_4">Grab some popcorn, get comfy, and let\'s press play. Your next movie night starts right now!</string>
+    <string name="next">Next</string>
+    <string name="let_started">Let Started</string>
+    <string name="mock_movie_last_kingdom">The Last Kingdom</string>
+    <string name="mock_movie_moonlight_promise">Moonlight Promise</string>
+    <string name="mock_movie_beyond_stars">Beyond the Stars</string>
+    <string name="mock_movie_long_title">A Very Long Movie Title for Testing Two Lines</string>
+    <string name="mock_movie_silent_ocean">The Silent Ocean</string>
+    <string name="mock_movie_chasing_tomorrow">Chasing Tomorrow</string>
+    <string name="mock_movie_city_dreams">City of Dreams</string>
+    <string name="mock_movie_one_more_summer">One More Summer</string>
+    <string name="mock_movie_midnight_chase">Midnight Chase</string>
+    <string name="mock_movie_final_mission">Final Mission</string>
+    <string name="mock_movie_shadow_agent">Shadow Agent</string>
+    <string name="movie_tag_vip">VIP</string>
+    <string name="movie_tag_new">New</string>
+    <string name="popular_movies">Popular Movies</string>
+    <string name="genre_action">Action</string>
+    <string name="mock_date_1" translatable="false">30/10/2026</string>
+    <string name="mock_date_2" translatable="false">06/11/2026</string>
+    <string name="mock_date_3" translatable="false">13/11/2026</string>
+    <string name="mock_date_4" translatable="false">20/11/2026</string>
+    <string name="loading">Loading...</string>
+    <string name="playback_progress_spaced">%1$s / %2$s</string>
+    <string name="movie_name_with_date">%1$s - %2$s</string>
+    <string name="playback_progress">%1$s/%2$s</string>
+    <string name="login_with_google">Log in with Google</string>
+    <string name="login_as_guest">Continue as guest</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="login_email_hint">Enter your email</string>
+    <string name="login_password_hint">Enter your password</string>
+    <string name="login_error_email_required">Please enter your email.</string>
+    <string name="login_error_email_invalid">Please enter a valid email address.</string>
+    <string name="login_error_password_required">Please enter your password.</string>
+    <string name="signup_agreement">I agree with <annotation action="terms">terms</annotation> and <annotation action="conditions">conditions</annotation></string>
+    <string name="signup_title">New Here?\nLet\'s Begin</string>
+    <string name="signup_create_account">Creater your account</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="or_log_in_with">- Or log in with -</string>
+    <string name="signup_error_confirm_password_required">Please confirm your password.</string>
+    <string name="signup_error_password_mismatch">Passwords do not match.</string>
+    <string name="signup_error_agreement_required">Please agree to the terms and conditions.</string>
 </resources>

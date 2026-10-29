@@ -1,1 +1,1 @@
--keep class com.example.data.entities.dto.** { *; }
+-keep class com.htdev.movie.htplay.data.entities.dto.** { *; }

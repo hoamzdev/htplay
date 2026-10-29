@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.domain"
+    namespace = "com.htdev.movie.htplay.domain"
     compileSdk {
         version = release(37)
     }

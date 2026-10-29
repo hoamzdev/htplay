@@ -6,13 +6,17 @@ plugins {
 }
 
 android {
-    namespace = "com.example.movie"
+    namespace = "com.htdev.movie.htplay"
     compileSdk {
         version = release(37)
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
-        applicationId = "com.example.movie"
+        applicationId = "com.htdev.movie.htplay"
         minSdk = 24
         targetSdk = 37
         versionCode = 100
@@ -58,6 +62,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
 
+    implementation(libs.blurview.vversion310)
+
     implementation(project(":data"))
     implementation(project(":domain"))
 
@@ -80,8 +86,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
-    // Muốn chỉ có log ở debug: đổi dòng trên thành debugImplementation(...)
-    // (chỉ làm được khi code trong src/main không import HttpLoggingInterceptor)
 
     // Room
     implementation(libs.androidx.room.runtime)

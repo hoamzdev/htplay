@@ -16,6 +16,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:rotation="-30"
+        android:clickable="false"
+        android:focusable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

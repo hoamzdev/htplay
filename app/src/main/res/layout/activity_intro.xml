@@ -5,6 +5,118 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:context=".intro.IntroActivity">
+
+    <eightbitlab.com.blurview.BlurTarget
+        android:id="@+id/blur_target"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_intro"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:scaleType="centerCrop" />
+
+
+    </eightbitlab.com.blurview.BlurTarget>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/card_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <eightbitlab.com.blurview.BlurView
+            android:id="@+id/blur_bottom"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bgr_card_intro"
+            app:blurOverlayColor="@color/intro_blur_overlay"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tvIntro1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size55"
+            android:fontFamily="@font/font_figtree_bold"
+            android:gravity="center_horizontal"
+            android:text="@string/intro_title_4"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizesp30"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvIntro2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size10"
+            android:fontFamily="@font/font_poppins_regular"
+            android:gravity="center_horizontal"
+            android:text="@string/intro_welcome_description"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizesp12"
+            android:maxLines="2"
+            android:paddingHorizontal="@dimen/size10"
+            android:includeFontPadding="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvIntro1" />
+
+
+        <com.htdev.movie.htplay.widget.DotIndicatorView
+            android:id="@+id/dots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvIntro2"
+            app:dotSize="@dimen/size8"
+            app:dotCount="4"
+            android:layout_marginTop="@dimen/size30"
+            app:dotSpacing="@dimen/size8"
+            app:dotSelectedColor="@color/primary_color"
+            app:dotUnselectedColor="@color/gray_color"/>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_started"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size16"
+            android:layout_marginTop="@dimen/size30"
+            android:background="@drawable/bgr_buton_primary"
+            android:paddingVertical="@dimen/size15"
+            android:text="@string/get_started"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizesp16"
+            android:fontFamily="@font/font_figtree_semi_bold"
+            app:layout_constraintTop_toBottomOf="@id/dots"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

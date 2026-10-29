@@ -1,0 +1,11 @@
+package com.htdev.movie.htplay.data.common
+
+import com.htdev.movie.htplay.domain.common.DispatcherProvide
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.MainCoroutineDispatcher
+
+data class DispatcherProvideImpl(
+    override val default: CoroutineDispatcher,
+    override val io: CoroutineDispatcher,
+    override val main: MainCoroutineDispatcher
+) : DispatcherProvide

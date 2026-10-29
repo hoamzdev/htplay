@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.data"
+    namespace = "com.htdev.movie.htplay.data"
     compileSdk {
         version = release(37)
     }
