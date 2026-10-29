@@ -1,0 +1,118 @@
+plugins {
+    alias(libs.plugins.android.application)
+    id("kotlin-parcelize")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+}
+
+android {
+    namespace = "com.example.movie"
+    compileSdk {
+        version = release(37)
+    }
+
+    defaultConfig {
+        applicationId = "com.example.movie"
+        minSdk = 24
+        targetSdk = 37
+        versionCode = 100
+        versionName = "1.0.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    viewBinding {
+        enable = true
+    }
+
+    buildTypes {
+        debug {
+            // Debug: không tối ưu, build nhanh, dễ debug
+            optimization {
+                enable = false
+            }
+        }
+        release {
+            // Release (CH Play): bật R8 để giảm dung lượng, khó decompile
+            optimization {
+                enable = true
+                keepRules {
+                    files.add(getDefaultProguardFile("proguard-android-optimize.txt"))
+                    files.add(File("proguard-rules.pro"))
+                }
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation(libs.androidx.activity.ktx)
+    // AndroidX / UI
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.material)
+
+    implementation(project(":data"))
+    implementation(project(":domain"))
+
+    // Test
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit)
+
+    // Dimens
+    implementation(libs.dimenlib)
+    implementation(libs.dimensplib)
+
+    // Rounded ImageView
+    implementation(libs.roundedimageview)
+
+    // Image
+    implementation(libs.glide)
+
+    // Network
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+    // Muốn chỉ có log ở debug: đổi dòng trên thành debugImplementation(...)
+    // (chỉ làm được khi code trong src/main không import HttpLoggingInterceptor)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Json
+    implementation(libs.gson)
+
+    // StoriesRecyclerView
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.exoplayer.hls)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.koin.android)
+
+    // ViewModel and LiveData
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.process)
+
+    // Lottie
+    implementation(libs.lottie)
+
+    implementation(libs.facebook.shimmer)
+    implementation(libs.androidx.multidex)
+    implementation(libs.androidx.work.runtime.ktx)
+
+    // Hilt
+    implementation(libs.javax.inject)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+
+    implementation(libs.androidx.fragment.ktx)
+}

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:layout_marginEnd="12dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/size10"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_thumbnail"
+            android:layout_width="match_parent"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:scaleType="centerCrop"
+            android:layout_height="200dp"/>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/pg_continue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            android:progress="20"
+            android:max="100"
+            app:indicatorColor="#2196F3"
+            app:trackColor="#662F2F"
+            app:trackThickness="@dimen/size8"
+            app:trackCornerRadius="@dimen/size10"
+            app:indicatorTrackGapSize="0dp"
+            app:layout_constraintTop_toBottomOf="@id/iv_thumbnail"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:trackStopIndicatorSize="0dp"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardCornerRadius="@dimen/size8"
+            android:layout_marginBottom="@dimen/size5"
+            app:cardBackgroundColor="#85000000"
+            android:layout_marginEnd="@dimen/size10"
+            app:layout_constraintBottom_toTopOf="@id/pg_continue"
+            app:strokeColor="@android:color/transparent"
+            app:strokeWidth="0dp">
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="00:02/02:39"
+                android:padding="@dimen/size10"
+                android:textColor="@color/white"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

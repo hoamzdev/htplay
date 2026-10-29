@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_color"
+    tools:context=".splash.SplashActivity">
+
+
+    <!-- Rotate the rows together so their spacing is preserved. -->
+    <LinearLayout
+        android:id="@+id/poster_rows"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:rotation="-30"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="2">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rc_demo1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_poster" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rc_demo2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size10"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_poster" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rc_demo3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size10"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_poster" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#2F000000" />
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/logo_app"
+        android:layout_width="@dimen/size150"
+        android:layout_height="@dimen/size150"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:cardCornerRadius="@dimen/size20"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        android:alpha="0"
+        app:cardElevation="0dp"
+        app:layout_constraintVertical_bias="0.38">
+
+        <ImageView
+            android:layout_width="@dimen/size150"
+            android:layout_height="@dimen/size150"
+            android:src="@drawable/logo" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/name_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sizesp50"
+        android:paddingHorizontal="@dimen/size32"
+        android:src="@drawable/name_logo"
+        android:alpha="0"
+        android:layout_marginTop="@dimen/size20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logo_app" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
