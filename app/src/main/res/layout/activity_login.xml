@@ -30,7 +30,7 @@
             android:id="@+id/tvlogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size55"
+            android:layout_marginTop="@dimen/size65"
             android:fontFamily="@font/font_figtree_bold"
             android:gravity="center_horizontal"
             android:text="Login to your Account"
@@ -122,7 +122,7 @@
             android:fontFamily="@font/font_figtree_bold"
             android:gravity="center_horizontal"
             android:paddingHorizontal="@dimen/size5"
-            android:text="Forget Password?"
+            android:text="@string/forget_password"
             android:textColor="@color/gray_color"
             android:textSize="@dimen/sizesp14"
             app:layout_constraintEnd_toEndOf="@id/til_password"
@@ -138,7 +138,7 @@
             android:background="@drawable/bgr_buton_primary"
             android:fontFamily="@font/font_figtree_semi_bold"
             android:paddingVertical="@dimen/size15"
-            android:text="Log in"
+            android:text="@string/login"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="@dimen/sizesp16"
@@ -223,6 +223,21 @@
             app:layout_constraintBaseline_toBaselineOf="@id/tv_no_account"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tv_no_account" />
+
+
+        <ProgressBar
+            android:id="@+id/pg_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:progressTint="@color/white"
+            android:indeterminateTint="@color/primary_color"
+            android:progress="40"
+            android:visibility="gone"
+            android:indeterminate="true"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

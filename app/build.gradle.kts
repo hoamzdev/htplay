@@ -3,6 +3,7 @@ plugins {
     id("kotlin-parcelize")
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    id("com.google.gms.google-services") version "4.5.0"
 }
 
 android {
@@ -60,6 +61,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.googleid)
+    implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.material)
 
     implementation(libs.blurview.vversion310)

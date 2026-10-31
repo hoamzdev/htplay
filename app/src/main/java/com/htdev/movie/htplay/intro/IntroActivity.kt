@@ -1,5 +1,6 @@
 package com.htdev.movie.htplay.intro
 
+import com.htdev.movie.htplay.widget.onClickListener
 import android.view.ViewOutlineProvider
 import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -56,7 +57,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding>() {
     }
 
     override fun handleClickEvent() {
-        binding.btnStarted.setOnClickListener {
+        binding.btnStarted.onClickListener {
             if(currentPosition < listIntro.size - 1){
                 handlePositonIntro(++currentPosition)
             }

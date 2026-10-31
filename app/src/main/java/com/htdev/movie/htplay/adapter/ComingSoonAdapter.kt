@@ -1,5 +1,6 @@
 package com.htdev.movie.htplay.adapter
 
+import com.htdev.movie.htplay.widget.onClickListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -31,7 +32,7 @@ class ComingSoonAdapter(
     inner class ComingSoonViewHolder(val binding : ItemComingsoonBinding) : RecyclerView.ViewHolder(binding.root){
 
         init {
-            binding.vCard.setOnClickListener {
+            binding.vCard.onClickListener {
                 bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }
                     ?.let { onClickCard(getItem(it)) }
             }

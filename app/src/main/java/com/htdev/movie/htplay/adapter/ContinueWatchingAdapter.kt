@@ -1,5 +1,6 @@
 package com.htdev.movie.htplay.adapter
 
+import com.htdev.movie.htplay.widget.onClickListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -35,7 +36,7 @@ class ContinueWatchingAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.root.setOnClickListener {
+            binding.root.onClickListener {
                 bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }
                     ?.let { onClickCard(getItem(it)) }
             }

@@ -1,5 +1,6 @@
 package com.htdev.movie.htplay.adapter
 
+import com.htdev.movie.htplay.widget.onClickListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -60,7 +61,7 @@ class HomeAdapter(
         private val rowAdapter = ContinueWatchingAdapter(onContinueClick)
         init {
             binding.rcContinueWatching.setupRow(rowAdapter)
-            binding.viewAll.setOnClickListener {
+            binding.viewAll.onClickListener {
                 (getItemAtPosition() as? HomeItem.ContinueWatchingSector)?.let(onViewAllClick)
             }
         }
@@ -73,7 +74,7 @@ class HomeAdapter(
         private val rowAdapter = ComingSoonAdapter(onComingSoonClick)
         init {
             binding.rcComingSoon.setupRow(rowAdapter)
-            binding.viewAll.setOnClickListener {
+            binding.viewAll.onClickListener {
                 (getItemAtPosition() as? HomeItem.ComingSoonSector)?.let(onViewAllClick)
             }
         }

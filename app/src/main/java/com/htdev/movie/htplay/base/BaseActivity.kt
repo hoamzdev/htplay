@@ -3,7 +3,6 @@ package com.htdev.movie.htplay.base
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
@@ -14,6 +13,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.viewbinding.ViewBinding
+import com.htdev.movie.htplay.widget.CustomToast
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected lateinit var binding: VB
@@ -73,7 +73,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     }
 
     open fun showToastApp(message : String){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        CustomToast.showToast(this, message)
     }
 
     fun init() {

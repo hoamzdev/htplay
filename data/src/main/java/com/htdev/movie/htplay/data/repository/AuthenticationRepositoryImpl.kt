@@ -11,11 +11,11 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.htdev.movie.htplay.data.exception.AppException
+import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.User
 import com.htdev.movie.htplay.domain.repository.AuthenticationRepository
-import com.htdev.movie.htplay.domain.common.Result
-import kotlinx.coroutines.CancellationException
 import dagger.Lazy
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
     ): Result<User> {
         return try {
             val response = auth.createUserWithEmailAndPassword(email, passwd).await()
-            Result.Success(User(username, response.user?.uid))
+            Result.Success(User(email, response.user?.uid))
         } catch (e: FirebaseAuthUserCollisionException) {
             Result.Error(AppException.EmailAlreadyExistsException())
         } catch (e: FirebaseNetworkException) {
@@ -43,7 +43,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override suspend fun loginWithEmailPasswd(email: String, passwd: String): Result<User> {
         return try {
             val response = auth.signInWithEmailAndPassword(email, passwd).await()
-            Result.Success(User(uid = response.user?.uid))
+            Result.Success(User(username = response.user?.email, uid = response.user?.uid))
         } catch (e: FirebaseAuthInvalidUserException) {
             Result.Error(AppException.EmailInvalidException())
         } catch (e: FirebaseAuthInvalidCredentialsException) {
@@ -65,15 +65,14 @@ class AuthenticationRepositoryImpl @Inject constructor(
                 val result = auth.signInWithCredential(firebaseCredential).await()
                 val user = result.user
                 if (user != null) {
-                    Result.Success(User(username = user.uid, uid = user.uid))
+                    Result.Success(User(username = user.email, uid = user.uid))
                 } else {
                     Result.Error(Exception("Login fail. Please try again"))
                 }
             } else Result.Error(Exception("Login fail. Please try again"))
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             if (e is CancellationException) throw e
-            Result.Error(Exception("Login fail. Please try again"))
+            Result.Error(e)
         }
     }
 
@@ -92,28 +91,27 @@ class AuthenticationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signInAnonymously(): Result<User> {
-        return try{
+        return try {
             val auth = auth.signInAnonymously().await()
             Result.Success(User(uid = auth.user?.uid, username = ""))
-        }catch (e: FirebaseNetworkException) {
+        } catch (e: FirebaseNetworkException) {
             Result.Error(AppException.NetworkException())
         } catch (e: Exception) {
             if (e is CancellationException) throw e
-            Result.Error(AppException.UnknownException())
+            Result.Error(e)
         }
     }
 
     override suspend fun getUserSignIn(): Result<User> {
-        return try{
+        return try {
             val response = auth.currentUser
-            if(response != null){
+            if (response != null) {
                 val user = User(uid = response.uid)
                 Result.Success(user)
-            }
-            else{
+            } else {
                 Result.Error(AppException.UnknownException())
             }
-        }catch (e : Exception){
+        } catch (e: Exception) {
             if (e is CancellationException) throw e
             Result.Error(AppException.UnknownException())
         }

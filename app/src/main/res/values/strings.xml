@@ -57,11 +57,16 @@
     <string name="login_error_email_invalid">Please enter a valid email address.</string>
     <string name="login_error_password_required">Please enter your password.</string>
     <string name="signup_agreement">I agree with <annotation action="terms">terms</annotation> and <annotation action="conditions">conditions</annotation></string>
-    <string name="signup_title">New Here?\nLet\'s Begin</string>
+    <string name="signup_title">\"New Here?\nLet\'s Begin\"</string>
     <string name="signup_create_account">Creater your account</string>
     <string name="signup_button">Sign Up</string>
     <string name="or_log_in_with">- Or log in with -</string>
     <string name="signup_error_confirm_password_required">Please confirm your password.</string>
     <string name="signup_error_password_mismatch">Passwords do not match.</string>
     <string name="signup_error_agreement_required">Please agree to the terms and conditions.</string>
+    <string name="forgot_password">  \"Forgot\npassword\"</string>
+    <string name="provide_your_account_s_email_for_which_you_want_to_reset_your_password">Provide your account\'s email for which you want to reset your password</string>
+    <string name="aldready_have_an_account">Aldready have an account?</string>
+    <string name="login">Login</string>
+    <string name="forget_password">Forgot Password?</string>
 </resources>
