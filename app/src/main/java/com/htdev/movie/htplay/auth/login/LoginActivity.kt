@@ -12,6 +12,7 @@ import com.htdev.movie.htplay.auth.sign_up.SignUpActivity
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityLoginBinding
 import com.htdev.movie.htplay.domain.common.Result
+import com.htdev.movie.htplay.favorite.ChooseFavoritesActivity
 import com.htdev.movie.htplay.util.AuthWrapper
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.CustomToast.showToast
@@ -58,8 +59,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
                     is Result.Success -> {
                         binding.pgLoading.gone()
-                        loginViewModel.saveSession()
-                        newActivity(MainActivity::class.java)
+                        newActivity(ChooseFavoritesActivity::class.java)
                         finish()
                     }
                 }

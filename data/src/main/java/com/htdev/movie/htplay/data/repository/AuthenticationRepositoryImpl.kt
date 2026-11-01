@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.htdev.movie.htplay.data.exception.AppException
 import com.htdev.movie.htplay.domain.common.Result
+import com.htdev.movie.htplay.domain.common.SessionExpiredException
 import com.htdev.movie.htplay.domain.entities.User
 import com.htdev.movie.htplay.domain.repository.AuthenticationRepository
 import dagger.Lazy
@@ -106,11 +107,21 @@ class AuthenticationRepositoryImpl @Inject constructor(
         return try {
             val response = auth.currentUser
             if (response != null) {
+                // currentUser is cached and can outlive an account deleted in the console.
+                response.reload().await()
+                if (auth.currentUser?.uid != response.uid) {
+                    return Result.Error(SessionExpiredException())
+                }
                 val user = User(uid = response.uid)
                 Result.Success(user)
             } else {
-                Result.Error(AppException.UnknownException())
+                Result.Error(SessionExpiredException())
             }
+        } catch (e: FirebaseAuthInvalidUserException) {
+            auth.signOut()
+            Result.Error(SessionExpiredException())
+        } catch (e: FirebaseNetworkException) {
+            Result.Error(AppException.NetworkException())
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Result.Error(AppException.UnknownException())

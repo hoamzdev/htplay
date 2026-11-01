@@ -46,13 +46,6 @@ class MovieRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth get() = authProvider.get()
     private val firestore: FirebaseFirestore get() = firestoreProvider.get()
 
-    //lay tat ca cac genre
-    override suspend fun getMovieGenres(): Result<List<Genre>> {
-        return withContext(dispatcherProvide.io) {
-            Result.Success(DataGenre.genres)
-        }
-    }
-
     //ham nay chi goi 1 lan luc onboarding lan dau vao app
     override suspend fun saveGenresFavorite(genres: List<String>): Result<Boolean> {
         return try {

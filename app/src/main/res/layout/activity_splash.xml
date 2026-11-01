@@ -60,7 +60,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#2F000000" />
+        android:clickable="true"
+        android:background="#2F000000"
+        android:focusable="true" />
 
 
     <com.google.android.material.card.MaterialCardView

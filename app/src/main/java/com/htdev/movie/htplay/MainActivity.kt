@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.adapter.HomeAdapter
 import com.htdev.movie.htplay.adapter.formatTime
-import com.htdev.movie.htplay.base.BaseActivity
+import com.htdev.movie.htplay.base.AuthenticatedActivity
 import com.htdev.movie.htplay.databinding.ActivityMainBinding
 import com.htdev.movie.htplay.entities.HomeItem
 import com.htdev.movie.htplay.mock.MockHomeData
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>() {
+class MainActivity : AuthenticatedActivity<ActivityMainBinding>() {
 
     private val viewModel: MainViewModel by viewModels()
 

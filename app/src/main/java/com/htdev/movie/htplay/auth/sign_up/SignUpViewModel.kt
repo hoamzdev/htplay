@@ -6,20 +6,20 @@ import androidx.lifecycle.viewModelScope
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.User
 import com.htdev.movie.htplay.domain.usecase.auth.CreateAccountWithEmailPasswd
-import com.htdev.movie.htplay.domain.usecase.auth.SaveStateLogin
 import com.htdev.movie.htplay.domain.usecase.auth.SignInAnonymously
 import com.htdev.movie.htplay.domain.usecase.auth.SignInWithGoogle
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val createAccountWithEmailPasswdUC: CreateAccountWithEmailPasswd,
     private val signInWithGoogleUseCase: SignInWithGoogle,
     private val signInAnonymously: SignInAnonymously,
-    private val saveStateLogin: SaveStateLogin,
 )  : ViewModel(){
 
     private val _createAccountState = MutableStateFlow<Result<User>>(Result.Idle)
@@ -45,7 +45,5 @@ class SignUpViewModel @Inject constructor(
             _createAccountState.value = signInWithGoogleUseCase(credential)
         }
     }
-
-    fun saveSession() = saveStateLogin()
 
 }

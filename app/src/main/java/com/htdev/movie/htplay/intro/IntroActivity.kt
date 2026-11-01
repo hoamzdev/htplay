@@ -1,15 +1,19 @@
 package com.htdev.movie.htplay.intro
 
-import com.htdev.movie.htplay.widget.onClickListener
 import android.view.ViewOutlineProvider
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.htdev.movie.htplay.MainActivity
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.auth.login.LoginActivity
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityIntroBinding
+import com.htdev.movie.htplay.domain.common.Result
+import com.htdev.movie.htplay.domain.common.SessionExpiredException
+import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -18,11 +22,9 @@ class IntroActivity : BaseActivity<ActivityIntroBinding>() {
     override fun createViewBinding(): ActivityIntroBinding {
         return ActivityIntroBinding.inflate(layoutInflater)
     }
-
     private val introAdapter: IntroAdapter by lazy { IntroAdapter() }
-    private var currentPosition : Int = 0
-
-    private val introViewModel : IntroViewModel by viewModels()
+    private var currentPosition: Int = 0
+    private val introViewModel: IntroViewModel by viewModels()
 
     override fun initView() {
         setupViewPager()
@@ -52,23 +54,38 @@ class IntroActivity : BaseActivity<ActivityIntroBinding>() {
                 }
             }
         })
+
         currentPosition = binding.vpIntro.currentItem
         handlePositonIntro(currentPosition)
     }
 
     override fun handleClickEvent() {
         binding.btnStarted.onClickListener {
-            if(currentPosition < listIntro.size - 1){
+            if (currentPosition < listIntro.size - 1) {
                 handlePositonIntro(++currentPosition)
-            }
-            else{
-                if(introViewModel.isLogin){
-                    newActivity(dist = MainActivity::class.java)
+            } else {
+                lifecycleScope.launch {
+                    binding.btnStarted.isEnabled = false
+                    try {
+                        when (val session = introViewModel.checkSessionLogin()) {
+                            is Result.Success -> {
+                                newActivity(dist = MainActivity::class.java)
+                                finishAffinity()
+                            }
+                            is Result.Error -> {
+                                if (session.throwable is SessionExpiredException) {
+                                    newActivity(dist = LoginActivity::class.java)
+                                    finishAffinity()
+                                } else {
+                                    showToastApp(session.throwable.message.orEmpty())
+                                }
+                            }
+                            else -> Unit
+                        }
+                    } finally {
+                        binding.btnStarted.isEnabled = true
+                    }
                 }
-                else{
-                    newActivity(dist = LoginActivity::class.java)
-                }
-                finishAffinity()
             }
         }
     }

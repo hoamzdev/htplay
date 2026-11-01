@@ -12,16 +12,6 @@ import javax.inject.Inject
 class LocalStorageRepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences,
 ) : LocalStorageRepository{
-    override fun saveStateLogin() {
-        sharedPreferences.edit {
-            putBoolean(ConstantKey.REMEMBER_ME,true)
-        }
-    }
-
-    override fun getStateLogin(): Boolean {
-        return sharedPreferences.getBoolean(ConstantKey.REMEMBER_ME,false)
-    }
-
     override fun getCurrentTabSearch(): Int {
         return sharedPreferences
             .getInt(ConstantKey.TAB_SEARCH_CURRENT,-1)

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.User
 import com.htdev.movie.htplay.domain.usecase.auth.LoginWithEmailPasswd
-import com.htdev.movie.htplay.domain.usecase.auth.SaveStateLogin
+import com.htdev.movie.htplay.domain.usecase.auth.ResetPassword
 import com.htdev.movie.htplay.domain.usecase.auth.SignInAnonymously
 import com.htdev.movie.htplay.domain.usecase.auth.SignInWithGoogle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,7 @@ class LoginViewModel @Inject constructor(
     private val loginWithEmailPasswd: LoginWithEmailPasswd,
     private val signInWithGoogleUseCase: SignInWithGoogle,
     private val signInAnonymously: SignInAnonymously,
-    private val saveStateLogin: SaveStateLogin,
+    private val resetPasswordUC: ResetPassword,
 ) : ViewModel() {
 
     private var _loginState = MutableStateFlow<Result<User>>(Result.Idle)
@@ -49,6 +49,13 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun saveSession() = saveStateLogin()
+    private val _stateResetPasswd = MutableStateFlow<Result<String>>(Result.Idle)
+    val stateResetPasswd : StateFlow<Result<String>> = _stateResetPasswd.asStateFlow()
 
+    fun resetPassword(email : String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _stateResetPasswd.value = Result.Loading
+            _stateResetPasswd.value = resetPasswordUC(email)
+        }
+    }
 }

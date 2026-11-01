@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.Flow
  * @author hwa..
  */
 interface MovieRepository {
-    suspend fun getMovieGenres() : Result<List<Genre>>
     suspend fun saveGenresFavorite(genres : List<String>) : Result<Boolean>
-
     //1): lay ra 1 page film moi nhat ko can phan trang -> do nen poster
     //du lieu ko phan trang o man hinh homa
     suspend fun getMoviesByPage() : Result<List<PosterMovieHome>>

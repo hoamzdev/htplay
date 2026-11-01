@@ -17,6 +17,7 @@ import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivitySignUpBinding
 import com.htdev.movie.htplay.domain.common.Result
+import com.htdev.movie.htplay.favorite.ChooseFavoritesActivity
 import com.htdev.movie.htplay.util.AuthWrapper
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.gone
@@ -63,6 +64,9 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>(){
             loginByGuest.onClickListener {
                 handleLoginByGuest()
             }
+            tvLogin.onClickListener {
+                finish()
+            }
         }
     }
 
@@ -71,9 +75,8 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>(){
             signUpViewModel.createAccountState.collectLatest { state ->
                 when(state){
                     is Result.Success -> {
-                        signUpViewModel.saveSession()
                         binding.pgLoading.gone()
-                        newActivity(MainActivity::class.java)
+                        newActivity(ChooseFavoritesActivity::class.java)
                         finish()
                     }
                     is Result.Error -> {
