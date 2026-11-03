@@ -2,9 +2,9 @@ package com.htdev.movie.htplay.mock
 
 import android.content.Context
 import com.htdev.movie.htplay.R
-import com.htdev.movie.htplay.entities.ComingSoon
 import com.htdev.movie.htplay.entities.ContinueWatching
 import com.htdev.movie.htplay.entities.HomeItem
+import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.entities.ItemMovie
 import java.util.UUID
 
@@ -19,13 +19,6 @@ class MockHomeData(context: Context) {
         ContinueWatching(id("continue-null")),
         ContinueWatching(id("continue-zero"), totalProgress = 0, currentProgress = 60),
         ContinueWatching(id("continue-overflow"), totalProgress = 600, currentProgress = 900),
-    )
-
-    val comingSoon = listOf(
-        ComingSoon(id("soon-1"), date = context.getString(R.string.mock_date_1), name = context.getString(R.string.mock_movie_last_kingdom)),
-        ComingSoon(id("soon-2"), date = context.getString(R.string.mock_date_2), name = context.getString(R.string.mock_movie_moonlight_promise)),
-        ComingSoon(id("soon-3"), date = context.getString(R.string.mock_date_3), name = context.getString(R.string.mock_movie_beyond_stars)),
-        ComingSoon(id("soon-4"), date = context.getString(R.string.mock_date_4), name = context.getString(R.string.mock_movie_long_title)),
     )
 
     val popularMovies = listOf(
@@ -44,8 +37,9 @@ class MockHomeData(context: Context) {
 
     val homeItems: List<HomeItem> = listOf(
         HomeItem.ContinueWatchingSector(id = 1, movies = continueWatching),
-        HomeItem.ComingSoonSector(id = 2, movies = comingSoon),
-        HomeItem.MovieSector(id = 3, Genre = context.getString(R.string.popular_movies), movies = popularMovies),
-        HomeItem.MovieSector(id = 4, Genre = context.getString(R.string.GenreLocal_action), movies = actionMovies),
+        HomeItem.MovieSector(id = 3, Genre = context.getString(R.string.popular_movies), movies = popularMovies,
+            viewAllTarget = HomeViewAllTarget.Latest),
+        HomeItem.MovieSector(id = 4, Genre = context.getString(R.string.GenreLocal_action), movies = actionMovies,
+            viewAllTarget = HomeViewAllTarget.ByGenre("hanh-dong")),
     )
 }

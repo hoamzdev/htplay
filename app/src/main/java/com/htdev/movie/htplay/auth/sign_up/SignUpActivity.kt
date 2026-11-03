@@ -12,7 +12,6 @@ import android.util.Patterns
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
-import com.htdev.movie.htplay.MainActivity
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivitySignUpBinding

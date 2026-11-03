@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">movie</string>
     <string name="continue_watching">続きを見る</string>
-    <string name="coming_soon">近日公開</string>
     <string name="mock_home_banner">映画\n次の物語を見つけよう</string>
     <string name="mock_selection">デモ: %1$s</string>
     <string name="intro_title_4">楽しむ準備はできましたか？</string>

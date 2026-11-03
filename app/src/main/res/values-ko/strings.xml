@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">movie</string>
     <string name="continue_watching">이어 보기</string>
-    <string name="coming_soon">공개 예정</string>
     <string name="mock_home_banner">영화\n새로운 이야기를 만나보세요</string>
     <string name="mock_selection">데모: %1$s</string>
     <string name="intro_title_4">즐길 준비 되셨나요?</string>

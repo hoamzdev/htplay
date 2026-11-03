@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">movie</string>
     <string name="continue_watching">Continuer à regarder</string>
-    <string name="coming_soon">Bientôt disponible</string>
     <string name="mock_home_banner">Cinéma\nDécouvrez votre prochaine histoire</string>
     <string name="mock_selection">Démo : %1$s</string>
     <string name="intro_title_4">Prêt à vous amuser ?</string>

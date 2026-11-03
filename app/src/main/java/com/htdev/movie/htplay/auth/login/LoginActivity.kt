@@ -6,7 +6,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.lifecycle.lifecycleScope
-import com.htdev.movie.htplay.MainActivity
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.auth.sign_up.SignUpActivity
 import com.htdev.movie.htplay.base.BaseActivity

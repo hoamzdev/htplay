@@ -5,24 +5,32 @@ import com.htdev.movie.htplay.domain.entities.Genre
 
 sealed class HomeItem {
     abstract val id : Int
-    data class ContinueWatchingSector(override val id: Int, val movies: List<ContinueWatching>) : HomeItem()
-    data class ComingSoonSector(override val id : Int, val movies : List<ComingSoon>) : HomeItem()
+    abstract val viewAllTarget: HomeViewAllTarget
+
+    data class ContinueWatchingSector(override val id: Int, val movies: List<ContinueWatching>) : HomeItem() {
+        override val viewAllTarget: HomeViewAllTarget = HomeViewAllTarget.ContinueWatching
+    }
     data class MovieSector(
         override val id: Int,
         val Genre: String,
         val movies: List<ItemMovie>,
+        override val viewAllTarget: HomeViewAllTarget,
         val isLoading: Boolean = false,
         val hasError: Boolean = false,
     ) : HomeItem()
 
-    data class GenreSector(override val id: Int, val Genres: List<Genre>) : HomeItem()
+    data class GenreSector(override val id: Int, val Genres: List<Genre>) : HomeItem() {
+        override val viewAllTarget: HomeViewAllTarget = HomeViewAllTarget.Genres
+    }
 
     data class CountrySector(
         override val id: Int,
         val countries: List<Country>,
         val isLoading: Boolean = false,
         val hasError: Boolean = false,
-    ) : HomeItem()
+    ) : HomeItem() {
+        override val viewAllTarget: HomeViewAllTarget = HomeViewAllTarget.Countries
+    }
 
     companion object {
         const val CONTINUE_WATCHING = 1

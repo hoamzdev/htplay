@@ -9,7 +9,9 @@ import androidx.viewbinding.ViewBinding
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
-    protected lateinit var binding: VB
+    private var _binding: VB? = null
+    protected val binding: VB
+        get() = checkNotNull(_binding) { "Binding is only available during the fragment view lifecycle." }
     abstract fun createViewBinding() : VB
 
     override fun onCreateView(
@@ -17,7 +19,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = createViewBinding()
+        _binding = createViewBinding()
         return binding.root
     }
 
@@ -31,5 +33,10 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     open fun initView(){}
     open fun bindViewModel(){}
     open fun handleClickEvent(){}
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }

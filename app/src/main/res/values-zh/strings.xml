@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">movie</string>
     <string name="continue_watching">继续观看</string>
-    <string name="coming_soon">即将上线</string>
     <string name="mock_home_banner">电影\n发现你的下一段故事</string>
     <string name="mock_selection">演示：%1$s</string>
     <string name="intro_title_4">准备好开启欢乐了吗？</string>

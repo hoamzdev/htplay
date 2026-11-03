@@ -9,11 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.core.view.isVisible
 import com.htdev.movie.htplay.R
-import com.htdev.movie.htplay.databinding.ItemComingsoonSectorBinding
 import com.htdev.movie.htplay.databinding.ItemContinueWatchingSectorBinding
 import com.htdev.movie.htplay.databinding.ItemMovieSectorBinding
 import com.htdev.movie.htplay.entities.HomeItem
-import com.htdev.movie.htplay.entities.ComingSoon
+import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.entities.ContinueWatching
 import com.htdev.movie.htplay.entities.ItemMovie
 import com.htdev.movie.htplay.domain.entities.Country
@@ -22,8 +21,7 @@ import com.htdev.movie.htplay.domain.entities.Genre
 class HomeAdapter(
     private val onMovieClick: (ItemMovie) -> Unit = {},
     private val onContinueClick: (ContinueWatching) -> Unit = {},
-    private val onComingSoonClick: (ComingSoon) -> Unit = {},
-    private val onViewAllClick: (HomeItem) -> Unit = {},
+    private val onViewAllClick: (target: HomeViewAllTarget) -> Unit = {},
     private val onGenreClick: (Genre) -> Unit = {},
     private val onCountryClick: (Country) -> Unit = {},
     private val onRetryClick: (HomeItem) -> Unit = {},
@@ -38,7 +36,6 @@ class HomeAdapter(
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)){
             is HomeItem.ContinueWatchingSector -> TYPE_CONTINUE
-            is HomeItem.ComingSoonSector -> TYPE_COMING_SOON
             is HomeItem.GenreSector -> TYPE_BROWSE
             is HomeItem.CountrySector -> TYPE_BROWSE
             else -> TYPE_NORMAL
@@ -55,10 +52,6 @@ class HomeAdapter(
                 val binding = ItemContinueWatchingSectorBinding.inflate(inflate, parent, false)
                 ContinueWatchingSectorViewHolder(binding)
             }
-            TYPE_COMING_SOON -> {
-                val binding = ItemComingsoonSectorBinding.inflate(inflate, parent, false)
-                ComingSoonSectorViewHolder(binding)
-            }
             TYPE_BROWSE -> BrowseViewHolder(ItemMovieSectorBinding.inflate(inflate, parent, false))
             else -> {
                 val binding = ItemMovieSectorBinding.inflate(inflate, parent, false)
@@ -72,7 +65,7 @@ class HomeAdapter(
         init {
             binding.rcContinueWatching.setupRow(rowAdapter)
             binding.viewAll.onClickListener {
-                (getItemAtPosition() as? HomeItem.ContinueWatchingSector)?.let(onViewAllClick)
+                (getItemAtPosition() as? HomeItem.ContinueWatchingSector)?.viewAllTarget?.let(onViewAllClick)
             }
         }
         fun bind(item: HomeItem.ContinueWatchingSector){
@@ -83,25 +76,12 @@ class HomeAdapter(
         }
     }
 
-    inner class ComingSoonSectorViewHolder(binding: ItemComingsoonSectorBinding) : RecyclerView.ViewHolder(binding.root){
-        private val rowAdapter = ComingSoonAdapter(onComingSoonClick)
-        init {
-            binding.rcComingSoon.setupRow(rowAdapter)
-            binding.viewAll.onClickListener {
-                (getItemAtPosition() as? HomeItem.ComingSoonSector)?.let(onViewAllClick)
-            }
-        }
-        fun bind(item: HomeItem.ComingSoonSector){
-            rowAdapter.submitList(item.movies)
-        }
-    }
-
     inner class MovieViewHolder(val binding: ItemMovieSectorBinding) : RecyclerView.ViewHolder(binding.root){
         private val rowAdapter = MovieAdapter(onMovieClick)
         init {
             binding.rcContinueWatching.setupRow(rowAdapter)
             binding.viewAll.onClickListener {
-                (getItemAtPosition() as? HomeItem.MovieSector)?.let(onViewAllClick)
+                (getItemAtPosition() as? HomeItem.MovieSector)?.viewAllTarget?.let(onViewAllClick)
             }
             binding.status.onClickListener {
                 (getItemAtPosition() as? HomeItem.MovieSector)
@@ -127,7 +107,7 @@ class HomeAdapter(
 
         init {
             binding.rcContinueWatching.setupRow(rowAdapter)
-            binding.viewAll.onClickListener { getItemAtPosition()?.let(onViewAllClick) }
+            binding.viewAll.onClickListener { getItemAtPosition()?.viewAllTarget?.let(onViewAllClick) }
             binding.status.onClickListener {
                 (getItemAtPosition() as? HomeItem.CountrySector)
                     ?.takeIf { it.hasError }?.let(onRetryClick)
@@ -180,9 +160,6 @@ class HomeAdapter(
             is HomeItem.ContinueWatchingSector -> {
                 (holder as ContinueWatchingSectorViewHolder).bind(item)
             }
-            is HomeItem.ComingSoonSector -> {
-                (holder as ComingSoonSectorViewHolder).bind(item)
-            }
             is HomeItem.MovieSector -> {
                 (holder as MovieViewHolder).bind(item)
             }
@@ -192,7 +169,6 @@ class HomeAdapter(
 
     companion object{
         private const val TYPE_CONTINUE = 0
-        private const val TYPE_COMING_SOON = 1
         private const val TYPE_NORMAL = 2
         private const val TYPE_BROWSE = 3
         val DIFF_UTIL = object : DiffUtil.ItemCallback<HomeItem>(){

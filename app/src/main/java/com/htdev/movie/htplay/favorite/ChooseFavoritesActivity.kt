@@ -9,6 +9,7 @@ import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.domain.common.Result
+import com.htdev.movie.htplay.home.HomeRouterActivity
 import com.htdev.movie.htplay.util.getLocalizedGenres
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import kotlinx.coroutines.flow.collectLatest
@@ -41,12 +42,12 @@ class ChooseFavoritesActivity : AuthenticatedActivity<ActivityChooseFavotireBind
     override fun handleClickEvent() {
         binding.apply {
             btnChoose.onClickListener {
-                val Genres = chooseFavoriteAdapter.getSelectedGenres()
-                if(Genres.isEmpty()){
+                val genres = chooseFavoriteAdapter.getSelectedGenres()
+                if(genres.isEmpty()){
                     showToastApp(getString(R.string.favorite_choose_at_least_one))
                 }
                 else{
-                    chooseFavoriteViewModel.saveGenresFavorite(Genres)
+                    chooseFavoriteViewModel.saveGenresFavorite(genres)
                 }
             }
         }
@@ -60,7 +61,7 @@ class ChooseFavoritesActivity : AuthenticatedActivity<ActivityChooseFavotireBind
                     is Result.Success -> {
                         if (result.data) {
                             chooseFavoriteViewModel.clearSaveResult()
-                            newActivity(MainActivity::class.java)
+                            newActivity(HomeRouterActivity::class.java)
                             finish()
                         } else {
                             showToastApp(getString(R.string.favorite_save_error))

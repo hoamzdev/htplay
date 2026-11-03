@@ -1,18 +1,18 @@
-package com.htdev.movie.htplay.viewmodel
+package com.htdev.movie.htplay.home.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.htdev.movie.htplay.domain.common.Result
+import com.htdev.movie.htplay.domain.entities.Genre
 import com.htdev.movie.htplay.domain.entities.PosterMovie
 import com.htdev.movie.htplay.domain.entities.PosterMovieHome
-import com.htdev.movie.htplay.domain.entities.Genre
+import com.htdev.movie.htplay.domain.usecase.movie.GetCountries
 import com.htdev.movie.htplay.domain.usecase.movie.GetGenres
 import com.htdev.movie.htplay.domain.usecase.movie.GetMovieByGenreAndCountry
-import com.htdev.movie.htplay.domain.usecase.movie.GetCountries
 import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByCountry
 import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByGenres
 import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByPage
@@ -23,13 +23,14 @@ import com.htdev.movie.htplay.domain.usecase.movie.pager.GetMoviesByGenrePager
 import com.htdev.movie.htplay.domain.usecase.movie.pager.GetMoviesBySearch
 import com.htdev.movie.htplay.domain.usecase.movie.pager.GetMoviesPager
 import com.htdev.movie.htplay.domain.usecase.movie.pager.GetMoviesSeriesPager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import com.htdev.movie.htplay.entities.ContinueWatching
 import com.htdev.movie.htplay.entities.HomeData
-import com.htdev.movie.htplay.entities.HomeItem
 import com.htdev.movie.htplay.entities.HomeGenrePage
+import com.htdev.movie.htplay.entities.HomeItem
 import com.htdev.movie.htplay.util.normalizeFavoriteGenres
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -37,20 +38,18 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val getMovieLastest: GetMoviesLatest,
     private val getMoviesByPage: GetMoviesByPage,
     private val getMoviesByGenres: GetMoviesByGenres,
@@ -77,11 +76,17 @@ class MainViewModel @Inject constructor(
     val homeGenreMovies = selectedHomeGenre.flatMapLatest { slug ->
         channelFlow {
             // Clear the previous tab while keeping refresh loading until this pager responds.
-            send(HomeGenrePage(slug, PagingData.empty<PosterMovie>(sourceLoadStates = LoadStates(
-                refresh = if (slug == null) LoadState.NotLoading(true) else LoadState.Loading,
-                prepend = LoadState.NotLoading(true),
-                append = LoadState.NotLoading(slug == null),
-            ))))
+            send(
+                HomeGenrePage(
+                    slug, PagingData.empty<PosterMovie>(
+                        sourceLoadStates = LoadStates(
+                            refresh = if (slug == null) LoadState.NotLoading(true) else LoadState.Loading,
+                            prepend = LoadState.NotLoading(true),
+                            append = LoadState.NotLoading(slug == null),
+                        )
+                    )
+                )
+            )
             if (slug != null) {
                 // This cache belongs to the selected tab and is cancelled when it changes.
                 getMoviesByGenrePager(slug).cachedIn(this).collect { pages ->

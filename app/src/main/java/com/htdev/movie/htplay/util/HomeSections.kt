@@ -6,6 +6,7 @@ import com.htdev.movie.htplay.domain.entities.Country
 import com.htdev.movie.htplay.domain.entities.PosterMovie
 import com.htdev.movie.htplay.entities.HomeData
 import com.htdev.movie.htplay.entities.HomeItem
+import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.entities.ItemMovie
 import java.util.UUID
 
@@ -33,13 +34,13 @@ fun buildHomeSections(
     if (home.continueWatching.isNotEmpty()) {
         add(HomeItem.ContinueWatchingSector(HomeItem.CONTINUE_WATCHING, home.continueWatching))
     }
-    add(latestMovies.toMovieSector(HomeItem.LATEST_MOVIES, latestTitle))
-    add(home.recommendedMovies.toMovieSector(HomeItem.SELECTED_FOR_YOU, recommendedTitle))
-    add(home.chineseMovies.toMovieSector(HomeItem.CHINESE_MOVIES, chineseTitle))
-    add(home.koreanMovies.toMovieSector(HomeItem.KOREAN_MOVIES, koreanTitle))
-    add(home.actionMovies.toMovieSector(HomeItem.ACTION_MOVIES, actionTitle))
-    add(home.romanceMovies.toMovieSector(HomeItem.ROMANCE_MOVIES, romanceTitle))
-    add(home.familyMovies.toMovieSector(HomeItem.FAMILY_MOVIES, familyTitle))
+    add(latestMovies.toMovieSector(HomeItem.LATEST_MOVIES, latestTitle, HomeViewAllTarget.Latest))
+    add(home.recommendedMovies.toMovieSector(HomeItem.SELECTED_FOR_YOU, recommendedTitle, HomeViewAllTarget.Recommended))
+    add(home.chineseMovies.toMovieSector(HomeItem.CHINESE_MOVIES, chineseTitle, HomeViewAllTarget.ByCountry("trung-quoc")))
+    add(home.koreanMovies.toMovieSector(HomeItem.KOREAN_MOVIES, koreanTitle, HomeViewAllTarget.ByCountry("han-quoc")))
+    add(home.actionMovies.toMovieSector(HomeItem.ACTION_MOVIES, actionTitle, HomeViewAllTarget.ByGenre("hanh-dong")))
+    add(home.romanceMovies.toMovieSector(HomeItem.ROMANCE_MOVIES, romanceTitle, HomeViewAllTarget.ByGenre("tinh-cam")))
+    add(home.familyMovies.toMovieSector(HomeItem.FAMILY_MOVIES, familyTitle, HomeViewAllTarget.ByGenre("gia-dinh")))
     add(HomeItem.CountrySector(
         HomeItem.COUNTRIES,
         (home.countries as? Result.Success)?.data.orEmpty().map(localizeCountry),
@@ -48,10 +49,15 @@ fun buildHomeSections(
     ))
 }
 
-private fun Result<List<PosterMovie>>.toMovieSector(id: Int, title: String): HomeItem.MovieSector =
+private fun Result<List<PosterMovie>>.toMovieSector(
+    id: Int,
+    title: String,
+    viewAllTarget: HomeViewAllTarget,
+): HomeItem.MovieSector =
     HomeItem.MovieSector(
         id = id,
         Genre = title,
+        viewAllTarget = viewAllTarget,
         movies = (this as? Result.Success)?.data.orEmpty().map { movie ->
             ItemMovie(
                 id = UUID.nameUUIDFromBytes(movie.id.ifBlank { movie.slug }

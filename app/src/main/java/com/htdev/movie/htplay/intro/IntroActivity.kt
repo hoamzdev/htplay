@@ -1,16 +1,15 @@
 package com.htdev.movie.htplay.intro
 
-import android.view.ViewOutlineProvider
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
-import com.htdev.movie.htplay.MainActivity
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.auth.login.LoginActivity
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityIntroBinding
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.common.SessionExpiredException
+import com.htdev.movie.htplay.home.HomeRouterActivity
 import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -60,7 +59,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding>() {
                     try {
                         when (val session = introViewModel.checkSessionLogin()) {
                             is Result.Success -> {
-                                newActivity(dist = MainActivity::class.java)
+                                newActivity(dist = HomeRouterActivity::class.java)
                                 finishAffinity()
                             }
                             is Result.Error -> {

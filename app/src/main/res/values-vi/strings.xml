@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">movie</string>
     <string name="continue_watching">Tiếp tục xem</string>
-    <string name="coming_soon">Sắp ra mắt</string>
     <string name="mock_home_banner">Phim ảnh\nKhám phá câu chuyện tiếp theo của bạn</string>
     <string name="mock_selection">Dữ liệu mẫu: %1$s</string>
     <string name="intro_title_4">Sẵn sàng tận hưởng niềm vui?</string>

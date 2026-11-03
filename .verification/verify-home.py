@@ -42,7 +42,7 @@ files = [domain / 'common/Result.kt', domain / 'entities/GenreLocal.kt', domain 
          domain / 'repository/MovieRepository.kt', domain / 'repository/LocalStorageRepository.kt',
          root / 'data/src/main/java/com/htdev/movie/htplay/data/db/DataGenreLocal.kt',
          root / 'data/src/main/java/com/htdev/movie/htplay/data/common/Api.kt',
-         app / 'viewmodel/MainViewModel.kt', app / 'favorite/FavoriteViewModel.kt', app / 'util/HomeSections.kt']
+         app / 'viewmodel/HomeViewModel.kt', app / 'favorite/FavoriteViewModel.kt', app / 'util/HomeSections.kt']
 files += list((domain / 'usecase/movie').rglob('*.kt'))
 files += list((app / 'entities').glob('*.kt'))
 tests = root / 'app/src/test/java/com/htdev/movie/htplay'
@@ -57,7 +57,7 @@ print(result.stdout, result.stderr)
 if result.returncode:
     raise SystemExit(result.returncode)
 result = subprocess.run([java, '-cp', ';'.join(map(str, [classes, *cp])), 'org.junit.runner.JUnitCore',
-    'com.htdev.movie.htplay.util.HomeSectionsTest', 'com.htdev.movie.htplay.viewmodel.MainViewModelTest'],
+    'com.htdev.movie.htplay.util.HomeSectionsTest', 'com.htdev.movie.htplay.viewmodel.HomeViewModelTest'],
     text=True, capture_output=True)
 print(result.stdout, result.stderr)
 raise SystemExit(result.returncode)

@@ -40,6 +40,9 @@ googleid = "1.2.1"
 firebaseAuth = "25.0.0"
 firebaseFirestore = "26.1.1"
 activityKtx = "1.13.0"
+navigationFragmentKtx = "2.10.2"
+navigationUiKtx = "2.10.2"
+fragment = "1.9.1"
 
 [libraries]
 blurview-vversion310 = { module = "com.github.Dimezis:BlurView", version.ref = "blurviewVersion" }
@@ -105,6 +108,9 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
