@@ -11,6 +11,8 @@ object  Api {
     const val ENDPOINT_FILM_COUNTRY = "v1/api/quoc-gia/{type_list}"
     const val ENDPOINT_SEARCH_FILM = "v1/api/tim-kiem"
     const val ENDPOINT_MOVIE_DETAIL = "phim/{slug}"
+    const val ENDPOINT_COUNTRY = "quoc-gia"
+    const val ENDPOINT_GENRES = "the-loai"
 }
 
 

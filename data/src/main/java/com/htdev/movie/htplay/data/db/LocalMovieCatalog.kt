@@ -8,7 +8,7 @@ import com.htdev.movie.htplay.domain.entities.Genre
  * @author hwa..
  */
 
-object DataGenre {
+object LocalMovieCatalog {
     val genres = listOf(
         Genre(
             name = genreSlugToEnglish("hanh-dong"),

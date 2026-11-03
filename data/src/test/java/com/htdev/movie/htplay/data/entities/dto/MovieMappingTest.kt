@@ -16,7 +16,7 @@ class MovieMappingTest {
     }
 
     @Test
-    fun genrePosterDoesNotPrefixAnAbsoluteUrlOrProduceNullPath() {
+    fun GenrePosterDoesNotPrefixAnAbsoluteUrlOrProduceNullPath() {
         val item = ItemByGenre("id", posterURL = "https://cdn.example.com/a.jpg", episodeCurrent = "Full")
         assertEquals("https://cdn.example.com/a.jpg", item.mapToPosterMovie().posterUrl)
         assertEquals("", item.copy(posterURL = null).mapToPosterMovie().posterUrl)
@@ -31,7 +31,7 @@ class MovieMappingTest {
         )
         val detail = movie.mapToDataMovieDetail()
         assertEquals("", detail.countrySlug)
-        assertEquals("Unknown", detail.genreSlug)
+        assertEquals("Unknown", detail.GenreSlug)
         assertEquals("0.0", detail.vote)
         assertEquals("https://phimimg.com/poster.jpg", detail.posterUrl)
     }

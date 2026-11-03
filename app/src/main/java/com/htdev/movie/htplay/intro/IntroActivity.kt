@@ -28,22 +28,13 @@ class IntroActivity : BaseActivity<ActivityIntroBinding>() {
 
     override fun initView() {
         setupViewPager()
-        val windowBackground = window.decorView.background
-        binding.apply {
-            blurBottom.post {
-                blurBottom.setupWith(blurTarget).setFrameClearDrawable(windowBackground)
-                    .setBlurRadius(16f)
-            }
-            blurBottom.outlineProvider = ViewOutlineProvider.BACKGROUND
-            blurBottom.clipToOutline = true
-        }
     }
 
     private fun setupViewPager() {
         introAdapter.setListData(listIntro)
         binding.vpIntro.apply {
             adapter = introAdapter
-            isUserInputEnabled = true
+            isUserInputEnabled = false
         }
 
         binding.vpIntro.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {

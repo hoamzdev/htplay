@@ -14,15 +14,17 @@ import java.util.UUID
 data class ChooseFavoriteItem(
     val uuid: UUID = UUID.randomUUID(),
     val nameGenre: String,
-    val urlPoster: String
+    val urlPoster: String,
+    val slug: String,
 )
 
-class ChooseFavoriteAdapter : ListAdapter<ChooseFavoriteItem, ChooseFavoriteAdapter.ChooseFavoriteViewHolder>(diffUtil) {
+class ChooseFavoriteAdapter :
+    ListAdapter<ChooseFavoriteItem, ChooseFavoriteAdapter.ChooseFavoriteViewHolder>(diffUtil) {
 
     private val selectedIds = mutableSetOf<UUID>()
 
-    fun getSelectedGenres() : List<String>{
-        return currentList.filter { it.uuid in selectedIds }.map { it.nameGenre }
+    fun getSelectedGenres(): List<String> {
+        return currentList.filter { it.uuid in selectedIds }.map { it.slug }
     }
 
     override fun onCreateViewHolder(
@@ -71,12 +73,10 @@ class ChooseFavoriteAdapter : ListAdapter<ChooseFavoriteItem, ChooseFavoriteAdap
                 val position = bindingAdapterPosition
                 if (position == RecyclerView.NO_POSITION) return@setOnClickListener
                 val item = getItem(position)
-                if(selectedIds.size < 3){
-                    if (!selectedIds.remove(item.uuid)) {
-                        selectedIds.add(item.uuid)
-                    }
-                    notifyItemChanged(position, SELECTION_CHANGED)
+                if (!selectedIds.remove(item.uuid)) {
+                    selectedIds.add(item.uuid)
                 }
+                notifyItemChanged(position, SELECTION_CHANGED)
             }
         }
 

@@ -1,8 +1,9 @@
 package com.htdev.movie.htplay.data.api
 
 import com.htdev.movie.htplay.data.common.Api
+import com.htdev.movie.htplay.data.entities.dto.CountryResponse
+import com.htdev.movie.htplay.data.entities.dto.GenreResponse
 import com.htdev.movie.htplay.data.entities.dto.Movie
-import com.htdev.movie.htplay.data.entities.dto.MovieByGenre
 import com.htdev.movie.htplay.data.entities.dto.MovieDetail
 import com.htdev.movie.htplay.data.entities.dto.MovieDetailPage
 import com.htdev.movie.htplay.data.entities.dto.MovieResponse
@@ -73,4 +74,11 @@ interface MovieService {
     suspend fun getMovieDetail(
         @Path("slug") slug : String
     ) : MovieDetailPage
+
+    @GET(Api.ENDPOINT_COUNTRY)
+    suspend fun getCountries() : CountryResponse
+
+    @GET(Api.ENDPOINT_GENRES)
+    suspend fun getGenres() : GenreResponse
+
 }

@@ -7,5 +7,6 @@ data class ItemMovie(
     val urlPoster : String? = null,
     val tagFilm : String? = null,
     val nameFile : String? = null,
-    val rateCount : Double? = 0.0
+    val rateCount : Double? = 0.0,
+    val slug: String = "",
 )

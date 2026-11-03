@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.htdev.movie.htplay.databinding.ItemMovieBinding
 import com.htdev.movie.htplay.entities.ItemMovie
-import androidx.core.view.isVisible
 import com.htdev.movie.htplay.util.loadPoster
 
 class MovieAdapter(
@@ -41,10 +40,7 @@ class MovieAdapter(
 
         fun bind(item: ItemMovie) {
             binding.apply {
-                ratingText.text = item.rateCount.toString()
                 bookTitle.text = item.nameFile
-                freeBadge.text = item.tagFilm
-                freeBadge.isVisible = !item.tagFilm.isNullOrBlank()
                 bookCover.loadPoster(item.urlPoster)
                 root.contentDescription = item.nameFile
             }

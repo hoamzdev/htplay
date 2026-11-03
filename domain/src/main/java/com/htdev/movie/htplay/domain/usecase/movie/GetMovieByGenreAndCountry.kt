@@ -9,5 +9,5 @@ import javax.inject.Inject
 class GetMovieByGenreAndCountry @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
-    suspend operator fun invoke(genreSlug : String,countrySlug : String,limit : Int = 30) = movieRepository.getMoviesByGenreAndCountry(countrySlug,genreSlug,limit)
+    suspend operator fun invoke(GenreSlug : String,countrySlug : String,limit : Int = 30) = movieRepository.getMoviesByGenreAndCountry(countrySlug,GenreSlug,limit)
 }

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    tools:context=".auth.login.ForgotPassWActivity">
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/forgot_password"
+        android:textColor="@color/white"
+        android:fontFamily="@font/font_figtree_semi_bold"
+        android:textSize="@dimen/size40"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.2"/>
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/provide_your_account_s_email_for_which_you_want_to_reset_your_password"
+        android:textColor="@color/white"
+        android:fontFamily="@font/font_poppins_regular"
+        android:textSize="@dimen/size14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/size20"
+        android:paddingHorizontal="@dimen/size20"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tv1"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size18"
+        android:layout_marginTop="@dimen/size40"
+        android:theme="@style/ThemeOverlay.Movie.LoginInput"
+        app:boxBackgroundMode="none"
+        app:cursorColor="@color/gray_color"
+        app:cursorErrorColor="@color/gray_color"
+        app:errorEnabled="false"
+        app:errorIconDrawable="@null"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv2">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="email"
+            android:background="@drawable/bgr_edit_text"
+            android:hint="@string/login_email_hint"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="@dimen/size16"
+            android:paddingVertical="@dimen/size15"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_color"
+            android:textSize="@dimen/sizesp14" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_reset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size50"
+        android:background="@drawable/bgr_buton_primary"
+        android:fontFamily="@font/font_figtree_semi_bold"
+        android:paddingVertical="@dimen/size15"
+        android:text="Reset password"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sizesp16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/til_email" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size20"
+        android:background="@drawable/bgr_buton_primary"
+        android:fontFamily="@font/font_figtree_semi_bold"
+        android:paddingVertical="@dimen/size15"
+        android:text="Login"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sizesp16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_reset" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

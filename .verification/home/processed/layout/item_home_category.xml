@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="10dp"
+    android:background="@drawable/bg_home_category"
+    android:backgroundTint="#E9F5F2"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center"
+    android:minWidth="96dp"
+    android:minHeight="48dp"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="14dp"
+    android:textColor="#164E43"
+    android:textSize="14sp"
+    android:textStyle="bold" />

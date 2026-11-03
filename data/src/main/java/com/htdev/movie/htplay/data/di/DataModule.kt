@@ -66,7 +66,7 @@ object DataModule {
     fun firebaseApp(@ApplicationContext context: Context): FirebaseApp =
         FirebaseApp.getApps(context).firstOrNull { it.name == FirebaseApp.DEFAULT_APP_NAME }
             ?: checkNotNull(FirebaseApp.initializeApp(context)) {
-                "Configure Firebase for com.htdev.movie.htplay before using authentication or saved genres."
+                "Configure Firebase for com.htdev.movie.htplay before using authentication or saved Genres."
             }
 
     @Provides

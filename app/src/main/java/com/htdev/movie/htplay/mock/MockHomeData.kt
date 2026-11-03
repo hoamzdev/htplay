@@ -45,7 +45,7 @@ class MockHomeData(context: Context) {
     val homeItems: List<HomeItem> = listOf(
         HomeItem.ContinueWatchingSector(id = 1, movies = continueWatching),
         HomeItem.ComingSoonSector(id = 2, movies = comingSoon),
-        HomeItem.MovieSector(id = 3, genre = context.getString(R.string.popular_movies), movies = popularMovies),
-        HomeItem.MovieSector(id = 4, genre = context.getString(R.string.genre_action), movies = actionMovies),
+        HomeItem.MovieSector(id = 3, Genre = context.getString(R.string.popular_movies), movies = popularMovies),
+        HomeItem.MovieSector(id = 4, Genre = context.getString(R.string.GenreLocal_action), movies = actionMovies),
     )
 }

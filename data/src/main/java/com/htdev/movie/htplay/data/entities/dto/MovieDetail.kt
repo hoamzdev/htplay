@@ -44,11 +44,7 @@ data class MovieDetail (
     val quality: String,
     val year: Long,
     val category: List<Category>?,
-    val country: List<Country>
-)
-
-data class Country(
-    val slug : String
+    val country: List<Country>?
 )
 
 fun MovieDetail.mapToDataMovieDetail() : DataMovieDetail{
@@ -58,7 +54,7 @@ fun MovieDetail.mapToDataMovieDetail() : DataMovieDetail{
         name = this.originName,
         content = this.content,
         year = this.year,
-        countrySlug = this.country.firstOrNull()?.slug.orEmpty(),
+        countrySlug = this.country?.firstOrNull()?.slug.orEmpty(),
         episodeCurrent = this.episodeCurrent,
         genre = if(this.category.isNullOrEmpty()) "Unknown" else genreSlugToEnglish(this.category[0].slug),
         vote = String.format(java.util.Locale.US, "%.1f", this.tmdb.voteAverage ?: 0.0),

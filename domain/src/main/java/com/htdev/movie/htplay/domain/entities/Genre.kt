@@ -7,8 +7,9 @@ package com.htdev.movie.htplay.domain.entities
 data class Genre(
     val name : String,
     val slug : String,
-    val poster : String,
+    val poster : String = "",
 )
+
 
 data class Country(
     val name : String,

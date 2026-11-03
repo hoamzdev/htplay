@@ -5,34 +5,81 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/background_color"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="@color/black"
         app:elevation="0dp">
 
         <FrameLayout
             android:id="@+id/banner_sector"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size250"
-            android:minHeight="@dimen/size100"
+            android:layout_height="400dp"
+            android:minHeight="@dimen/home_collapsed_header_height"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-            <TextView
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vpPoster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/book_cover"
-                android:gravity="bottom|start"
-                android:padding="24dp"
-                android:text="@string/mock_home_banner"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <com.htdev.movie.htplay.widget.DotIndicatorView
+                android:id="@+id/dotIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="24dp"
+                android:importantForAccessibility="no"
+                android:visibility="gone"
+                app:dotCount="4"
+                app:dotSelectedColor="#FFFFFF"
+                app:dotSize="4dp"
+                app:dotSpacing="3dp"
+                app:dotUnselectedColor="#66FFFFFF" />
+
+            <ImageView
+                android:id="@+id/posterPlaceholder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                android:src="@drawable/iv_placeholder" />
+
+            <TextView
+                android:id="@+id/posterStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#99000000"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:padding="16dp"
                 android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <View
+                android:id="@+id/posterScrim"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:background="@color/black"
+                android:importantForAccessibility="no" />
         </FrameLayout>
+
+        <include
+            android:id="@+id/genreTabs"
+            layout="@layout/item_home_genre_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -40,6 +87,60 @@
         android:id="@+id/rcMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="@dimen/size50"
+        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/searchContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_collapsed_header_height"
+        android:layout_gravity="top"
+        android:alpha="0"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/name_logo"
+            android:layout_width="@dimen/size60"
+            android:layout_height="@dimen/size40"
+            android:layout_marginStart="@dimen/size16"
+            android:layout_marginTop="@dimen/size30"
+            android:contentDescription="@null"
+            android:src="@drawable/name_logo"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/edtSearch"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size40"
+            android:layout_marginStart="@dimen/size10"
+            android:layout_marginEnd="@dimen/size16"
+            android:fontFamily="@font/font_poppins_regular"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:paddingHorizontal="@dimen/size10"
+            android:background="@drawable/bg_fr_search"
+            android:textColor="@color/gray_color"
+            android:textSize="@dimen/sizesp14"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/name_logo"
+            app:layout_constraintTop_toTopOf="@id/name_logo" />
+
+        <ImageView
+            android:id="@+id/ic_search"
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_search"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="@id/edtSearch"
+            android:layout_marginEnd="@dimen/size10"
+            app:layout_constraintEnd_toEndOf="@id/edtSearch"
+            app:layout_constraintTop_toTopOf="@id/edtSearch" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

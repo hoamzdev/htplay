@@ -9,5 +9,5 @@ import javax.inject.Inject
 class GetMoviesSeriesPager @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
-    operator fun invoke(genre : String,limit : Int = 20) = movieRepository.getMoviesSeriesPager(genre,limit)
+    operator fun invoke(Genre : String,limit : Int = 20) = movieRepository.getMoviesSeriesPager(Genre,limit)
 }

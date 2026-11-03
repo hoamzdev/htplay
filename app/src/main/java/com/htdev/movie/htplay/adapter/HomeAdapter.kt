@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.isVisible
+import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.databinding.ItemComingsoonSectorBinding
 import com.htdev.movie.htplay.databinding.ItemContinueWatchingSectorBinding
 import com.htdev.movie.htplay.databinding.ItemMovieSectorBinding
@@ -14,12 +16,17 @@ import com.htdev.movie.htplay.entities.HomeItem
 import com.htdev.movie.htplay.entities.ComingSoon
 import com.htdev.movie.htplay.entities.ContinueWatching
 import com.htdev.movie.htplay.entities.ItemMovie
+import com.htdev.movie.htplay.domain.entities.Country
+import com.htdev.movie.htplay.domain.entities.Genre
 
 class HomeAdapter(
     private val onMovieClick: (ItemMovie) -> Unit = {},
     private val onContinueClick: (ContinueWatching) -> Unit = {},
     private val onComingSoonClick: (ComingSoon) -> Unit = {},
     private val onViewAllClick: (HomeItem) -> Unit = {},
+    private val onGenreClick: (Genre) -> Unit = {},
+    private val onCountryClick: (Country) -> Unit = {},
+    private val onRetryClick: (HomeItem) -> Unit = {},
 ) : ListAdapter<HomeItem, RecyclerView.ViewHolder>(DIFF_UTIL) {
 
     private fun RecyclerView.setupRow(rowAdapter: RecyclerView.Adapter<*>) {
@@ -32,6 +39,8 @@ class HomeAdapter(
         return when(getItem(position)){
             is HomeItem.ContinueWatchingSector -> TYPE_CONTINUE
             is HomeItem.ComingSoonSector -> TYPE_COMING_SOON
+            is HomeItem.GenreSector -> TYPE_BROWSE
+            is HomeItem.CountrySector -> TYPE_BROWSE
             else -> TYPE_NORMAL
         }
     }
@@ -50,6 +59,7 @@ class HomeAdapter(
                 val binding = ItemComingsoonSectorBinding.inflate(inflate, parent, false)
                 ComingSoonSectorViewHolder(binding)
             }
+            TYPE_BROWSE -> BrowseViewHolder(ItemMovieSectorBinding.inflate(inflate, parent, false))
             else -> {
                 val binding = ItemMovieSectorBinding.inflate(inflate, parent, false)
                 MovieViewHolder(binding)
@@ -57,7 +67,7 @@ class HomeAdapter(
         }
     }
 
-    inner class ContinueWatchingSectorViewHolder(binding: ItemContinueWatchingSectorBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class ContinueWatchingSectorViewHolder(private val binding: ItemContinueWatchingSectorBinding) : RecyclerView.ViewHolder(binding.root){
         private val rowAdapter = ContinueWatchingAdapter(onContinueClick)
         init {
             binding.rcContinueWatching.setupRow(rowAdapter)
@@ -67,6 +77,9 @@ class HomeAdapter(
         }
         fun bind(item: HomeItem.ContinueWatchingSector){
             rowAdapter.submitList(item.movies)
+            binding.status.isVisible = item.movies.isEmpty()
+            binding.rcContinueWatching.isVisible = item.movies.isNotEmpty()
+            binding.viewAll.isVisible = item.movies.isNotEmpty()
         }
     }
 
@@ -87,11 +100,73 @@ class HomeAdapter(
         private val rowAdapter = MovieAdapter(onMovieClick)
         init {
             binding.rcContinueWatching.setupRow(rowAdapter)
+            binding.viewAll.onClickListener {
+                (getItemAtPosition() as? HomeItem.MovieSector)?.let(onViewAllClick)
+            }
+            binding.status.onClickListener {
+                (getItemAtPosition() as? HomeItem.MovieSector)
+                    ?.takeIf { it.hasError }?.let(onRetryClick)
+            }
         }
         fun bind(item: HomeItem.MovieSector){
-            binding.tag.text = item.genre
+            binding.tag.text = item.Genre
             rowAdapter.submitList(item.movies)
+            binding.bindStatus(item.isLoading, item.hasError, item.movies.isEmpty(),
+                if (item.id == HomeItem.SELECTED_FOR_YOU) R.string.home_no_recommendations else R.string.home_no_movies)
         }
+    }
+
+    inner class BrowseViewHolder(private val binding: ItemMovieSectorBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val rowAdapter = HomeCategoryAdapter { slug ->
+            when (val section = getItemAtPosition()) {
+                is HomeItem.GenreSector -> section.Genres.firstOrNull { it.slug == slug }?.let(onGenreClick)
+                is HomeItem.CountrySector -> section.countries.firstOrNull { it.slug == slug }?.let(onCountryClick)
+                else -> Unit
+            }
+        }
+
+        init {
+            binding.rcContinueWatching.setupRow(rowAdapter)
+            binding.viewAll.onClickListener { getItemAtPosition()?.let(onViewAllClick) }
+            binding.status.onClickListener {
+                (getItemAtPosition() as? HomeItem.CountrySector)
+                    ?.takeIf { it.hasError }?.let(onRetryClick)
+            }
+        }
+
+        fun bind(item: HomeItem) {
+            when (item) {
+                is HomeItem.GenreSector -> {
+                    binding.tag.setText(R.string.home_GenreLocals)
+                    rowAdapter.submitList(item.Genres.map { HomeCategoryItem(it.slug, it.name) })
+                    binding.bindStatus(false, false, item.Genres.isEmpty(), R.string.home_no_categories)
+                }
+                is HomeItem.CountrySector -> {
+                    binding.tag.setText(R.string.home_countries)
+                    rowAdapter.submitList(item.countries.map { HomeCategoryItem(it.slug, it.name) })
+                    binding.bindStatus(item.isLoading, item.hasError, item.countries.isEmpty(), R.string.home_no_categories)
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    private fun ItemMovieSectorBinding.bindStatus(
+        isLoading: Boolean,
+        hasError: Boolean,
+        isEmpty: Boolean,
+        emptyMessage: Int,
+    ) {
+        status.isVisible = isLoading || hasError || isEmpty
+        status.setText(when {
+            isLoading -> R.string.loading
+            hasError -> R.string.home_load_error_retry
+            else -> emptyMessage
+        })
+        status.isClickable = hasError
+        status.isFocusable = hasError
+        rcContinueWatching.isVisible = !isLoading && !hasError && !isEmpty
+        viewAll.isVisible = !isLoading && !hasError && !isEmpty
     }
 
     private fun RecyclerView.ViewHolder.getItemAtPosition(): HomeItem? =
@@ -111,6 +186,7 @@ class HomeAdapter(
             is HomeItem.MovieSector -> {
                 (holder as MovieViewHolder).bind(item)
             }
+            is HomeItem.GenreSector, is HomeItem.CountrySector -> (holder as BrowseViewHolder).bind(item)
         }
     }
 
@@ -118,6 +194,7 @@ class HomeAdapter(
         private const val TYPE_CONTINUE = 0
         private const val TYPE_COMING_SOON = 1
         private const val TYPE_NORMAL = 2
+        private const val TYPE_BROWSE = 3
         val DIFF_UTIL = object : DiffUtil.ItemCallback<HomeItem>(){
             override fun areItemsTheSame(
                 oldItem: HomeItem,

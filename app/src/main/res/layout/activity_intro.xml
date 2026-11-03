@@ -8,26 +8,17 @@
     android:background="@android:color/transparent"
     tools:context=".intro.IntroActivity">
 
-    <eightbitlab.com.blurview.BlurTarget
-        android:id="@+id/blur_target"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@android:color/transparent"
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_intro"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vp_intro"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:scaleType="centerCrop" />
-
-
-    </eightbitlab.com.blurview.BlurTarget>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,20 +27,9 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/bgr_card_intro"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintStart_toStartOf="parent">
-
-        <eightbitlab.com.blurview.BlurView
-            android:id="@+id/blur_bottom"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/bgr_card_intro"
-            app:blurOverlayColor="@color/intro_blur_overlay"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
 
         <TextView
             android:id="@+id/tvIntro1"
@@ -72,12 +52,12 @@
             android:layout_marginTop="@dimen/size10"
             android:fontFamily="@font/font_poppins_regular"
             android:gravity="center_horizontal"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:paddingHorizontal="@dimen/size10"
             android:text="@string/intro_welcome_description"
             android:textColor="@color/white"
             android:textSize="@dimen/sizesp12"
-            android:maxLines="2"
-            android:paddingHorizontal="@dimen/size10"
-            android:includeFontPadding="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvIntro1" />
@@ -87,16 +67,16 @@
             android:id="@+id/dots"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btn_started"
-            app:dotSize="@dimen/size8"
-            app:dotCount="4"
             android:layout_marginBottom="@dimen/size20"
-            app:dotSpacing="@dimen/size8"
+            android:gravity="center_vertical"
+            app:dotCount="4"
             app:dotSelectedColor="@color/primary_color"
-            app:dotUnselectedColor="@color/gray_color"/>
+            app:dotSize="@dimen/size8"
+            app:dotSpacing="@dimen/size8"
+            app:dotUnselectedColor="@color/gray_color"
+            app:layout_constraintBottom_toTopOf="@id/btn_started"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -104,14 +84,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/size16"
+            android:layout_marginBottom="@dimen/size40"
             android:background="@drawable/bgr_buton_primary"
+            android:fontFamily="@font/font_figtree_semi_bold"
             android:paddingVertical="@dimen/size15"
             android:text="@string/get_started"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="@dimen/sizesp16"
-            android:layout_marginBottom="@dimen/size40"
-            android:fontFamily="@font/font_figtree_semi_bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

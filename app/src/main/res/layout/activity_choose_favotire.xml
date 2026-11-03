@@ -35,7 +35,7 @@
             android:layout_marginTop="@dimen/size3"
             android:fontFamily="@font/font_poppins_regular"
             android:includeFontPadding="true"
-            android:text="Choose 3 genres you like"
+            android:text="Choose GenreLocals you like"
             android:textColor="@color/gray_color"
             android:textSize="@dimen/size16"
             app:layout_constraintStart_toStartOf="parent"

@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.htdev.movie.htplay.data.api.MovieService
-import com.htdev.movie.htplay.data.db.DataGenre
 import com.htdev.movie.htplay.data.entities.dto.UserData
 import com.htdev.movie.htplay.data.entities.dto.mapToDataMovieDetail
 import com.htdev.movie.htplay.data.entities.dto.mapToDataMoviePlayer
@@ -18,6 +17,7 @@ import com.htdev.movie.htplay.data.entities.dto.mapToPosterMovieHome
 import com.htdev.movie.htplay.data.exception.AppException
 import com.htdev.movie.htplay.domain.common.DispatcherProvide
 import com.htdev.movie.htplay.domain.common.Result
+import com.htdev.movie.htplay.domain.entities.Country
 import com.htdev.movie.htplay.domain.entities.DataMovieDetail
 import com.htdev.movie.htplay.domain.entities.DataMoviePlayer
 import com.htdev.movie.htplay.domain.entities.Genre
@@ -92,14 +92,14 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     //lay film them the loai co phan trang
-    override fun getMoviesByGenrePager(genre: String, limit: Int): Flow<PagingData<PosterMovie>> {
+    override fun getMoviesByGenrePager(Genre: String, limit: Int): Flow<PagingData<PosterMovie>> {
         return Pager(
             config = PagingConfig(
                 pageSize = limit, initialLoadSize = limit, enablePlaceholders = false, prefetchDistance = 4
             ), pagingSourceFactory = {
                 MoviePagingSource { page ->
                     val response =
-                        movieService.getMoviesByGenre(type = genre, page = page, limit = limit)
+                        movieService.getMoviesByGenre(type = Genre, page = page, limit = limit)
                     val movies = response.data.items ?: emptyList()
                     movies.map { movie -> movie.mapToPosterMovie() }
                 }
@@ -122,14 +122,14 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     //lay film theo the loai (co phan trang)
-    override fun getMoviesSeriesPager(genre: String, limit: Int): Flow<PagingData<PosterMovie>> {
+    override fun getMoviesSeriesPager(Genre: String, limit: Int): Flow<PagingData<PosterMovie>> {
         return Pager(
             config = PagingConfig(
                 pageSize = limit, initialLoadSize = limit, enablePlaceholders = false, prefetchDistance = 4
             ), pagingSourceFactory = {
                 MoviePagingSource { page ->
                     val response =
-                        movieService.getMoviesByType(type = genre, page = page, limit = limit)
+                        movieService.getMoviesByType(type = Genre, page = page, limit = limit)
                     val movies = response.data.items ?: emptyList()
                     movies.map { movie -> movie.mapToPosterMovie() }
                 }
@@ -160,11 +160,11 @@ class MovieRepositoryImpl @Inject constructor(
 
     //lay film theo kieu chuoi film -> ko phan trang
     override suspend fun getMoviesSeries(
-        genre: String, limit: Int
+        Genre: String, limit: Int
     ): Result<List<PosterMovie>> {
         return withContext(dispatcherProvide.io) {
             try {
-                val dataOfPage = movieService.getMoviesByType(type = genre, page = 1,limit = limit)
+                val dataOfPage = movieService.getMoviesByType(type = Genre, page = 1,limit = limit)
                 val movies = dataOfPage.data.items
                 if (movies.isNotEmpty()) {
                     Result.Success(movies.distinctBy { movie -> movie.id }
@@ -183,10 +183,10 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     //lay film theo the loai
-    override suspend fun getMoviesByGenre(genre: String, limit: Int): Result<List<PosterMovie>> {
+    override suspend fun getMoviesByGenre(Genre: String, limit: Int): Result<List<PosterMovie>> {
         return withContext(dispatcherProvide.io) {
             try {
-                val dataOfPage = movieService.getMoviesByGenre(type = genre, page = 1,limit = limit)
+                val dataOfPage = movieService.getMoviesByGenre(type = Genre, page = 1,limit = limit)
                 val movies = dataOfPage.data.items
                 if (movies.isNotEmpty()) {
                     Result.Success(movies.distinctBy { movie -> movie.id }
@@ -234,14 +234,14 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getSavedGenres(): Result<List<String>> {
         return try{
-            val currentUser = checkNotNull(auth.currentUser) { "Sign in before accessing saved genres" }
+            val currentUser = checkNotNull(auth.currentUser) { "Sign in before accessing saved Genres" }
             val uid = currentUser.uid
             val data = firestore.collection("users")
                 .document(uid)
                 .get()
                 .await()
-            val genres = data.toObject(UserData::class.java)?.genresFavorite ?: emptyList<String>()
-            Result.Success(genres)
+            val Genres = data.toObject(UserData::class.java)?.genresFavorite ?: emptyList<String>()
+            Result.Success(Genres)
         }catch (e : FirebaseNetworkException){
             Log.e("Bug_here",e.message.toString())
             Result.Error(e)
@@ -253,7 +253,7 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     //search
-    override fun getMoviesBySearch(keyword: String,genre : String, limit: Int): Flow<PagingData<PosterMovie>> {
+    override fun getMoviesBySearch(keyword: String,Genre : String, limit: Int): Flow<PagingData<PosterMovie>> {
         return Pager(
             config = PagingConfig(
                 pageSize = limit, initialLoadSize = limit,
@@ -262,11 +262,11 @@ class MovieRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = {
                 MoviePagingSource{page ->
-                    val response = if(genre == "All"){
+                    val response = if(Genre == "All"){
                         movieService.getMoviesBySearch(keyword,page,limit)
                     }
                     else{
-                        movieService.getMoviesBySearch(keyword,page,limit,genre)
+                        movieService.getMoviesBySearch(keyword,page,limit,Genre)
                     }
                     val movies = response.data.items ?: emptyList()
                     movies.map { movie -> movie.mapToPosterMovie() }
@@ -310,16 +310,55 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getMoviesByGenreAndCountry(
         countrySlug: String,
-        genreSlug: String,
+        GenreSlug: String,
         limit: Int
     ): Result<List<PosterMovie>> {
         return withContext(dispatcherProvide.io){
             try {
-                val response = movieService.getMoviesByGenreAndCountry(type = genreSlug, country = countrySlug, page = 1,limit = limit)
-                val movies = response.data.items ?: emptyList()
+                val response = movieService.getMoviesByGenreAndCountry(type = GenreSlug, country = countrySlug, page = 1,limit = limit)
+                val movies = response.data.items
                 Result.Success(
                     movies.map { movie -> movie.mapToPosterMovie() }
                 )
+            }catch (e: UnknownHostException) {
+                Result.Error(e)
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+                Result.Error(e)
+            }
+        }
+    }
+
+    override suspend fun getCountries(): Result<List<Country>> {
+        return withContext(dispatcherProvide.io){
+            try{
+                val response = movieService.getCountries()
+                Result.Success(response.data.items
+                .map { country -> 
+                    Country(
+                        name = country.name,
+                        slug = country.slug
+                    )
+                })
+            }catch (e: UnknownHostException) {
+                Result.Error(e)
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+                Result.Error(e)
+            }
+        }
+    }
+
+    override suspend fun getGenres(): Result<List<Genre>> {
+        return withContext(dispatcherProvide.io){
+            try{
+                val response = movieService.getGenres()
+                Result.Success(response.data.items.map { genre ->
+                    Genre(
+                        name = genre.name,
+                        slug = genre.slug,
+                    )
+                })
             }catch (e: UnknownHostException) {
                 Result.Error(e)
             } catch (e: Exception) {

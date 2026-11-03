@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poster_home_play">Phát phim</string>
+    <string name="poster_home_play_movie">Phát %1$s</string>
+    <string name="poster_home_vote">Đánh giá: %1$s</string>
+</resources>

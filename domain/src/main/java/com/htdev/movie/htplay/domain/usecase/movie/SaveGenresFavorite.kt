@@ -9,5 +9,5 @@ import javax.inject.Inject
 class SaveGenresFavorite @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
-    suspend operator fun invoke(genres : List<String>) = movieRepository.saveGenresFavorite(genres)
+    suspend operator fun invoke(Genres : List<String>) = movieRepository.saveGenresFavorite(Genres)
 }
