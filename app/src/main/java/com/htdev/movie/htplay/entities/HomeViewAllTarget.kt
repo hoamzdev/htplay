@@ -7,10 +7,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 sealed class HomeViewAllTarget : Parcelable {
     data object Latest : HomeViewAllTarget()
-    data object Recommended : HomeViewAllTarget()
+    data class Recommended(val genreSlugs: List<String>) : HomeViewAllTarget()
     data class ByGenre(val slug: String) : HomeViewAllTarget()
     data class ByCountry(val slug: String) : HomeViewAllTarget()
     data object ContinueWatching : HomeViewAllTarget()
-    data object Genres : HomeViewAllTarget()
     data object Countries : HomeViewAllTarget()
 }

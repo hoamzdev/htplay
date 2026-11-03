@@ -11,6 +11,7 @@ class HomeGenreTabsController(
     private val binding: ItemHomeGenreTabsBinding,
     private val onSelect: (String?) -> Unit,
     private val onRetry: () -> Unit,
+    private val includePopular: Boolean = true,
 ) {
     private var genres: Result<List<Genre>> = Result.Loading
     private var selectedSlug: String? = null
@@ -40,13 +41,15 @@ class HomeGenreTabsController(
         bindingTabs = true
         if (displayedGenres != items) {
             binding.tabs.removeAllTabs()
-            binding.tabs.addTab(binding.tabs.newTab().setText(R.string.home_popular))
+            if (includePopular) {
+                binding.tabs.addTab(binding.tabs.newTab().setText(R.string.home_popular))
+            }
             items.forEach { genre ->
                 binding.tabs.addTab(binding.tabs.newTab().setText(genre.name).setTag(genre.slug))
             }
             displayedGenres = items
         }
-        val selected = items.indexOfFirst { it.slug == selectedSlug } + 1
+        val selected = items.indexOfFirst { it.slug == selectedSlug } + if (includePopular) 1 else 0
         if (binding.tabs.selectedTabPosition != selected) {
             binding.tabs.getTabAt(selected)?.select()
         }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poster_home_play">Film abspielen</string>
+    <string name="poster_home_play_movie">%1$s abspielen</string>
+    <string name="poster_home_vote">Bewertung: %1$s</string>
+</resources>

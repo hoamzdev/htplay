@@ -9,8 +9,6 @@ import com.htdev.movie.htplay.domain.entities.Genre
 fun LocalMovieCatalog.getLocalizedGenres(context: Context): List<Genre> =
     genres.map { it.copy(name = context.getGenreName(it.slug)) }
 
-fun LocalMovieCatalog.getExploreCountries(context: Context): List<Country> =
-    exploreCountries.map { it.copy(name = context.getCountryName(it.slug)) }
 
 fun Context.getGenreName(slug: String): String {
     val resource = when (slug) {
@@ -61,6 +59,28 @@ fun Context.getCountryName(slug: String): String {
         "uc" -> R.string.country_australia
         "y" -> R.string.country_italy
         "na-uy" -> R.string.country_norway
+        "brazil" -> R.string.country_brazil
+        "bo-dao-nha" -> R.string.country_portugal
+        "chau-phi" -> R.string.country_africa
+        "ha-lan" -> R.string.country_netherlands
+        "indonesia" -> R.string.country_indonesia
+        "malaysia" -> R.string.country_malaysia
+        "mexico" -> R.string.country_mexico
+        "nam-phi" -> R.string.country_south_africa
+        "nhat-ban" -> R.string.country_japan
+        "philippines" -> R.string.country_philippines
+        "phap" -> R.string.country_france
+        "quoc-gia-khac" -> R.string.country_other
+        "tho-nhi-ky" -> R.string.country_turkey
+        "thuy-si" -> R.string.country_switzerland
+        "thuy-dien" -> R.string.country_sweden
+        "uae" -> R.string.country_uae
+        "ukraina" -> R.string.country_ukraine
+        "viet-nam" -> R.string.country_vietnam
+        "au-my" -> R.string.country_europe_america
+        "dan-mach" -> R.string.country_denmark
+        "duc" -> R.string.country_germany
+        "a-rap-xe-ut" -> R.string.country_saudi_arabia
         else -> return slug
     }
     return getString(resource)

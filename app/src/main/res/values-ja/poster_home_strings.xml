@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poster_home_play">映画を再生</string>
+    <string name="poster_home_play_movie">%1$sを再生</string>
+    <string name="poster_home_vote">評価：%1$s</string>
+</resources>

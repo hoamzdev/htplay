@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poster_home_play">播放电影</string>
+    <string name="poster_home_play_movie">播放%1$s</string>
+    <string name="poster_home_vote">评分：%1$s</string>
+</resources>

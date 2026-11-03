@@ -16,13 +16,11 @@ import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.entities.ContinueWatching
 import com.htdev.movie.htplay.entities.ItemMovie
 import com.htdev.movie.htplay.domain.entities.Country
-import com.htdev.movie.htplay.domain.entities.Genre
 
 class HomeAdapter(
     private val onMovieClick: (ItemMovie) -> Unit = {},
     private val onContinueClick: (ContinueWatching) -> Unit = {},
     private val onViewAllClick: (target: HomeViewAllTarget) -> Unit = {},
-    private val onGenreClick: (Genre) -> Unit = {},
     private val onCountryClick: (Country) -> Unit = {},
     private val onRetryClick: (HomeItem) -> Unit = {},
 ) : ListAdapter<HomeItem, RecyclerView.ViewHolder>(DIFF_UTIL) {
@@ -36,7 +34,6 @@ class HomeAdapter(
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)){
             is HomeItem.ContinueWatchingSector -> TYPE_CONTINUE
-            is HomeItem.GenreSector -> TYPE_BROWSE
             is HomeItem.CountrySector -> TYPE_BROWSE
             else -> TYPE_NORMAL
         }
@@ -98,11 +95,8 @@ class HomeAdapter(
 
     inner class BrowseViewHolder(private val binding: ItemMovieSectorBinding) : RecyclerView.ViewHolder(binding.root) {
         private val rowAdapter = HomeCategoryAdapter { slug ->
-            when (val section = getItemAtPosition()) {
-                is HomeItem.GenreSector -> section.Genres.firstOrNull { it.slug == slug }?.let(onGenreClick)
-                is HomeItem.CountrySector -> section.countries.firstOrNull { it.slug == slug }?.let(onCountryClick)
-                else -> Unit
-            }
+            (getItemAtPosition() as? HomeItem.CountrySector)
+                ?.countries?.firstOrNull { it.slug == slug }?.let(onCountryClick)
         }
 
         init {
@@ -114,20 +108,10 @@ class HomeAdapter(
             }
         }
 
-        fun bind(item: HomeItem) {
-            when (item) {
-                is HomeItem.GenreSector -> {
-                    binding.tag.setText(R.string.home_GenreLocals)
-                    rowAdapter.submitList(item.Genres.map { HomeCategoryItem(it.slug, it.name) })
-                    binding.bindStatus(false, false, item.Genres.isEmpty(), R.string.home_no_categories)
-                }
-                is HomeItem.CountrySector -> {
-                    binding.tag.setText(R.string.home_countries)
-                    rowAdapter.submitList(item.countries.map { HomeCategoryItem(it.slug, it.name) })
-                    binding.bindStatus(item.isLoading, item.hasError, item.countries.isEmpty(), R.string.home_no_categories)
-                }
-                else -> Unit
-            }
+        fun bind(item: HomeItem.CountrySector) {
+            binding.tag.setText(R.string.home_countries)
+            rowAdapter.submitList(item.countries.map { HomeCategoryItem(it.slug, it.name) })
+            binding.bindStatus(item.isLoading, item.hasError, item.countries.isEmpty(), R.string.home_no_categories)
         }
     }
 
@@ -163,7 +147,7 @@ class HomeAdapter(
             is HomeItem.MovieSector -> {
                 (holder as MovieViewHolder).bind(item)
             }
-            is HomeItem.GenreSector, is HomeItem.CountrySector -> (holder as BrowseViewHolder).bind(item)
+            is HomeItem.CountrySector -> (holder as BrowseViewHolder).bind(item)
         }
     }
 

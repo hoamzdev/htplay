@@ -6,7 +6,7 @@
     android:background="@drawable/bg_home_category"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
+    android:foreground="@android:color/transparent"
     android:gravity="center"
     android:minWidth="96dp"
     android:minHeight="48dp"

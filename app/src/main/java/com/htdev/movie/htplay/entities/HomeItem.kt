@@ -1,7 +1,6 @@
 package com.htdev.movie.htplay.entities
 
 import com.htdev.movie.htplay.domain.entities.Country
-import com.htdev.movie.htplay.domain.entities.Genre
 
 sealed class HomeItem {
     abstract val id : Int
@@ -19,10 +18,6 @@ sealed class HomeItem {
         val hasError: Boolean = false,
     ) : HomeItem()
 
-    data class GenreSector(override val id: Int, val Genres: List<Genre>) : HomeItem() {
-        override val viewAllTarget: HomeViewAllTarget = HomeViewAllTarget.Genres
-    }
-
     data class CountrySector(
         override val id: Int,
         val countries: List<Country>,
@@ -38,7 +33,6 @@ sealed class HomeItem {
         const val SELECTED_FOR_YOU = 3
         const val CHINESE_MOVIES = 4
         const val KOREAN_MOVIES = 5
-        const val GenreS = 6
         const val COUNTRIES = 7
         const val ACTION_MOVIES = 8
         const val ROMANCE_MOVIES = 9

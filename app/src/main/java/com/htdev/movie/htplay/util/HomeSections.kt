@@ -35,7 +35,11 @@ fun buildHomeSections(
         add(HomeItem.ContinueWatchingSector(HomeItem.CONTINUE_WATCHING, home.continueWatching))
     }
     add(latestMovies.toMovieSector(HomeItem.LATEST_MOVIES, latestTitle, HomeViewAllTarget.Latest))
-    add(home.recommendedMovies.toMovieSector(HomeItem.SELECTED_FOR_YOU, recommendedTitle, HomeViewAllTarget.Recommended))
+    add(home.recommendedMovies.toMovieSector(
+        HomeItem.SELECTED_FOR_YOU,
+        recommendedTitle,
+        HomeViewAllTarget.Recommended(home.selectedGenreSlugs),
+    ))
     add(home.chineseMovies.toMovieSector(HomeItem.CHINESE_MOVIES, chineseTitle, HomeViewAllTarget.ByCountry("trung-quoc")))
     add(home.koreanMovies.toMovieSector(HomeItem.KOREAN_MOVIES, koreanTitle, HomeViewAllTarget.ByCountry("han-quoc")))
     add(home.actionMovies.toMovieSector(HomeItem.ACTION_MOVIES, actionTitle, HomeViewAllTarget.ByGenre("hanh-dong")))

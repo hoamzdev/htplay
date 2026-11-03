@@ -1,6 +1,7 @@
 package com.htdev.movie.htplay.home.home
 
 
+import android.content.Intent
 import androidx.fragment.app.viewModels
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
@@ -18,6 +19,7 @@ import com.htdev.movie.htplay.adapter.PosterHomeAdapter
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.BaseFragment
 import com.htdev.movie.htplay.databinding.FragmentHomeBinding
+import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.util.buildHomeSections
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.getCountryName
@@ -42,20 +44,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
     private val posterHomeAdapter = PosterHomeAdapter(
-        onMovieClick = {},
-        onPlayClick = {},
+        onMovieClick = { movie ->
+            //nav to detail movie
+        },
+        onPlayClick = { movie ->
+            //nav to detail movie
+        },
     ).apply {
         stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
     private val homeAdapter = HomeAdapter(
-        onMovieClick = {},
-        onContinueClick = {},
-        onViewAllClick = { target ->
-
+        onMovieClick = { movie ->
+            //nav to detail movie
         },
-        onGenreClick = {},
-        onCountryClick = {},
+        onContinueClick = { continueWatching ->
+            //nav to detail movie
+        },
+        onViewAllClick = { source ->
+            //nav to show all activity
+            handleNavToShowAllSector(source)
+        },
+        onCountryClick = { country ->
+            startActivity(ShowAllMovieActivity.countryIntent(requireContext(), country))
+        },
         onRetryClick = { viewModel.retryHomeSection(it.id) },
     )
 
@@ -118,6 +130,74 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             adapter = mainAdapter
         }
         binding.rcMain.itemAnimator = null
+    }
+
+    private fun handleNavToShowAllSector(source: HomeViewAllTarget){
+        when(source){
+            is HomeViewAllTarget.ContinueWatching -> {
+                val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                    putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_CONTINUE)
+                }
+                startActivity(intent)
+            }
+            is HomeViewAllTarget.Latest -> {
+                val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                    putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_LATEST)
+                }
+                startActivity(intent)
+            }
+            is HomeViewAllTarget.Recommended -> {
+                val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                    putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_RECOMMENDED)
+                    putStringArrayListExtra(ShowAllMovieActivity.KEY_DATA, ArrayList(source.genreSlugs))
+                }
+                startActivity(intent)
+            }
+            is HomeViewAllTarget.ByGenre -> {
+                when(source.slug){
+                    "hanh-dong" -> {
+                        val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                            putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_ACTION)
+                        }
+                        startActivity(intent)
+                    }
+                    "tinh-cam" -> {
+                        val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                            putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_ROMANCE)
+                        }
+                        startActivity(intent)
+                    }
+                    "gia-dinh" -> {
+                        val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                            putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_FAMILY)
+                        }
+                        startActivity(intent)
+                    }
+                }
+            }
+            is HomeViewAllTarget.ByCountry -> {
+                when (source.slug) {
+                    "trung-quoc" -> {
+                        val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                            putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_CHINESE)
+                        }
+                        startActivity(intent)
+                    }
+                    "han-quoc" -> {
+                        val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                            putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_KOREAN)
+                        }
+                        startActivity(intent)
+                    }
+                }
+            }
+            is HomeViewAllTarget.Countries -> {
+                val intent = Intent(requireActivity(), ShowAllMovieActivity::class.java).apply {
+                    putExtra(ShowAllMovieActivity.KEY_SECTOR, ShowAllMovieActivity.SECTOR_MOVIE_COUNTRIES)
+                }
+                startActivity(intent)
+            }
+        }
     }
 
     override fun bindViewModel() {

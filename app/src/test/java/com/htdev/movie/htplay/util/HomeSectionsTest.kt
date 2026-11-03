@@ -27,7 +27,7 @@ class HomeSectionsTest {
 
     @Test
     fun continueWatchingReturnsAtTheTopWhenThereAreUnfinishedMovies() {
-        val movies = listOf(ContinueWatching(totalProgress = 100, currentProgress = 40))
+        val movies = listOf(ContinueWatching(slugMovie = "unfinished", totalProgress = 100, currentProgress = 40))
         val before = sections(HomeData(continueWatching = movies))
         assertEquals(movies, (before.first() as HomeItem.ContinueWatchingSector).movies)
         val after = sections(HomeData(continueWatching = emptyList()))

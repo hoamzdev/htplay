@@ -99,6 +99,28 @@
     <string name="country_australia">Úc</string>
     <string name="country_italy">Ý</string>
     <string name="country_norway">Na Uy</string>
+    <string name="country_brazil">Brazil</string>
+    <string name="country_portugal">Bồ Đào Nha</string>
+    <string name="country_africa">Châu Phi</string>
+    <string name="country_netherlands">Hà Lan</string>
+    <string name="country_indonesia">Indonesia</string>
+    <string name="country_malaysia">Malaysia</string>
+    <string name="country_mexico">Mexico</string>
+    <string name="country_south_africa">Nam Phi</string>
+    <string name="country_japan">Nhật Bản</string>
+    <string name="country_philippines">Philippines</string>
+    <string name="country_france">Pháp</string>
+    <string name="country_other">Quốc Gia Khác</string>
+    <string name="country_turkey">Thổ Nhĩ Kỳ</string>
+    <string name="country_switzerland">Thụy Sĩ</string>
+    <string name="country_sweden">Thụy Điển</string>
+    <string name="country_uae">UAE</string>
+    <string name="country_ukraine">Ukraina</string>
+    <string name="country_vietnam">Việt Nam</string>
+    <string name="country_europe_america">Âu Mỹ</string>
+    <string name="country_denmark">Đan Mạch</string>
+    <string name="country_germany">Đức</string>
+    <string name="country_saudi_arabia">Ả Rập Xê Út</string>
     <string name="home_latest_movies">Phim mới nhất</string>
     <string name="home_selected_for_you">Dành cho bạn</string>
     <string name="home_chinese_movies">Phim Trung Quốc</string>
@@ -114,4 +136,5 @@
     <string name="country_south_korea">Hàn Quốc</string>
     <string name="favorite_choose_at_least_one">Vui lòng chọn ít nhất một thể loại.</string>
     <string name="favorite_save_error">Không lưu được thể loại. Vui lòng thử lại.</string>
+    <string name="hello_blank_fragment">Xin chào, fragment trống</string>
 </resources>

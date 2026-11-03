@@ -62,9 +62,9 @@
         android:id="@+id/rc_continue_watching"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size10"
+        android:layout_marginTop="@dimen/size5"
         android:clipToPadding="false"
-        android:paddingHorizontal="@dimen/sizesp16"
+        android:paddingHorizontal="@dimen/sizesp6"
         android:paddingBottom="12dp"
         app:layout_constraintTop_toBottomOf="@id/header_bottom" />
 

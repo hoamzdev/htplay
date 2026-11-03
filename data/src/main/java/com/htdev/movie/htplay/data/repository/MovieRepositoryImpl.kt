@@ -106,6 +106,20 @@ class MovieRepositoryImpl @Inject constructor(
             }).flow
     }
 
+    override fun getMoviesByCountryPager(countrySlug: String, limit: Int): Flow<PagingData<PosterMovie>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = limit, initialLoadSize = limit,
+                enablePlaceholders = false, prefetchDistance = 4,
+            ),
+            pagingSourceFactory = {
+                MoviePagingSource { page ->
+                    movieService.getMoviesByCountry(type = countrySlug, page = page, limit = limit)
+                        .data.items.orEmpty().map { it.mapToPosterMovie() }
+                }
+            },
+        ).flow
+
     //lay tat ca cac film ms nhat co phan trang
     override fun getMoviesPager(): Flow<PagingData<PosterMovie>> {
         return Pager(
@@ -268,7 +282,7 @@ class MovieRepositoryImpl @Inject constructor(
                     else{
                         movieService.getMoviesBySearch(keyword,page,limit,Genre)
                     }
-                    val movies = response.data.items ?: emptyList()
+                    val movies = response.data.items
                     movies.map { movie -> movie.mapToPosterMovie() }
                 }
             }

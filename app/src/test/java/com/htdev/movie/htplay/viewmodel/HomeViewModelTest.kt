@@ -222,11 +222,11 @@ class HomeViewModelTest {
     @Test
     fun continueWatchingExcludesFinishedUnstartedAndUnknownDuration() = runTest {
         val viewModel = createViewModel(FakeMovieRepository())
-        val unfinished = ContinueWatching(totalProgress = 100, currentProgress = 40)
+        val unfinished = ContinueWatching(slugMovie = "unfinished", totalProgress = 100, currentProgress = 40)
         viewModel.updateContinueWatching(listOf(unfinished, unfinished,
-            ContinueWatching(totalProgress = 100, currentProgress = 100),
-            ContinueWatching(totalProgress = 100, currentProgress = 0),
-            ContinueWatching(currentProgress = 40)))
+            ContinueWatching(slugMovie = "finished", totalProgress = 100, currentProgress = 100),
+            ContinueWatching(slugMovie = "unstarted", totalProgress = 100, currentProgress = 0),
+            ContinueWatching(slugMovie = "unknown-duration", currentProgress = 40)))
 
         assertEquals(listOf(unfinished), viewModel.homeData.value.continueWatching)
         advanceUntilIdle()

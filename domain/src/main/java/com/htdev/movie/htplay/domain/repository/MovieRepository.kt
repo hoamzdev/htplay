@@ -28,6 +28,7 @@ interface MovieRepository {
     //du lieu phan trang trong detail screen
     //2): loc ra ds film theo Genres ma user chon(that ra la lay Genre dau tien ma user chon) -> selected for you
     fun getMoviesByGenrePager(Genre : String,limit : Int) : Flow<PagingData<PosterMovie>>
+    fun getMoviesByCountryPager(countrySlug: String, limit: Int) : Flow<PagingData<PosterMovie>>
     //3): lay ra nhung film moi nhat co phan trang -> Latest Release
     fun getMoviesPager() : Flow<PagingData<PosterMovie>>
     //4): lay ra ds tong hop phim bo,tv-shows.. -> Series
