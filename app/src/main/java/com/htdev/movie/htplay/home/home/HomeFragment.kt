@@ -25,6 +25,8 @@ import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.home.home.viewmodel.HomeViewModel
+import com.htdev.movie.htplay.search.SearchActivity
+import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -200,6 +202,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
     }
 
+    override fun handleClickEvent() {
+        binding.apply {
+            edtSearch.onClickListener {
+                val intent = Intent(requireActivity(), SearchActivity::class.java)
+                startActivity(intent)
+            }
+        }
+    }
+
     override fun bindViewModel() {
         observePosterBanner()
         observeGenreTabs()
@@ -224,7 +235,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 homeAdapter.submitList(sections)
             }
         }
-
     }
 
     private fun observeGenreTabs() {

@@ -111,6 +111,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/ic_search"
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_search"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="@id/edtSearch"
+            android:layout_marginEnd="@dimen/size10"
+            app:layout_constraintEnd_toEndOf="@id/edtSearch"
+            app:layout_constraintTop_toTopOf="@id/edtSearch" />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/edtSearch"
             android:layout_width="0dp"
@@ -128,18 +140,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/name_logo"
             app:layout_constraintTop_toTopOf="@id/name_logo" />
-
-        <ImageView
-            android:id="@+id/ic_search"
-            android:layout_width="@dimen/size24"
-            android:layout_height="@dimen/size24"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_search"
-            android:background="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="@id/edtSearch"
-            android:layout_marginEnd="@dimen/size10"
-            app:layout_constraintEnd_toEndOf="@id/edtSearch"
-            app:layout_constraintTop_toTopOf="@id/edtSearch" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -55,7 +55,7 @@
             android:name=".favorite.ChooseFavoritesActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".home.HomeRouterActivity"
             android:exported="false"
@@ -64,6 +64,10 @@
         `
         <activity
             android:name=".home.home.ShowAllMovieActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".search.SearchActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

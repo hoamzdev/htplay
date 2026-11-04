@@ -18,6 +18,7 @@ data class PosterMovieHome(
     val quality : String,
     val year : Long,
     val vote : String,
+    val thumbUrl : String = "",
 ) : Parcelable
 
 @Parcelize
@@ -27,6 +28,8 @@ data class PosterMovie(
     val name : String,
     val slug : String,
     val episodeCurrent: String,
+    val thumbUrl : String = "",
+    val year : Long? = null,
 ) : Parcelable
 
 @Parcelize

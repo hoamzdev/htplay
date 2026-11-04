@@ -24,6 +24,8 @@ data class Item (
     val originName: String? = null,
     @SerializedName("poster_url")
     val posterURL: String? = null,
+    @SerializedName("thumb_url")
+    val thumbURL: String? = null,
     val year: Long? = 2026,
     @SerializedName("episode_current")
     val episodeCurrent: String? = "Full",
@@ -44,6 +46,7 @@ fun Item.mapToPosterMovieHome() : PosterMovieHome{
     return PosterMovieHome(
         id = this.id,
         posterUrl = this.posterURL.toImageUrl(),
+        thumbUrl = this.thumbURL.toImageUrl(),
         name = this.originName ?: "",
         slug = this.slug ?: "",
         year = this.year ?: 2026,
@@ -57,6 +60,8 @@ fun Item.mapToPosterMovie() : PosterMovie{
     return PosterMovie(
         id = this.id,
         posterUrl = this.posterURL.toImageUrl(),
+        thumbUrl = this.thumbURL.toImageUrl(),
+        year = this.year,
         name = this.originName ?: "",
         slug = this.slug ?: "",
         episodeCurrent = this.episodeCurrent ?: ""

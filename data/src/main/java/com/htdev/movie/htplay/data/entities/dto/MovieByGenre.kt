@@ -25,8 +25,11 @@ data class ItemByGenre (
     val originName: String? = null,
     @SerializedName("poster_url")
     val posterURL: String? = null,
+    @SerializedName("thumb_url")
+    val thumbURL: String? = null,
     @SerializedName("episode_current")
     val episodeCurrent: String,
+    val year: Long? = null,
 )
 
 data class Params(
@@ -41,6 +44,8 @@ fun ItemByGenre.mapToPosterMovie() : PosterMovie{
     return PosterMovie(
         id = this.id,
         posterUrl = this.posterURL.toImageUrl(),
+        thumbUrl = this.thumbURL.toImageUrl(),
+        year = this.year,
         name = this.originName ?: "",
         slug = this.slug ?: "",
         episodeCurrent = this.episodeCurrent
