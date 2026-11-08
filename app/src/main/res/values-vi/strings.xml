@@ -36,6 +36,7 @@
     <string name="movie_tag_new">Mới</string>
     <string name="popular_movies">Phim nổi bật</string>
     <string name="GenreLocal_action">Hành động</string>
+    <string name="GenreLocal_animation">Hoạt hình</string>
     <string name="loading">Đang tải...</string>
     <string name="playback_progress_spaced">%1$s / %2$s</string>
     <string name="movie_name_with_date">%1$s - %2$s</string>
@@ -137,4 +138,6 @@
     <string name="favorite_choose_at_least_one">Vui lòng chọn ít nhất một thể loại.</string>
     <string name="favorite_save_error">Không lưu được thể loại. Vui lòng thử lại.</string>
     <string name="hello_blank_fragment">Xin chào, fragment trống</string>
+    <string name="no_result_found">Không tìm thấy kết quả</string>
+    <string name="we_can_t_find_any_item_matching_your_search">Không tìm thấy phim nào phù hợp với tìm kiếm của bạn</string>
 </resources>

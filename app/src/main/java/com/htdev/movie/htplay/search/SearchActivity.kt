@@ -10,6 +10,7 @@ import androidx.paging.LoadState
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivitySearchBinding
+import com.htdev.movie.htplay.detail.DetailActivity
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -18,7 +19,9 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SearchActivity : BaseActivity<ActivitySearchBinding>() {
     private val viewModel: SearchViewModel by viewModels()
-    private val searchAdapter = HotSearchAdapter()
+    private val searchAdapter = HotSearchAdapter(onClick = { movie ->
+        startActivity(DetailActivity.createIntent(this, movie.slug))
+    })
     override fun createViewBinding(): ActivitySearchBinding {
         return ActivitySearchBinding.inflate(layoutInflater)
     }
@@ -53,12 +56,15 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
             launch {
                 viewModel.query.collect { query ->
                     binding.tvSearch.setText(if (query.isBlank()) R.string.search_hot else R.string.search_results)
+                    binding.lnEmptySearch.isVisible = false
                     searchAdapter.showRank = query.isBlank()
                     binding.rvSearch.scrollToPosition(0)
                 }
             }
             launch {
-                viewModel.movies.collectLatest { searchAdapter.submitData(it) }
+                viewModel.movies.collectLatest { movies ->
+                    searchAdapter.submitData(movies)
+                }
             }
             launch {
                 searchAdapter.loadStateFlow.collect { states ->
@@ -67,11 +73,12 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
                     val loading = states.refresh is LoadState.Loading || states.append is LoadState.Loading
                     val empty = searchAdapter.itemCount == 0 && states.refresh is LoadState.NotLoading &&
                         states.append.endOfPaginationReached
+                    binding.lnEmptySearch.isVisible = empty && !loading && !error && viewModel.query.value.isNotBlank()
                     binding.progressSearch.isVisible = loading && searchAdapter.itemCount == 0
                     val message = when {
                         error -> R.string.home_load_error_retry
                         loading && searchAdapter.itemCount > 0 -> R.string.loading
-                        empty -> if (viewModel.query.value.isBlank()) R.string.home_no_movies else R.string.search_no_results
+                        empty && viewModel.query.value.isBlank() -> R.string.home_no_movies
                         else -> null
                     }
                     binding.tvSearchStatus.isVisible = message != null

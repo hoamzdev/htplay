@@ -36,6 +36,7 @@
     <string name="movie_tag_new">新片</string>
     <string name="popular_movies">热门电影</string>
     <string name="GenreLocal_action">动作</string>
+    <string name="GenreLocal_animation">动画</string>
     <string name="loading">加载中...</string>
     <string name="playback_progress_spaced">%1$s / %2$s</string>
     <string name="movie_name_with_date">%1$s - %2$s</string>
@@ -137,4 +138,6 @@
     <string name="favorite_choose_at_least_one">请至少选择一种类型。</string>
     <string name="favorite_save_error">无法保存你喜欢的类型，请重试。</string>
     <string name="hello_blank_fragment">你好，空白片段</string>
+    <string name="no_result_found">未找到搜索结果</string>
+    <string name="we_can_t_find_any_item_matching_your_search">未找到符合您搜索条件的电影</string>
 </resources>

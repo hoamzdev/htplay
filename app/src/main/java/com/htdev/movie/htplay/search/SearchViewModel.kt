@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -49,7 +50,7 @@ class SearchViewModel @Inject constructor(
                     emit(PagingData.from(items, sourceLoadStates = loadStates(LoadState.NotLoading(true))))
                 } else {
                     // Delaying inside flatMapLatest also cancels in-flight old requests immediately.
-                    delay(300)
+                    delay(500.milliseconds)
                     emitAll(getMoviesBySearch(keyword = keyword, limit = PAGE_SIZE)
                         .map { page -> page.map { it.toSearchItem() } })
                 }

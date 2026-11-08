@@ -71,7 +71,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/edt_search"
             app:layout_constraintBottom_toBottomOf="@id/edt_search"
-            android:layout_marginEnd="@dimen/size16"
+            android:layout_marginEnd="@dimen/size8"
             app:tint="@color/white" />
 
 
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ln_tab_search"
-        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginHorizontal="@dimen/size8"
         android:text="@string/search_hot"
         android:textColor="@color/gray_color"
         android:textSize="@dimen/sizesp16"
@@ -100,7 +100,7 @@
         app:layout_constraintBottom_toTopOf="@id/tv_search_status"
         android:paddingBottom="@dimen/size20"
         android:clipToPadding="false"
-        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginHorizontal="@dimen/size8"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
         tools:listitem="@layout/item_hot_search"
@@ -121,7 +121,8 @@
         android:id="@+id/tv_search_status"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="@dimen/size16"
+        android:paddingHorizontal="@dimen/size8"
+        android:paddingVertical="@dimen/size16"
         android:gravity="center"
         android:textColor="@color/gray_color"
         android:fontFamily="@font/font_poppins_regular"
@@ -129,5 +130,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ln_empty_search"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/background_color"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingBottom="@dimen/size50"
+        app:layout_constraintTop_toTopOf="@id/rv_search"
+        app:layout_constraintBottom_toBottomOf="@id/rv_search"
+        android:orientation="vertical">
+        
+        
+        <ImageView
+            android:layout_width="@dimen/size100"
+            android:layout_height="@dimen/size100"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_empty"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_result_found"
+            android:fontFamily="@font/font_poppins_regular"
+            android:textSize="@dimen/sizesp16"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/we_can_t_find_any_item_matching_your_search"
+            android:fontFamily="@font/font_figtree_medium"
+            android:textSize="@dimen/sizesp14"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

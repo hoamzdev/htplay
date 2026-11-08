@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.databinding.ItemPosterHomeBinding
 import com.htdev.movie.htplay.domain.entities.PosterMovieHome
+import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.loadPoster
 
 /** Item cho banner Home; co the gan truc tiep vao ViewPager2. */
 class PosterHomeAdapter(
     private val onMovieClick: (PosterMovieHome) -> Unit = {},
-    private val onPlayClick: (PosterMovieHome) -> Unit = onMovieClick,
 ) : ListAdapter<PosterMovieHome, PosterHomeAdapter.PosterViewHolder>(DIFF) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PosterViewHolder =
@@ -25,9 +25,11 @@ class PosterHomeAdapter(
     }
 
     inner class PosterViewHolder(private val binding: ItemPosterHomeBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        val context = binding.root.context
         init {
             binding.root.setOnClickListener { currentMovie()?.let(onMovieClick) }
-            binding.btnPlay.setOnClickListener { currentMovie()?.let(onPlayClick) }
+            binding.btnPlay.setOnClickListener { currentMovie()?.let(onMovieClick) }
         }
 
         private fun currentMovie(): PosterMovieHome? =
@@ -39,7 +41,7 @@ class PosterHomeAdapter(
 
             tvQuality.text = movie.quality
             tvQuality.isVisible = movie.quality.isNotBlank()
-            tvGenre.text = movie.genre
+            tvGenre.text = context.getGenreName(movie.genre)
             tvGenre.isVisible = movie.genre.isNotBlank()
             metadata.isVisible = tvQuality.isVisible || tvGenre.isVisible
 

@@ -13,6 +13,7 @@ fun LocalMovieCatalog.getLocalizedGenres(context: Context): List<Genre> =
 fun Context.getGenreName(slug: String): String {
     val resource = when (slug) {
         "hanh-dong" -> R.string.GenreLocal_action
+        "hoat-hinh" -> R.string.GenreLocal_animation
         "mien-tay" -> R.string.GenreLocal_western
         "tre-em" -> R.string.GenreLocal_kids
         "lich-su" -> R.string.GenreLocal_history

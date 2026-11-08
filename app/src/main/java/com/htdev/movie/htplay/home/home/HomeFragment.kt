@@ -19,6 +19,7 @@ import com.htdev.movie.htplay.adapter.PosterHomeAdapter
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.BaseFragment
 import com.htdev.movie.htplay.databinding.FragmentHomeBinding
+import com.htdev.movie.htplay.detail.DetailActivity
 import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.util.buildHomeSections
 import com.htdev.movie.htplay.util.getGenreName
@@ -48,19 +49,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private val posterHomeAdapter = PosterHomeAdapter(
         onMovieClick = { movie ->
             //nav to detail movie
-        },
-        onPlayClick = { movie ->
-            //nav to detail movie
+            navToMovieDetail(movie.slug)
         },
     ).apply {
         stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
+    private fun navToMovieDetail(movieSlug : String){
+        val intent = DetailActivity.createIntent(requireActivity(), movieSlug)
+        startActivity(intent)
+    }
+
     private val homeAdapter = HomeAdapter(
         onMovieClick = { movie ->
-            //nav to detail movie
+            navToMovieDetail(movie.slug)
         },
         onContinueClick = { continueWatching ->
+            val movieSlug : String = continueWatching.slugMovie
+            navToMovieDetail(movieSlug)
             //nav to detail movie
         },
         onViewAllClick = { source ->
@@ -295,7 +301,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             if (homeAdapter !in mainAdapter.adapters) mainAdapter.addAdapter(homeAdapter)
         } else {
             mainAdapter.removeAdapter(homeAdapter)
-            genreMovieAdapter = HomeGenreMovieAdapter(onClick = {})
+            genreMovieAdapter = HomeGenreMovieAdapter(onClick = { movie ->
+                navToMovieDetail(movie.slug)
+            })
             genreStatusAdapter.submit(R.string.home_genre_loading)
             if (genreStatusAdapter !in mainAdapter.adapters) mainAdapter.addAdapter(genreStatusAdapter)
         }

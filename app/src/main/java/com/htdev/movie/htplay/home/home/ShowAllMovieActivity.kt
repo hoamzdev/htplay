@@ -13,6 +13,7 @@ import com.htdev.movie.htplay.adapter.HomeGenreStatusAdapter
 import com.htdev.movie.htplay.adapter.ShowAllCountryAdapter
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityShowAllMovieBinding
+import com.htdev.movie.htplay.detail.DetailActivity
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.Country
 import com.htdev.movie.htplay.domain.entities.Genre
@@ -22,7 +23,9 @@ import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.HomeGenreTabsController
+import com.htdev.movie.htplay.widget.invisible
 import com.htdev.movie.htplay.widget.onClickListener
+import com.htdev.movie.htplay.widget.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -147,7 +150,9 @@ class ShowAllMovieActivity : BaseActivity<ActivityShowAllMovieBinding>() {
             if (!viewModel.isCurrentPage(page.target)) return@collectLatest
             if (displayedTarget != page.target) {
                 movieAdapter?.let(mainAdapter::removeAdapter)
-                movieAdapter = HomeGenreMovieAdapter(onClick = { /* Navigate to movie detail. */ })
+                movieAdapter = HomeGenreMovieAdapter(onClick = { movie ->
+                    startActivity(DetailActivity.createIntent(this@ShowAllMovieActivity, movie.slug))
+                })
                 displayedTarget = page.target
                 statusAdapter.submit(R.string.loading)
                 mainAdapter.addAdapter(0, movieAdapter!!)

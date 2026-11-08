@@ -56,7 +56,7 @@ fun MovieDetail.mapToDataMovieDetail() : DataMovieDetail{
         year = this.year,
         countrySlug = this.country?.firstOrNull()?.slug.orEmpty(),
         episodeCurrent = this.episodeCurrent,
-        genre = if(this.category.isNullOrEmpty()) "Unknown" else genreSlugToEnglish(this.category[0].slug),
+        genre = if(this.category.isNullOrEmpty()) "Unknown" else this.category[0].slug,
         vote = String.format(java.util.Locale.US, "%.1f", this.tmdb.voteAverage ?: 0.0),
         genreSlug = if(this.category.isNullOrEmpty()) "Unknown" else this.category[0].slug,
         slug = this.slug,

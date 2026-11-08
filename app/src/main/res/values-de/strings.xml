@@ -36,6 +36,7 @@
     <string name="movie_tag_new">Neu</string>
     <string name="popular_movies">Beliebte Filme</string>
     <string name="GenreLocal_action">Action</string>
+    <string name="GenreLocal_animation">Animation</string>
     <string name="loading">Wird geladen...</string>
     <string name="playback_progress_spaced">%1$s / %2$s</string>
     <string name="movie_name_with_date">%1$s - %2$s</string>
@@ -137,4 +138,6 @@
     <string name="favorite_choose_at_least_one">Bitte wähle mindestens ein Genre aus.</string>
     <string name="favorite_save_error">Deine Lieblingsgenres konnten nicht gespeichert werden. Bitte versuche es erneut.</string>
     <string name="hello_blank_fragment">Hallo, leeres Fragment</string>
+    <string name="no_result_found">Keine Ergebnisse gefunden</string>
+    <string name="we_can_t_find_any_item_matching_your_search">Wir konnten keine Filme finden, die zu deiner Suche passen</string>
 </resources>

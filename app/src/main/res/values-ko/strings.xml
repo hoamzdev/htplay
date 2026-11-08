@@ -36,6 +36,7 @@
     <string name="movie_tag_new">신작</string>
     <string name="popular_movies">인기 영화</string>
     <string name="GenreLocal_action">액션</string>
+    <string name="GenreLocal_animation">애니메이션</string>
     <string name="loading">로딩 중...</string>
     <string name="playback_progress_spaced">%1$s / %2$s</string>
     <string name="movie_name_with_date">%1$s - %2$s</string>
@@ -137,4 +138,6 @@
     <string name="favorite_choose_at_least_one">장르를 하나 이상 선택해 주세요.</string>
     <string name="favorite_save_error">좋아하는 장르를 저장하지 못했습니다. 다시 시도해 주세요.</string>
     <string name="hello_blank_fragment">안녕하세요, 빈 프래그먼트입니다</string>
+    <string name="no_result_found">검색 결과가 없습니다</string>
+    <string name="we_can_t_find_any_item_matching_your_search">검색어와 일치하는 영화를 찾을 수 없습니다</string>
 </resources>

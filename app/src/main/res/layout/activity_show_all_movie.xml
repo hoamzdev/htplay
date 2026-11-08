@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/ic_back"
-        app:layout_constraintEnd_toStartOf="@id/ic_search"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/size40"
         android:layout_marginStart="@dimen/size10"
@@ -37,18 +37,6 @@
         android:fontFamily="@font/font_poppins_regular"
         android:textColor="@color/white"/>
 
-    <ImageView
-        android:id="@+id/ic_search"
-        android:layout_width="@dimen/size32"
-        android:layout_height="@dimen/size32"
-        android:src="@drawable/img_search"
-        android:padding="@dimen/size2"
-        android:contentDescription="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_title"
-        app:layout_constraintBottom_toBottomOf="@id/tv_title"
-        android:layout_marginEnd="@dimen/size16"
-        app:tint="@color/white" />
 
     <include
         android:id="@+id/genre_tabs"

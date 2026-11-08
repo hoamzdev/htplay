@@ -36,6 +36,7 @@
     <string name="movie_tag_new">新着</string>
     <string name="popular_movies">人気の映画</string>
     <string name="GenreLocal_action">アクション</string>
+    <string name="GenreLocal_animation">アニメ</string>
     <string name="loading">読み込み中...</string>
     <string name="playback_progress_spaced">%1$s / %2$s</string>
     <string name="movie_name_with_date">%1$s - %2$s</string>
@@ -137,4 +138,6 @@
     <string name="favorite_choose_at_least_one">ジャンルを1つ以上選んでください。</string>
     <string name="favorite_save_error">お気に入りのジャンルを保存できませんでした。もう一度お試しください。</string>
     <string name="hello_blank_fragment">こんにちは、空のフラグメント</string>
+    <string name="no_result_found">検索結果が見つかりません</string>
+    <string name="we_can_t_find_any_item_matching_your_search">検索条件に一致する映画が見つかりません</string>
 </resources>
