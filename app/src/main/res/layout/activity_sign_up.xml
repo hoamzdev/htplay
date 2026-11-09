@@ -194,7 +194,7 @@
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size8"
+            android:layout_marginHorizontal="@dimen/size16"
             android:layout_marginTop="@dimen/size30"
             android:background="@drawable/bgr_buton_primary"
             android:fontFamily="@font/font_figtree_semi_bold"
