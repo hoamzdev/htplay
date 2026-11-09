@@ -59,6 +59,14 @@
           }
         },
         {
+          "client_id": "429913901141-uucecned8r8b4jliuedps4rvsa01obub.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.htdev.movie.htplay",
+            "certificate_hash": "6eda5b73758deaf2c7651475357d9991726f6bf3"
+          }
+        },
+        {
           "client_id": "429913901141-qcr37h1n62p39si80qip3dn198a48piu.apps.googleusercontent.com",
           "client_type": 3
         }
