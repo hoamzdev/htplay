@@ -1,6 +1,7 @@
 package com.htdev.movie.htplay.base
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
@@ -14,10 +15,15 @@ import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.viewbinding.ViewBinding
 import com.htdev.movie.htplay.widget.CustomToast
+import com.htdev.movie.htplay.language.LanguageHelper
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected lateinit var binding: VB
     abstract fun createViewBinding() : VB
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageHelper.attachBaseContextWithLocale(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -2,13 +2,10 @@ package com.htdev.movie.htplay
 
 import android.app.Activity
 import android.app.Application
-import android.app.LocaleManager
-import android.os.Build
+import android.content.Context
 import android.os.Bundle
-import android.os.LocaleList
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.DefaultLifecycleObserver
+import com.htdev.movie.htplay.language.LanguageHelper
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -18,13 +15,12 @@ class MovieApplication : Application(), Application.ActivityLifecycleCallbacks,
     override fun onCreate() {
         super<Application>.onCreate()
 
-        // Apply English before any screen is created, regardless of the device language.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getSystemService(LocaleManager::class.java).applicationLocales =
-                LocaleList.forLanguageTags("en")
-        } else {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"))
-        }
+        LanguageHelper.clearLegacyFrameworkLocale(this)
+        LanguageHelper.refreshApplicationLanguage(this)
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LanguageHelper.attachBaseContextWithLocale(base))
     }
 
     override fun onActivityCreated(

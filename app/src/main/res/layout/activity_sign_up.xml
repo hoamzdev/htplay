@@ -140,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:autofillHints="password"
                 android:background="@drawable/bgr_edit_text"
-                android:hint="@string/login_password_hint"
+                android:hint="@string/signup_confirm_password_hint"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:paddingVertical="@dimen/size15"

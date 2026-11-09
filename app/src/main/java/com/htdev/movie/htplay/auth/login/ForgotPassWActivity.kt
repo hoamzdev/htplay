@@ -9,6 +9,7 @@ import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityForgotPassWactivityBinding
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
+import com.htdev.movie.htplay.util.getLocalizedErrorMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -44,11 +45,11 @@ class ForgotPassWActivity : BaseActivity<ActivityForgotPassWactivityBinding>() {
             loginViewModel.stateResetPasswd.collectLatest { state ->
                 when(state){
                     is Result.Success -> {
-                        showToastApp(state.data)
+                        showToastApp(getString(R.string.password_reset_sent))
                         finish()
                     }
                     is Result.Error -> {
-                        showToastApp(state.throwable.message.toString())
+                        showToastApp(getLocalizedErrorMessage(state.throwable))
                     }
                     else -> Unit
                 }

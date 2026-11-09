@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">アカウントにログイン</string>
+    <string name="password_reset_button">パスワードを再設定</string>
+    <string name="password_reset_sent">メールに記載されたパスワード再設定用のリンクをご確認ください。</string>
+    <string name="favorite_title">お気に入りの映画</string>
+    <string name="favorite_choose_genres">お好きなジャンルを選択してください</string>
+    <string name="favorite_choose_button">選択</string>
+    <string name="detail_about">作品情報</string>
+    <string name="detail_episodes">エピソード</string>
+    <string name="detail_more_like_this">関連作品</string>
+    <string name="nav_home">ホーム</string>
+    <string name="nav_favorites">お気に入り</string>
+    <string name="nav_downloads">ダウンロード</string>
+    <string name="nav_settings">設定</string>
+    <string name="accessibility_back">戻る</string>
+    <string name="accessibility_search">検索</string>
+    <string name="signup_confirm_password_hint">パスワードを確認</string>
+    <string name="error_email_not_found">このメールアドレスのアカウントが見つかりません。</string>
+    <string name="error_email_in_use">このメールアドレスはすでに使用されています。</string>
+    <string name="error_invalid_credentials">メールアドレスまたはパスワードが正しくありません。</string>
+    <string name="error_network">ネットワークエラーです。接続をご確認ください。</string>
+    <string name="error_generic">エラーが発生しました。もう一度お試しください。</string>
+    <string name="error_session_expired">セッションの有効期限が切れました。再度ログインしてください。</string>
+    <string name="error_google_sign_in">Google でログインできません。もう一度お試しください。</string>
+    <string name="error_google_no_accounts">利用可能な Google アカウントがありません。端末にアカウントを追加してから再度お試しください。</string>
+    <string name="error_google_interrupted">Google ログインが中断されました。もう一度お試しください。</string>
+    <string name="error_account_disabled">このアカウントは無効になっています。</string>
+    <string name="error_too_many_requests">試行回数が多すぎます。しばらくしてからお試しください。</string>
+    <string name="error_sign_in_unavailable">このログイン方法は現在利用できません。</string>
+    <string name="error_weak_password">より安全なパスワードを設定してください。</string>
+    <string name="error_account_different_provider">このメールアドレスは別のログイン方法を使用しています。その方法でログインしてください。</string>
+    <string name="detail_load_error">作品情報を読み込めません。</string>
+    <string name="detail_more_from_country">%1$sのその他の作品</string>
+    <string name="detail_episode_number">第%1$d話</string>
+    <string name="detail_episodes_error">エピソードを読み込めません。</string>
+    <string name="detail_no_playable_episodes">再生できるエピソードはまだありません。</string>
+    <string name="detail_playback_error">このエピソードを再生できません。タップして再試行してください。</string>
+    <string name="search_hint">ここで検索...</string>
+    <string name="search_hot">人気の検索</string>
+    <string name="search_results">検索結果</string>
+    <string name="search_no_results">作品が見つかりません。</string>
+</resources>

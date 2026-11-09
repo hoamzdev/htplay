@@ -8,6 +8,7 @@ import com.htdev.movie.htplay.auth.SessionViewModel
 import com.htdev.movie.htplay.auth.login.LoginActivity
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.common.SessionExpiredException
+import com.htdev.movie.htplay.util.getLocalizedErrorMessage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -27,7 +28,7 @@ abstract class AuthenticatedActivity<VB : ViewBinding> : BaseActivity<VB>() {
                     finish()
                 } else {
                     // A failed network check does not prove the account was deleted.
-                    showToastApp(result.throwable.message.orEmpty())
+                    showToastApp(getLocalizedErrorMessage(result.throwable))
                 }
             }
         }

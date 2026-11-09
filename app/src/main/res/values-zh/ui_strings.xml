@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">登录您的账户</string>
+    <string name="password_reset_button">重置密码</string>
+    <string name="password_reset_sent">请查看电子邮件中的密码重置链接。</string>
+    <string name="favorite_title">喜爱的电影</string>
+    <string name="favorite_choose_genres">选择您喜欢的类型</string>
+    <string name="favorite_choose_button">选择</string>
+    <string name="detail_about">简介</string>
+    <string name="detail_episodes">剧集</string>
+    <string name="detail_more_like_this">相似影片</string>
+    <string name="nav_home">首页</string>
+    <string name="nav_favorites">收藏</string>
+    <string name="nav_downloads">下载</string>
+    <string name="nav_settings">设置</string>
+    <string name="accessibility_back">返回</string>
+    <string name="accessibility_search">搜索</string>
+    <string name="signup_confirm_password_hint">确认密码</string>
+    <string name="error_email_not_found">未找到使用此电子邮件的账户。</string>
+    <string name="error_email_in_use">此电子邮件已被使用。</string>
+    <string name="error_invalid_credentials">电子邮件或密码不正确。</string>
+    <string name="error_network">网络错误，请检查您的连接。</string>
+    <string name="error_generic">出现错误，请重试。</string>
+    <string name="error_session_expired">登录已过期，请重新登录。</string>
+    <string name="error_google_sign_in">无法使用 Google 登录，请重试。</string>
+    <string name="error_google_no_accounts">没有可用的 Google 账户，请在设备上添加账户后重试。</string>
+    <string name="error_google_interrupted">Google 登录已中断，请重试。</string>
+    <string name="error_account_disabled">此账户已被停用。</string>
+    <string name="error_too_many_requests">尝试次数过多，请稍后重试。</string>
+    <string name="error_sign_in_unavailable">此登录方式目前不可用。</string>
+    <string name="error_weak_password">请选择更安全的密码。</string>
+    <string name="error_account_different_provider">此电子邮件使用其他登录方式，请使用该方式登录。</string>
+    <string name="detail_load_error">无法加载影片详情。</string>
+    <string name="detail_more_from_country">更多来自%1$s的影片</string>
+    <string name="detail_episode_number">第%1$d集</string>
+    <string name="detail_episodes_error">无法加载剧集。</string>
+    <string name="detail_no_playable_episodes">暂无可播放的剧集。</string>
+    <string name="detail_playback_error">无法播放此集，点击重试。</string>
+    <string name="search_hint">在此搜索...</string>
+    <string name="search_hot">热门搜索</string>
+    <string name="search_results">搜索结果</string>
+    <string name="search_no_results">未找到影片。</string>
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Accedi al tuo account</string>
+    <string name="password_reset_button">Reimposta la password</string>
+    <string name="password_reset_sent">Controlla la tua e-mail per il link di reimpostazione della password.</string>
+    <string name="favorite_title">Film preferiti</string>
+    <string name="favorite_choose_genres">Scegli i generi che preferisci</string>
+    <string name="favorite_choose_button">Scegli</string>
+    <string name="detail_about">Informazioni</string>
+    <string name="detail_episodes">Episodi</string>
+    <string name="detail_more_like_this">Titoli simili</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_favorites">Preferiti</string>
+    <string name="nav_downloads">Download</string>
+    <string name="nav_settings">Impostazioni</string>
+    <string name="accessibility_back">Indietro</string>
+    <string name="accessibility_search">Cerca</string>
+    <string name="signup_confirm_password_hint">Conferma la password</string>
+    <string name="error_email_not_found">Nessun account trovato con questa e-mail.</string>
+    <string name="error_email_in_use">Questa e-mail è già in uso.</string>
+    <string name="error_invalid_credentials">L’indirizzo e-mail o la password non è corretto.</string>
+    <string name="error_network">Errore di rete. Controlla la connessione.</string>
+    <string name="error_generic">Si è verificato un errore. Riprova.</string>
+    <string name="error_session_expired">La sessione è scaduta. Accedi di nuovo.</string>
+    <string name="error_google_sign_in">Impossibile accedere con Google. Riprova.</string>
+    <string name="error_google_no_accounts">Nessun account Google disponibile. Aggiungi un account sul dispositivo e riprova.</string>
+    <string name="error_google_interrupted">L’accesso con Google è stato interrotto. Riprova.</string>
+    <string name="error_account_disabled">Questo account è stato disattivato.</string>
+    <string name="error_too_many_requests">Troppi tentativi. Riprova più tardi.</string>
+    <string name="error_sign_in_unavailable">Questo metodo di accesso non è attualmente disponibile.</string>
+    <string name="error_weak_password">Scegli una password più sicura.</string>
+    <string name="error_account_different_provider">Questa e-mail usa un altro metodo di accesso. Usa quel metodo.</string>
+    <string name="detail_load_error">Impossibile caricare le informazioni del film.</string>
+    <string name="detail_more_from_country">Altri film da %1$s</string>
+    <string name="detail_episode_number">Episodio %1$d</string>
+    <string name="detail_episodes_error">Impossibile caricare gli episodi.</string>
+    <string name="detail_no_playable_episodes">Non ci sono ancora episodi disponibili da riprodurre.</string>
+    <string name="detail_playback_error">Impossibile riprodurre questo episodio. Tocca per riprovare.</string>
+    <string name="search_hint">Cerca qui...</string>
+    <string name="search_hot">Ricerche popolari</string>
+    <string name="search_results">Risultati di ricerca</string>
+    <string name="search_no_results">Nessun film trovato.</string>
+</resources>

@@ -12,17 +12,22 @@ import android.util.Patterns
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.lifecycle.lifecycleScope
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivitySignUpBinding
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.favorite.ChooseFavoritesActivity
 import com.htdev.movie.htplay.util.AuthWrapper
+import com.htdev.movie.htplay.util.getLocalizedErrorMessage
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.gone
 import com.htdev.movie.htplay.widget.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -80,7 +85,7 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>(){
                     }
                     is Result.Error -> {
                         binding.pgLoading.gone()
-                        showToastApp(state.throwable.message.toString())
+                        showToastApp(getLocalizedErrorMessage(state.throwable))
                     }
                     is Result.Idle -> Unit
                     is Result.Loading -> {
@@ -98,9 +103,18 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>(){
     }
 
     private fun handleLoginByGoogle(){
-        launchRepeatOnStarted {
-            val credential = AuthWrapper.createCredential(this@SignUpActivity)
-            signUpViewModel.signInWithGoogle(credential)
+        lifecycleScope.launch {
+            binding.loginByGg.isEnabled = false
+            try {
+                val credential = AuthWrapper.createCredential(this@SignUpActivity)
+                signUpViewModel.signInWithGoogle(credential)
+            } catch (e: GetCredentialCancellationException) {
+                // Dismissing the account picker ends this attempt.
+            } catch (e: GetCredentialException) {
+                showToastApp(getLocalizedErrorMessage(e))
+            } finally {
+                binding.loginByGg.isEnabled = true
+            }
         }
     }
 

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/transparent"
     android:layout_height="wrap_content">
 
@@ -12,7 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="Action"
+        tools:text="@string/GenreLocal_action"
         android:background="@android:color/transparent"
         android:paddingVertical="@dimen/size5"
         android:textSize="@dimen/sizesp15"

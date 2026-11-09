@@ -13,6 +13,7 @@ import com.htdev.movie.htplay.databinding.ActivityLoginBinding
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.favorite.ChooseFavoritesActivity
 import com.htdev.movie.htplay.util.AuthWrapper
+import com.htdev.movie.htplay.util.getLocalizedErrorMessage
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.CustomToast.showToast
 import com.htdev.movie.htplay.widget.gone
@@ -53,7 +54,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
                     is Result.Error -> {
                         binding.pgLoading.gone()
-                        showToast(this@LoginActivity, state.throwable.message.toString())
+                        showToast(this@LoginActivity, getLocalizedErrorMessage(state.throwable))
                     }
 
                     is Result.Success -> {
@@ -146,7 +147,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             } catch (e: GetCredentialCancellationException) {
                 // Closing the account picker cancels this sign-in attempt.
             } catch (e: GetCredentialException) {
-                showToast(this@LoginActivity, e.message ?: e.type)
+                showToast(this@LoginActivity, getLocalizedErrorMessage(e))
             } finally {
                 binding.loginByGg.isEnabled = true
             }

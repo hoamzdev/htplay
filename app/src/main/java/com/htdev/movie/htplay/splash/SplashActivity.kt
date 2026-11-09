@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivitySplashBinding
 import com.htdev.movie.htplay.intro.IntroActivity
+import com.htdev.movie.htplay.language.LanguageActivity
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +65,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         launchRepeatOnStarted {
             delay(5000.milliseconds)
             withContext(Dispatchers.Main){
-                newActivity(dist = IntroActivity::class.java)
+                newActivity(dist = LanguageActivity::class.java)
                 finishAffinity()
             }
         }

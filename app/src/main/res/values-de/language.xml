@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_choose">Sprache wählen</string>
+    <string name="language_save">Speichern</string>
+    <string name="language_translating">Übersetzung läuft...</string>
+</resources>

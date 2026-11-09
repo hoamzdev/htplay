@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Connectez-vous à votre compte</string>
+    <string name="password_reset_button">Réinitialiser le mot de passe</string>
+    <string name="password_reset_sent">Consultez votre e-mail pour obtenir le lien de réinitialisation du mot de passe.</string>
+    <string name="favorite_title">Films favoris</string>
+    <string name="favorite_choose_genres">Choisissez les genres que vous aimez</string>
+    <string name="favorite_choose_button">Choisir</string>
+    <string name="detail_about">Présentation</string>
+    <string name="detail_episodes">Épisodes</string>
+    <string name="detail_more_like_this">Titres similaires</string>
+    <string name="nav_home">Accueil</string>
+    <string name="nav_favorites">Favoris</string>
+    <string name="nav_downloads">Téléchargements</string>
+    <string name="nav_settings">Paramètres</string>
+    <string name="accessibility_back">Retour</string>
+    <string name="accessibility_search">Rechercher</string>
+    <string name="signup_confirm_password_hint">Confirmez votre mot de passe</string>
+    <string name="error_email_not_found">Aucun compte ne correspond à cette adresse e-mail.</string>
+    <string name="error_email_in_use">Cette adresse e-mail est déjà utilisée.</string>
+    <string name="error_invalid_credentials">L’adresse e-mail ou le mot de passe est incorrect.</string>
+    <string name="error_network">Erreur réseau. Vérifiez votre connexion.</string>
+    <string name="error_generic">Une erreur est survenue. Veuillez réessayer.</string>
+    <string name="error_session_expired">Votre session a expiré. Veuillez vous reconnecter.</string>
+    <string name="error_google_sign_in">Impossible de se connecter avec Google. Veuillez réessayer.</string>
+    <string name="error_google_no_accounts">Aucun compte Google disponible. Ajoutez un compte sur votre appareil, puis réessayez.</string>
+    <string name="error_google_interrupted">La connexion Google a été interrompue. Veuillez réessayer.</string>
+    <string name="error_account_disabled">Ce compte a été désactivé.</string>
+    <string name="error_too_many_requests">Trop de tentatives. Veuillez réessayer plus tard.</string>
+    <string name="error_sign_in_unavailable">Ce mode de connexion est actuellement indisponible.</string>
+    <string name="error_weak_password">Choisissez un mot de passe plus sécurisé.</string>
+    <string name="error_account_different_provider">Cette adresse e-mail utilise un autre mode de connexion. Veuillez utiliser celui-ci.</string>
+    <string name="detail_load_error">Impossible de charger les informations du film.</string>
+    <string name="detail_more_from_country">Autres films de %1$s</string>
+    <string name="detail_episode_number">Épisode %1$d</string>
+    <string name="detail_episodes_error">Impossible de charger les épisodes.</string>
+    <string name="detail_no_playable_episodes">Aucun épisode ne peut être lu pour le moment.</string>
+    <string name="detail_playback_error">Impossible de lire cet épisode. Appuyez pour réessayer.</string>
+    <string name="search_hint">Rechercher ici...</string>
+    <string name="search_hot">Recherches populaires</string>
+    <string name="search_results">Résultats de recherche</string>
+    <string name="search_no_results">Aucun film trouvé.</string>
+</resources>

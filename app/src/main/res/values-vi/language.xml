@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_choose">Chọn ngôn ngữ</string>
+    <string name="language_save">Lưu</string>
+    <string name="language_translating">Đang chuyển ngôn ngữ...</string>
+</resources>

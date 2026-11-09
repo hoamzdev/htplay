@@ -39,7 +39,7 @@
         android:layout_height="@dimen/size35"
         android:layout_marginStart="@dimen/size10"
         android:layout_marginTop="@dimen/size40"
-        android:contentDescription="@null"
+        android:contentDescription="@string/accessibility_back"
         android:src="@drawable/iv_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +53,7 @@
         android:ellipsize="end"
         android:fontFamily="@font/font_figtree_regular"
         android:maxLines="1"
-        android:text="Queen of tears"
+        tools:text="Queen of tears"
         android:textColor="@color/white"
         android:textSize="@dimen/sizesp18"
         app:layout_constraintStart_toStartOf="parent"

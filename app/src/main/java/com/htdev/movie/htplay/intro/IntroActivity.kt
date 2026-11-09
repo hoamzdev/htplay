@@ -10,6 +10,7 @@ import com.htdev.movie.htplay.databinding.ActivityIntroBinding
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.common.SessionExpiredException
 import com.htdev.movie.htplay.home.HomeRouterActivity
+import com.htdev.movie.htplay.util.getLocalizedErrorMessage
 import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -67,7 +68,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding>() {
                                     newActivity(dist = LoginActivity::class.java)
                                     finishAffinity()
                                 } else {
-                                    showToastApp(session.throwable.message.orEmpty())
+                                    showToastApp(getLocalizedErrorMessage(session.throwable))
                                 }
                             }
                             else -> Unit

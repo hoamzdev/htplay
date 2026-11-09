@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Melde dich bei deinem Konto an</string>
+    <string name="password_reset_button">Passwort zurücksetzen</string>
+    <string name="password_reset_sent">Prüfe deine E-Mails auf den Link zum Zurücksetzen des Passworts.</string>
+    <string name="favorite_title">Lieblingsfilme</string>
+    <string name="favorite_choose_genres">Wähle deine Lieblingsgenres</string>
+    <string name="favorite_choose_button">Auswählen</string>
+    <string name="detail_about">Informationen</string>
+    <string name="detail_episodes">Folgen</string>
+    <string name="detail_more_like_this">Ähnliche Titel</string>
+    <string name="nav_home">Startseite</string>
+    <string name="nav_favorites">Favoriten</string>
+    <string name="nav_downloads">Downloads</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="accessibility_back">Zurück</string>
+    <string name="accessibility_search">Suchen</string>
+    <string name="signup_confirm_password_hint">Passwort bestätigen</string>
+    <string name="error_email_not_found">Für diese E-Mail-Adresse wurde kein Konto gefunden.</string>
+    <string name="error_email_in_use">Diese E-Mail-Adresse wird bereits verwendet.</string>
+    <string name="error_invalid_credentials">Die E-Mail-Adresse oder das Passwort ist falsch.</string>
+    <string name="error_network">Netzwerkfehler. Bitte prüfe deine Verbindung.</string>
+    <string name="error_generic">Ein Fehler ist aufgetreten. Bitte versuche es erneut.</string>
+    <string name="error_session_expired">Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.</string>
+    <string name="error_google_sign_in">Anmeldung mit Google nicht möglich. Bitte versuche es erneut.</string>
+    <string name="error_google_no_accounts">Kein Google-Konto verfügbar. Füge auf deinem Gerät ein Konto hinzu und versuche es erneut.</string>
+    <string name="error_google_interrupted">Die Google-Anmeldung wurde unterbrochen. Bitte versuche es erneut.</string>
+    <string name="error_account_disabled">Dieses Konto wurde deaktiviert.</string>
+    <string name="error_too_many_requests">Zu viele Versuche. Bitte versuche es später erneut.</string>
+    <string name="error_sign_in_unavailable">Diese Anmeldemethode ist derzeit nicht verfügbar.</string>
+    <string name="error_weak_password">Bitte wähle ein stärkeres Passwort.</string>
+    <string name="error_account_different_provider">Diese E-Mail-Adresse verwendet eine andere Anmeldemethode. Bitte nutze diese Methode.</string>
+    <string name="detail_load_error">Filminformationen konnten nicht geladen werden.</string>
+    <string name="detail_more_from_country">Weitere Filme aus %1$s</string>
+    <string name="detail_episode_number">Folge %1$d</string>
+    <string name="detail_episodes_error">Folgen konnten nicht geladen werden.</string>
+    <string name="detail_no_playable_episodes">Es sind noch keine Folgen zum Abspielen verfügbar.</string>
+    <string name="detail_playback_error">Diese Folge kann nicht abgespielt werden. Zum Wiederholen tippen.</string>
+    <string name="search_hint">Hier suchen...</string>
+    <string name="search_hot">Beliebte Suchanfragen</string>
+    <string name="search_results">Suchergebnisse</string>
+    <string name="search_no_results">Keine Filme gefunden.</string>
+</resources>

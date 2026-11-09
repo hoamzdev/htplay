@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Đăng nhập vào tài khoản</string>
+    <string name="password_reset_button">Đặt lại mật khẩu</string>
+    <string name="password_reset_sent">Kiểm tra email để nhận liên kết đặt lại mật khẩu.</string>
+    <string name="favorite_title">Phim yêu thích</string>
+    <string name="favorite_choose_genres">Chọn thể loại bạn yêu thích</string>
+    <string name="favorite_choose_button">Chọn</string>
+    <string name="detail_about">Giới thiệu</string>
+    <string name="detail_episodes">Danh sách tập</string>
+    <string name="detail_more_like_this">Phim tương tự</string>
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_favorites">Yêu thích</string>
+    <string name="nav_downloads">Tải xuống</string>
+    <string name="nav_settings">Cài đặt</string>
+    <string name="accessibility_back">Quay lại</string>
+    <string name="accessibility_search">Tìm kiếm</string>
+    <string name="signup_confirm_password_hint">Xác nhận mật khẩu</string>
+    <string name="error_email_not_found">Không tìm thấy tài khoản với email này.</string>
+    <string name="error_email_in_use">Email này đã được sử dụng.</string>
+    <string name="error_invalid_credentials">Email hoặc mật khẩu không đúng.</string>
+    <string name="error_network">Lỗi mạng. Vui lòng kiểm tra kết nối.</string>
+    <string name="error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+    <string name="error_session_expired">Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</string>
+    <string name="error_google_sign_in">Không thể đăng nhập bằng Google. Vui lòng thử lại.</string>
+    <string name="error_google_no_accounts">Không có tài khoản Google khả dụng. Hãy thêm tài khoản trên thiết bị rồi thử lại.</string>
+    <string name="error_google_interrupted">Đăng nhập Google bị gián đoạn. Vui lòng thử lại.</string>
+    <string name="error_account_disabled">Tài khoản này đã bị vô hiệu hóa.</string>
+    <string name="error_too_many_requests">Bạn đã thử quá nhiều lần. Vui lòng thử lại sau.</string>
+    <string name="error_sign_in_unavailable">Phương thức đăng nhập này hiện không khả dụng.</string>
+    <string name="error_weak_password">Vui lòng chọn mật khẩu mạnh hơn.</string>
+    <string name="error_account_different_provider">Email này sử dụng phương thức đăng nhập khác. Vui lòng dùng phương thức đó.</string>
+    <string name="detail_load_error">Không thể tải thông tin phim.</string>
+    <string name="detail_more_from_country">Phim khác từ %1$s</string>
+    <string name="detail_episode_number">Tập %1$d</string>
+    <string name="detail_episodes_error">Không thể tải danh sách tập.</string>
+    <string name="detail_no_playable_episodes">Chưa có tập phim nào có thể phát.</string>
+    <string name="detail_playback_error">Không thể phát tập này. Nhấn để thử lại.</string>
+    <string name="search_hint">Tìm kiếm tại đây...</string>
+    <string name="search_hot">Tìm kiếm thịnh hành</string>
+    <string name="search_results">Kết quả tìm kiếm</string>
+    <string name="search_no_results">Không tìm thấy phim.</string>
+</resources>

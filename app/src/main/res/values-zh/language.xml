@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_choose">选择语言</string>
+    <string name="language_save">保存</string>
+    <string name="language_translating">正在切换语言...</string>
+</resources>

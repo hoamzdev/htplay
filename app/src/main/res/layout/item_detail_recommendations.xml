@@ -10,7 +10,7 @@
         android:id="@+id/tv_more"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="More like this"
+        android:text="@string/detail_more_like_this"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginHorizontal="@dimen/size8"
