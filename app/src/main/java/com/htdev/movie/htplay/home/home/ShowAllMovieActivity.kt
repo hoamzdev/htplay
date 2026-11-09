@@ -2,15 +2,19 @@ package com.htdev.movie.htplay.home.home
 
 import android.content.Context
 import android.content.Intent
+import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.adapter.HomeGenreMovieAdapter
 import com.htdev.movie.htplay.adapter.HomeGenreStatusAdapter
 import com.htdev.movie.htplay.adapter.ShowAllCountryAdapter
+import com.htdev.movie.htplay.adapter.ContinueWatchingAdapter
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityShowAllMovieBinding
 import com.htdev.movie.htplay.detail.DetailActivity
@@ -19,6 +23,7 @@ import com.htdev.movie.htplay.domain.entities.Country
 import com.htdev.movie.htplay.domain.entities.Genre
 import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.home.home.viewmodel.ShowAllViewModel
+import com.htdev.movie.htplay.home.home.viewmodel.ContinueWatchingViewModel
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
@@ -30,10 +35,17 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class ShowAllMovieActivity : BaseActivity<ActivityShowAllMovieBinding>() {
     private val viewModel: ShowAllViewModel by viewModels()
+    private val continueWatchingViewModel: ContinueWatchingViewModel by viewModels()
+    private val continueWatchingAdapter = ContinueWatchingAdapter(
+        onClickCard = { movie -> startActivity(DetailActivity.createIntent(this, movie.slugMovie)) },
+        fillParentWidth = true,
+        showMovieName = true,
+    )
     private val sector by lazy { intent.getIntExtra(KEY_SECTOR, SECTOR_CONTINUE) }
     private val target: HomeViewAllTarget? by lazy {
         when (sector) {
@@ -82,8 +94,17 @@ class ShowAllMovieActivity : BaseActivity<ActivityShowAllMovieBinding>() {
             }
             HomeViewAllTarget.Countries -> getString(R.string.home_countries)
         }
-        // Continue Watching is implemented separately.
-        if (source == HomeViewAllTarget.ContinueWatching) return
+        if (source == HomeViewAllTarget.ContinueWatching) {
+            binding.rcMovies.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                val sideMargin = (8 * resources.displayMetrics.density).roundToInt()
+                marginStart = sideMargin
+                marginEnd = sideMargin
+            }
+            binding.rcMovies.layoutManager = LinearLayoutManager(this)
+            binding.rcMovies.adapter = mainAdapter
+            mainAdapter.addAdapter(0, continueWatchingAdapter)
+            return
+        }
         viewModel.initialize(source)
         val columns = if (source == HomeViewAllTarget.Countries) 2 else 3
         binding.rcMovies.apply {
@@ -129,7 +150,13 @@ class ShowAllMovieActivity : BaseActivity<ActivityShowAllMovieBinding>() {
 
     override fun observerData() {
         when (target) {
-            null, HomeViewAllTarget.ContinueWatching -> Unit
+            null -> Unit
+            HomeViewAllTarget.ContinueWatching -> launchRepeatOnStarted {
+                continueWatchingViewModel.movies.collect { movies ->
+                    continueWatchingAdapter.submitList(movies)
+                    statusAdapter.submit(if (movies.isEmpty()) R.string.home_no_continue_watching else null)
+                }
+            }
             HomeViewAllTarget.Countries -> observeCountries()
             else -> {
                 observeMovies()

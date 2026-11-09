@@ -12,8 +12,10 @@ import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.BundleCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -22,10 +24,15 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.adapter.MovieAdapter
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityDetailBinding
+import com.htdev.movie.htplay.databinding.ItemDetailHeaderBinding
+import com.htdev.movie.htplay.databinding.ItemDetailRecommendationsBinding
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.DataMovieDetail
 import com.htdev.movie.htplay.domain.entities.MoviePlayer
@@ -35,22 +42,31 @@ import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 @androidx.annotation.OptIn(UnstableApi::class)
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
     private val episodeAdapter = EpisodeAdapter()
+    private val episodePager = EpisodePager()
+    private lateinit var headerBinding: ItemDetailHeaderBinding
+    private lateinit var recommendationsBinding: ItemDetailRecommendationsBinding
+    private var isShowingEpisodes = false
     private val moreLikeThisAdapter = MovieAdapter(onClick = { movie ->
-        startActivity(createIntent(this, movie.slug))
+        openMovie(movie.slug)
     })
     private val countryMovieAdapter = MovieAdapter(onClick = { movie ->
-        startActivity(createIntent(this, movie.slug))
+        openMovie(movie.slug)
     })
     private var isContentExpanded = false
+    private var renderedState: DetailUiState? = null
     private var player: ExoPlayer? = null
+    private var progressSaveJob: Job? = null
     private var selectedEpisode: MoviePlayer? = null
     private var playbackPosition = 0L
     private var playWhenReady = true
@@ -92,18 +108,39 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun initView() {
-        binding.rcEpisodes.adapter = episodeAdapter
-        binding.rcMoreLikeThis.adapter = moreLikeThisAdapter
-        binding.rcMoreLikeThisCountry.adapter = countryMovieAdapter
+        // Inflating sections with this RecyclerView as parent requires its LayoutManager first.
+        binding.scrollDetail.layoutManager = GridLayoutManager(this, EPISODE_COLUMNS).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int =
+                    if (position in 1..episodeAdapter.itemCount) 1 else EPISODE_COLUMNS
+            }
+        }
+        headerBinding = ItemDetailHeaderBinding.inflate(layoutInflater, binding.scrollDetail, false)
+        recommendationsBinding = ItemDetailRecommendationsBinding.inflate(layoutInflater, binding.scrollDetail, false)
+        binding.scrollDetail.apply {
+            adapter = ConcatAdapter(
+                DetailSectionAdapter(headerBinding.root),
+                episodeAdapter,
+                DetailSectionAdapter(recommendationsBinding.root),
+            )
+            itemAnimator = null
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy >= 0) loadMoreEpisodesIfNeeded()
+                }
+            })
+        }
+        recommendationsBinding.rcMoreLikeThis.adapter = moreLikeThisAdapter
+        recommendationsBinding.rcMoreLikeThisCountry.adapter = countryMovieAdapter
         binding.tvNameMovie.text = ""
-        binding.tvStar.text = ""
-        binding.tvYear.text = ""
-        binding.tvCountry.text = ""
-        binding.tvGenre.text = ""
-        binding.tvMore.isVisible = false
-        binding.rcMoreLikeThis.isVisible = false
-        binding.tvMoreCountry.isVisible = false
-        binding.rcMoreLikeThisCountry.isVisible = false
+        headerBinding.tvStar.text = ""
+        headerBinding.tvYear.text = ""
+        headerBinding.tvCountry.text = ""
+        headerBinding.tvGenre.text = ""
+        recommendationsBinding.tvMore.isVisible = false
+        recommendationsBinding.rcMoreLikeThis.isVisible = false
+        recommendationsBinding.tvMoreCountry.isVisible = false
+        recommendationsBinding.rcMoreLikeThisCountry.isVisible = false
         selectTab(showEpisodes = false)
         updateContentExpansion()
         portraitPlayerHeight = binding.mediaPlay.layoutParams.height
@@ -119,9 +156,9 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         mediaPlay.setFullscreenButtonClickListener { fullscreen ->
             if (fullscreen != isFullscreen) requestFullscreen(fullscreen)
         }
-        tvAbout.setOnClickListener { selectTab(showEpisodes = false) }
-        tvEpisodes.setOnClickListener { selectTab(showEpisodes = true) }
-        tvContent.setOnClickListener {
+        headerBinding.tvAbout.setOnClickListener { selectTab(showEpisodes = false) }
+        headerBinding.tvEpisodes.setOnClickListener { selectTab(showEpisodes = true) }
+        headerBinding.tvContent.setOnClickListener {
             isContentExpanded = !isContentExpanded
             updateContentExpansion()
         }
@@ -136,9 +173,10 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         }
     }
 
-    private fun selectTab(showEpisodes: Boolean) = with(binding) {
+    private fun selectTab(showEpisodes: Boolean) = with(headerBinding) {
+        isShowingEpisodes = showEpisodes
         tvContent.isVisible = !showEpisodes
-        rcEpisodes.isVisible = showEpisodes
+        renderEpisodes()
         tvAbout.isSelected = !showEpisodes
         tvEpisodes.isSelected = showEpisodes
         val aboutColor = getColor(if (showEpisodes) R.color.white else R.color.secondary_color)
@@ -149,7 +187,29 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         vLandEpisodes.setBackgroundColor(episodesColor)
     }
 
-    private fun updateContentExpansion() = with(binding.tvContent) {
+    private fun renderEpisodes() {
+        episodeAdapter.submitList(if (isShowingEpisodes) episodePager.visibleEpisodes else emptyList()) {
+            binding.scrollDetail.doOnNextLayout { loadMoreEpisodesIfNeeded() }
+        }
+    }
+
+    private fun loadMoreEpisodesIfNeeded() {
+        if (isDestroyed || !isShowingEpisodes || !binding.scrollDetail.isVisible || !episodePager.hasMore ||
+            episodeAdapter.itemCount != episodePager.loadedCount) return
+        val layout = binding.scrollDetail.layoutManager as? GridLayoutManager ?: return
+        // Include the header offset and start loading two rows before the last loaded episode.
+        val lastEpisodePosition = episodeAdapter.itemCount
+        if (layout.findLastVisibleItemPosition() >= lastEpisodePosition - EPISODE_COLUMNS * 2 &&
+            episodePager.loadMore()) {
+            // A fast fling can reach recommendations before the new batch is attached.
+            if (layout.findFirstVisibleItemPosition() > lastEpisodePosition) {
+                layout.scrollToPositionWithOffset(lastEpisodePosition, 0)
+            }
+            renderEpisodes()
+        }
+    }
+
+    private fun updateContentExpansion() = with(headerBinding.tvContent) {
         maxLines = if (isContentExpanded) Int.MAX_VALUE else 3
         ellipsize = if (isContentExpanded) null else TextUtils.TruncateAt.END
     }
@@ -166,6 +226,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private fun applyFullscreen(fullscreen: Boolean) = with(binding) {
         isFullscreen = fullscreen
         tvNameMovie.isVisible = !fullscreen
+        updateCurrentEpisodeLabel()
         scrollDetail.isVisible = !fullscreen
         mediaPlay.updateLayoutParams<ConstraintLayout.LayoutParams> {
             height = if (fullscreen) ConstraintLayout.LayoutParams.MATCH_CONSTRAINT else portraitPlayerHeight
@@ -193,76 +254,136 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun backDevice() {
-        if (isFullscreen) requestFullscreen(false) else super.backDevice()
+        persistContinueWatching()
+        when {
+            isFullscreen -> requestFullscreen(false)
+            viewModel.goBack() -> Unit
+            else -> super.backDevice()
+        }
+    }
+
+    private fun openMovie(slug: String) {
+        persistContinueWatching()
+        viewModel.openMovie(slug)
+    }
+
+    private fun resetMovieContent() = with(binding) {
+        selectedEpisode = null
+        playbackPosition = 0L
+        playWhenReady = true
+        player?.stop()
+        player?.clearMediaItems()
+        mediaPlay.setCustomErrorMessage(null)
+        mediaPlay.keepScreenOn = false
+        progressBar.isVisible = true
+        episodeAdapter.selectedEpisodeId = null
+        episodePager.submit(emptyList())
+        episodeAdapter.submitList(emptyList())
+        moreLikeThisAdapter.submitList(emptyList())
+        countryMovieAdapter.submitList(emptyList())
+        tvNameMovie.text = ""
+        tvCurrentEpisode.text = ""
+        tvCurrentEpisode.isVisible = false
+        headerBinding.tvStar.text = ""
+        headerBinding.tvYear.text = ""
+        headerBinding.tvCountry.text = ""
+        headerBinding.tvGenre.text = ""
+        headerBinding.tvContent.setText(R.string.loading)
+        recommendationsBinding.tvMore.isVisible = false
+        recommendationsBinding.rcMoreLikeThis.isVisible = false
+        recommendationsBinding.tvMoreCountry.isVisible = false
+        recommendationsBinding.rcMoreLikeThisCountry.isVisible = false
+        isContentExpanded = false
+        updateContentExpansion()
+        selectTab(showEpisodes = false)
+        scrollDetail.scrollToPosition(0)
+        recommendationsBinding.rcMoreLikeThis.scrollToPosition(0)
+        recommendationsBinding.rcMoreLikeThisCountry.scrollToPosition(0)
     }
 
     override fun observerData() {
         launchRepeatOnStarted {
-            launch {
-                viewModel.detail.collect { result ->
-                    when (result) {
-                        is Result.Success -> bindDetail(result.data)
-                        is Result.Error -> binding.tvContent.setText(R.string.detail_load_error)
-                        Result.Idle, Result.Loading -> binding.tvContent.setText(R.string.loading)
+            viewModel.uiState.collect { state -> bindState(state) }
+        }
+    }
+
+    private fun bindState(state: DetailUiState) {
+        val previous = renderedState
+        val movieChanged = previous?.movieSlug != state.movieSlug
+        // Reset and bind from the same snapshot, even when loading finishes before it is drawn.
+        if (previous != null && movieChanged) resetMovieContent()
+        renderedState = state
+
+        if (movieChanged || previous.detail != state.detail) {
+            when (val result = state.detail) {
+                is Result.Success -> bindDetail(result.data)
+                is Result.Error -> headerBinding.tvContent.setText(R.string.detail_load_error)
+                Result.Idle, Result.Loading -> headerBinding.tvContent.setText(R.string.loading)
+            }
+        }
+        if (movieChanged || previous.episodes != state.episodes) {
+            when (val result = state.episodes) {
+                is Result.Success -> {
+                    val episodes = result.data
+                    episodePager.submit(episodes)
+                    renderEpisodes()
+                    val episode = episodes.firstOrNull {
+                        it.id == selectedEpisode?.id && it.linkM3u8.isNotBlank()
+                    } ?: state.continueWatching?.let { saved ->
+                        episodes.getOrNull(saved.currentEpisode)?.takeIf { it.linkM3u8.isNotBlank() }
+                    } ?: episodes.firstOrNull { it.linkM3u8.isNotBlank() }
+                    if (episode == null) {
+                        selectedEpisode = null
+                        player?.stop()
+                        player?.clearMediaItems()
+                        showPlaybackMessage(R.string.detail_no_playable_episodes)
+                    } else if (episode != selectedEpisode) {
+                        val saved = state.continueWatching
+                        val resumePosition = if (selectedEpisode == null && saved != null &&
+                            episodes.getOrNull(saved.currentEpisode) == episode) saved.positionContinue else 0L
+                        playEpisode(episode, resumePosition)
                     }
+                    episodeAdapter.selectedEpisodeId = selectedEpisode?.id
                 }
-            }
-            launch {
-                viewModel.episodes.collect { result ->
-                    when (result) {
-                        is Result.Success -> {
-                            val episodes = result.data
-                            episodeAdapter.submitList(episodes)
-                            val episode = episodes.firstOrNull {
-                                it.id == selectedEpisode?.id && it.linkM3u8.isNotBlank()
-                            } ?: episodes.firstOrNull { it.linkM3u8.isNotBlank() }
-                            if (episode == null) {
-                                selectedEpisode = null
-                                player?.stop()
-                                player?.clearMediaItems()
-                                showPlaybackMessage(R.string.detail_no_playable_episodes)
-                            } else if (episode != selectedEpisode) {
-                                playEpisode(episode)
-                            }
-                            episodeAdapter.selectedEpisodeId = selectedEpisode?.id
-                        }
-                        is Result.Error -> if (selectedEpisode == null) {
-                            showPlaybackMessage(R.string.detail_episodes_error)
-                        }
-                        Result.Idle, Result.Loading -> if (selectedEpisode == null) {
-                            binding.mediaPlay.setCustomErrorMessage(null)
-                            binding.progressBar.isVisible = true
-                        }
-                    }
+                is Result.Error -> if (selectedEpisode == null) {
+                    showPlaybackMessage(R.string.detail_episodes_error)
                 }
-            }
-            launch {
-                viewModel.moreLikeThis.collect { result ->
-                    val movies = (result as? Result.Success)?.data.orEmpty()
-                    moreLikeThisAdapter.submitList(movies.toMovieItems())
-                    binding.tvMore.isVisible = movies.isNotEmpty()
-                    binding.rcMoreLikeThis.isVisible = movies.isNotEmpty()
-                }
-            }
-            launch {
-                viewModel.countryMovies.collect { result ->
-                    val movies = (result as? Result.Success)?.data.orEmpty()
-                    countryMovieAdapter.submitList(movies.toMovieItems())
-                    binding.tvMoreCountry.isVisible = movies.isNotEmpty()
-                    binding.rcMoreLikeThisCountry.isVisible = movies.isNotEmpty()
+                Result.Idle, Result.Loading -> if (selectedEpisode == null) {
+                    binding.mediaPlay.setCustomErrorMessage(null)
+                    binding.progressBar.isVisible = true
                 }
             }
         }
+        updateCurrentEpisodeLabel()
+        if (movieChanged || previous.moreLikeThis != state.moreLikeThis) {
+            val movies = (state.moreLikeThis as? Result.Success)?.data.orEmpty()
+            moreLikeThisAdapter.submitList(movies.toMovieItems())
+            recommendationsBinding.tvMore.isVisible = movies.isNotEmpty()
+            recommendationsBinding.rcMoreLikeThis.isVisible = movies.isNotEmpty()
+        }
+        if (movieChanged || previous.countryMovies != state.countryMovies) {
+            val movies = (state.countryMovies as? Result.Success)?.data.orEmpty()
+            countryMovieAdapter.submitList(movies.toMovieItems())
+            recommendationsBinding.tvMoreCountry.isVisible = movies.isNotEmpty()
+            recommendationsBinding.rcMoreLikeThisCountry.isVisible = movies.isNotEmpty()
+        }
+    }
+
+    private fun updateCurrentEpisodeLabel() = with(binding.tvCurrentEpisode) {
+        val episodes = (renderedState?.episodes as? Result.Success)?.data.orEmpty()
+        val episodeIndex = episodes.indexOfFirst { it.id == selectedEpisode?.id }
+        text = if (episodeIndex >= 0) getString(R.string.detail_episode_number, episodeIndex + 1) else ""
+        isVisible = !isFullscreen && episodeIndex >= 0
     }
 
     private fun bindDetail(movie: DataMovieDetail) = with(binding) {
         tvNameMovie.text = movie.name
-        tvStar.text = movie.vote
-        tvYear.text = movie.year.takeIf { it > 0 }?.toString().orEmpty()
-        tvCountry.text = getCountryName(movie.countrySlug)
-        tvMoreCountry.text = getString(R.string.detail_more_from_country, getCountryName(movie.countrySlug))
-        tvGenre.text = getGenreName(movie.genreSlug.ifBlank { movie.genre })
-        tvContent.text = HtmlCompat.fromHtml(movie.content, HtmlCompat.FROM_HTML_MODE_COMPACT).trim()
+        headerBinding.tvStar.text = movie.vote
+        headerBinding.tvYear.text = movie.year.takeIf { it > 0 }?.toString().orEmpty()
+        headerBinding.tvCountry.text = getCountryName(movie.countrySlug)
+        recommendationsBinding.tvMoreCountry.text = getString(R.string.detail_more_from_country, getCountryName(movie.countrySlug))
+        headerBinding.tvGenre.text = getGenreName(movie.genreSlug.ifBlank { movie.genre })
+        headerBinding.tvContent.text = HtmlCompat.fromHtml(movie.content, HtmlCompat.FROM_HTML_MODE_COMPACT).trim()
     }
 
     private fun List<PosterMovie>.toMovieItems(): List<ItemMovie> = map { movie ->
@@ -274,7 +395,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         )
     }
 
-    private fun playEpisode(episode: MoviePlayer) {
+    private fun playEpisode(episode: MoviePlayer, startPosition: Long = 0L) {
         if (episode.linkM3u8.isBlank()) return
         val currentPlayer = player
         if (selectedEpisode == episode && currentPlayer?.currentMediaItem?.mediaId == episode.id &&
@@ -282,9 +403,11 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             currentPlayer.play()
             return
         }
+        persistContinueWatching()
         selectedEpisode = episode
         episodeAdapter.selectedEpisodeId = episode.id
-        playbackPosition = 0L
+        updateCurrentEpisodeLabel()
+        playbackPosition = startPosition.coerceAtLeast(0L)
         playWhenReady = true
         prepareSelectedEpisode()
     }
@@ -320,20 +443,36 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             currentPlayer.addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     binding.mediaPlay.keepScreenOn = isPlaying
+                    if (!isPlaying) persistContinueWatching()
                 }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     binding.progressBar.isVisible = playbackState == Player.STATE_BUFFERING
                     if (playbackState == Player.STATE_READY) binding.mediaPlay.setCustomErrorMessage(null)
+                    if (playbackState == Player.STATE_ENDED) persistContinueWatching()
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
                     showPlaybackMessage(R.string.detail_playback_error)
                 }
+
+                override fun onPositionDiscontinuity(
+                    oldPosition: Player.PositionInfo,
+                    newPosition: Player.PositionInfo,
+                    reason: Int,
+                ) {
+                    if (reason == Player.DISCONTINUITY_REASON_SEEK) persistContinueWatching()
+                }
             })
             binding.mediaPlay.player = currentPlayer
         }
         prepareSelectedEpisode()
+        progressSaveJob = lifecycleScope.launch {
+            while (isActive) {
+                delay(5_000)
+                if (player?.isPlaying == true) persistContinueWatching()
+            }
+        }
         if (orientationListener.canDetectOrientation()) orientationListener.enable()
     }
 
@@ -349,6 +488,18 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         }
     }
 
+    private fun persistContinueWatching() {
+        val currentPlayer = player ?: return
+        val episode = selectedEpisode ?: return
+        if (currentPlayer.currentMediaItem?.localConfiguration?.uri?.toString() != episode.linkM3u8.trim()) return
+        viewModel.savePlaybackProgress(episode, currentPlayer.currentPosition, currentPlayer.duration)
+    }
+
+    override fun onPause() {
+        persistContinueWatching()
+        super.onPause()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         savePlaybackState()
         outState.putParcelable(STATE_EPISODE, selectedEpisode)
@@ -358,6 +509,9 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun onStop() {
+        progressSaveJob?.cancel()
+        progressSaveJob = null
+        persistContinueWatching()
         orientationListener.disable()
         savePlaybackState()
         binding.mediaPlay.player = null
@@ -368,13 +522,14 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun onDestroy() {
-        binding.rcEpisodes.adapter = null
-        binding.rcMoreLikeThis.adapter = null
-        binding.rcMoreLikeThisCountry.adapter = null
+        binding.scrollDetail.adapter = null
+        recommendationsBinding.rcMoreLikeThis.adapter = null
+        recommendationsBinding.rcMoreLikeThisCountry.adapter = null
         super.onDestroy()
     }
 
     companion object {
+        private const val EPISODE_COLUMNS = 6
         const val EXTRA_MOVIE_SLUG = "movie_slug"
         private const val STATE_EPISODE = "detail_episode"
         private const val STATE_POSITION = "detail_position"

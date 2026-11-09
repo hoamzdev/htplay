@@ -8,6 +8,6 @@ internal fun String?.toImageUrl(): String {
         path.startsWith("https://", ignoreCase = true) ||
             path.startsWith("http://", ignoreCase = true) -> path
         path.startsWith("//") -> "https:$path"
-        else -> "${Api.BASE_URL_IMAGE}/${path.trimStart('/')}"
+        else -> "${Api.BASE_URL_IMAGE.trimEnd('/')}/${path.trimStart('/')}"
     }
 }

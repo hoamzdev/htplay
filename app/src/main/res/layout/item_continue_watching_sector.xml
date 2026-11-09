@@ -33,7 +33,7 @@
         android:layout_marginEnd="@dimen/size8"
         android:includeFontPadding="false"
         android:text="@string/view_all"
-        android:textSize="@dimen/sizesp15"
+        android:textSize="14sp"
         android:textColor="@color/gray_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

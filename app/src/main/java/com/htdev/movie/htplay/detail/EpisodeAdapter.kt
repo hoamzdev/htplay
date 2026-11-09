@@ -1,5 +1,6 @@
 package com.htdev.movie.htplay.detail
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -38,6 +39,7 @@ class EpisodeAdapter : ListAdapter<MoviePlayer, EpisodeAdapter.EpisodeViewHolder
             }
         }
 
+        @SuppressLint("SetTextI18n")
         fun bind(episode: MoviePlayer, position: Int) {
             val context = binding.root.context
             val selected = episode.id == selectedEpisodeId

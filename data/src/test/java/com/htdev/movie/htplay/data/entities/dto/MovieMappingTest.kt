@@ -31,7 +31,7 @@ class MovieMappingTest {
         )
         val detail = movie.mapToDataMovieDetail()
         assertEquals("", detail.countrySlug)
-        assertEquals("Unknown", detail.GenreSlug)
+        assertEquals("Unknown", detail.genreSlug)
         assertEquals("0.0", detail.vote)
         assertEquals("https://phimimg.com/poster.jpg", detail.posterUrl)
     }

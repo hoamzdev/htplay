@@ -2,6 +2,8 @@ package com.htdev.movie.htplay.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +15,8 @@ import com.htdev.movie.htplay.util.playbackProgressPercent
 
 class ContinueWatchingAdapter(
     val onClickCard: (ContinueWatching) -> Unit,
+    private val fillParentWidth: Boolean = false,
+    private val showMovieName: Boolean = false,
 ) : ListAdapter<ContinueWatching, ContinueWatchingAdapter.ContinueWatchingViewHolder>(diffUtil) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -21,6 +25,12 @@ class ContinueWatchingAdapter(
         val inflate = LayoutInflater.from(parent.context)
         val binding: ItemContinuewatchingBinding =
             ItemContinuewatchingBinding.inflate(inflate, parent, false)
+        if (fillParentWidth) binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            width = ViewGroup.LayoutParams.MATCH_PARENT
+            marginStart = 0
+            marginEnd = 0
+        }
+        binding.tvMovieName.isVisible = showMovieName
         return ContinueWatchingViewHolder(binding)
     }
 
@@ -45,6 +55,8 @@ class ContinueWatchingAdapter(
             binding.apply {
                 pgContinue.progress = playbackProgressPercent(item.currentProgress, item.totalProgress)
                 ivThumbnail.loadPoster(item.urlThumbnail)
+                root.contentDescription = item.name.ifBlank { item.slugMovie }
+                tvMovieName.text = item.name.ifBlank { item.slugMovie }
                 tvTime.text =
                     root.context.getString(
                         R.string.playback_progress,
@@ -61,7 +73,7 @@ class ContinueWatchingAdapter(
                 oldItem: ContinueWatching,
                 newItem: ContinueWatching
             ): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.slugMovie == newItem.slugMovie
             }
 
             override fun areContentsTheSame(

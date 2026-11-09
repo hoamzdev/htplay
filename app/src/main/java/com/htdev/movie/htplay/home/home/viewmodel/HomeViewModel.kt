@@ -233,7 +233,7 @@ class HomeViewModel @Inject constructor(
                 val progress = it.currentProgress ?: 0
                 val duration = it.totalProgress ?: 0
                 progress in 1..<duration
-            }.distinctBy { it.id })
+            }.distinctBy { it.slugMovie }.take(5))
         }
     }
 

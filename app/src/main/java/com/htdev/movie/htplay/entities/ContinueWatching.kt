@@ -8,4 +8,5 @@ data class ContinueWatching(
     val slugMovie : String,
     val totalProgress : Long? = null,
     val currentProgress : Long? = null,
+    val name: String = "",
 )

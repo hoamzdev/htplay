@@ -26,6 +26,7 @@ import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.home.home.viewmodel.HomeViewModel
+import com.htdev.movie.htplay.home.home.viewmodel.ContinueWatchingViewModel
 import com.htdev.movie.htplay.search.SearchActivity
 import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private val viewModel: HomeViewModel by viewModels()
+    private val continueWatchingViewModel: ContinueWatchingViewModel by viewModels()
 
     private val posterPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -84,6 +86,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private var displayedHomeGenre: String? = null
     private val genreStatusAdapter = HomeGenreStatusAdapter(onRetry = { genreMovieAdapter?.retry() })
     private val mainAdapter = ConcatAdapter(homeAdapter)
+    private val homeSectionsObserver = object : RecyclerView.AdapterDataObserver() {
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            if (positionStart != 0 || homeAdapter !in mainAdapter.adapters) return
+            val recycler = binding.rcMain
+            val layout = recycler.layoutManager as? GridLayoutManager ?: return
+            val firstPosition = layout.findFirstVisibleItemPosition()
+            val firstView = layout.findViewByPosition(0)
+            val atTop = firstPosition == RecyclerView.NO_POSITION ||
+                (firstPosition == 0 && firstView != null &&
+                    layout.getDecoratedTop(firstView) >= recycler.paddingTop)
+            if (atTop && recycler.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                // Keep newly loaded Continue cards visible instead of anchoring Latest below them.
+                layout.scrollToPositionWithOffset(0, 0)
+            }
+        }
+    }
 
     private val appBarOffsetListener = AppBarLayout.OnOffsetChangedListener { appBar, offset ->
         val progress = if (appBar.totalScrollRange > 0) {
@@ -138,6 +156,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             adapter = mainAdapter
         }
         binding.rcMain.itemAnimator = null
+        homeAdapter.registerAdapterDataObserver(homeSectionsObserver)
     }
 
     private fun handleNavToShowAllSector(source: HomeViewAllTarget){
@@ -218,6 +237,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
     override fun bindViewModel() {
+        launchRepeatOnStarted {
+            continueWatchingViewModel.movies.collect { viewModel.updateContinueWatching(it) }
+        }
         observePosterBanner()
         observeGenreTabs()
         launchRepeatOnStarted {
@@ -351,6 +373,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.appBar.removeOnOffsetChangedListener(appBarOffsetListener)
         binding.vpPoster.unregisterOnPageChangeCallback(posterPageChangeCallback)
         binding.vpPoster.adapter = null
+        homeAdapter.unregisterAdapterDataObserver(homeSectionsObserver)
         binding.rcMain.adapter = null
         genreTabsController = null
         genreMovieAdapter?.let { mainAdapter.removeAdapter(it) }
