@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.htdev.movie.htplay.data.entities.dto.mapToFavorite
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.common.map
 import com.htdev.movie.htplay.domain.entities.DataMovieDetail
@@ -17,6 +18,7 @@ import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByGenres
 import com.htdev.movie.htplay.domain.usecase.movie.GetListContinueWatching
 import com.htdev.movie.htplay.domain.usecase.movie.SaveContinueWatching
 import com.htdev.movie.htplay.di.ApplicationScope
+import com.htdev.movie.htplay.domain.usecase.movie.SaveFavoriteMovie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -48,6 +50,7 @@ class DetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getListContinueWatching: GetListContinueWatching,
     private val saveContinueWatching: SaveContinueWatching,
+    private val saveFavoriteMovie: SaveFavoriteMovie,
     @ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -212,6 +215,14 @@ class DetailViewModel @Inject constructor(
     } catch (e: Exception) {
         currentCoroutineContext().ensureActive()
         Result.Error(e)
+    }
+
+
+    fun saveFavoriteMovie(detail : DataMovieDetail){
+        val favoriteModel = detail.mapToFavorite()
+        viewModelScope.launch {
+            saveFavoriteMovie.invoke(favoriteModel)
+        }
     }
 
     private companion object {

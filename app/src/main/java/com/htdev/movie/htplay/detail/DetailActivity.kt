@@ -39,6 +39,7 @@ import com.htdev.movie.htplay.entities.ItemMovie
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
+import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 import kotlinx.coroutines.Job
@@ -150,6 +151,12 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             isContentExpanded = !isContentExpanded
             updateContentExpansion()
         }
+        headerBinding.ivDownload.onClickListener {
+            onDownloadMovie()
+        }
+        headerBinding.ivFavorite.onClickListener {
+            onFavoriteMovie()
+        }
         episodeAdapter.onEpisodeClick = { episode -> playEpisode(episode) }
         mediaPlay.findViewById<View>(androidx.media3.ui.R.id.exo_error_message)?.setOnClickListener {
             player?.takeIf { it.playerError != null }?.let {
@@ -158,6 +165,18 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 it.prepare()
                 it.play()
             }
+        }
+    }
+
+    private fun onDownloadMovie(){
+
+    }
+
+    private fun onFavoriteMovie(){
+        detailMovie?.let {
+            viewModel.saveFavoriteMovie(it)
+            headerBinding.ivFavorite.setImageResource(R.drawable.ic_checked_favorite)
+            showToastApp("Added movie to favorite")
         }
     }
 
@@ -272,6 +291,8 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         recommendationsBinding.rcMoreLikeThisCountry.scrollToPosition(0)
     }
 
+    private var detailMovie : DataMovieDetail? = null
+
     override fun observerData() {
         launchRepeatOnStarted {
             viewModel.uiState.collect { state -> bindState(state) }
@@ -347,6 +368,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun bindDetail(movie: DataMovieDetail) = with(binding) {
+        detailMovie = movie
         tvNameMovie.text = movie.name
         headerBinding.tvStar.text = movie.vote
         headerBinding.tvYear.text = movie.year.takeIf { it > 0 }?.toString().orEmpty()

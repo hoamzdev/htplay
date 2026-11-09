@@ -32,4 +32,9 @@ class DataBaseModule {
     fun providerContinueWatchingDao(appRoomDataBase: AppRoomDataBase) =
         appRoomDataBase.continueWatchingDao()
 
+    @Provides
+    @Singleton
+    fun providerFavoriteDao(appRoomDataBase: AppRoomDataBase) =
+        appRoomDataBase.favoriteDao()
+
 }

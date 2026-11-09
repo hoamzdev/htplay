@@ -1,14 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_color"
     tools:context=".home.favorite.FavoriteFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/logo_app"
+        android:layout_width="@dimen/size28"
+        android:layout_height="@dimen/size28"
+        app:cardCornerRadius="@dimen/size8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="@dimen/size16"
+        android:layout_marginTop="@dimen/size40"
+        app:strokeColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        android:alpha="1"
+        app:cardElevation="0dp"
+        app:layout_constraintVertical_bias="0.38">
+
+        <ImageView
+            android:layout_width="@dimen/size28"
+            android:layout_height="@dimen/size28"
+            android:contentDescription="@null"
+            android:src="@drawable/logo" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <TextView
+        android:id="@+id/tv_favorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Favorites"
+        android:textColor="@color/white"
+        android:fontFamily="@font/font_figtree_regular"
+        android:visibility="visible"
+        android:textSize="@dimen/size18"
+        app:layout_constraintTop_toTopOf="@id/logo_app"
+        android:includeFontPadding="false"
+        app:layout_constraintBottom_toBottomOf="@id/logo_app"
+        app:layout_constraintStart_toEndOf="@id/logo_app"
+        android:layout_marginStart="@dimen/size20"/>
+
+    <ImageView
+        android:id="@+id/iv_search"
+        android:layout_width="@dimen/size26"
+        android:layout_height="@dimen/size26"
+        android:src="@drawable/ic_search"
+        app:layout_constraintTop_toTopOf="@id/logo_app"
+        app:layout_constraintBottom_toBottomOf="@id/logo_app"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/size20"
+        android:contentDescription="@null"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edt_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/tv_favorites"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/logo_app"
+        android:layout_marginStart="@dimen/size10"
+        android:layout_marginEnd="16dp"
+        android:paddingStart="@dimen/size8"
+        android:paddingEnd="@dimen/size30"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="gone"
+        android:hint="@string/search_hint"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:textColorHint="@color/gray_color"
+        app:layout_constraintBottom_toBottomOf="@id/logo_app"
+        android:paddingHorizontal="@dimen/size14"
+        android:paddingVertical="@dimen/size10"
+        android:background="@drawable/bg_fr_search"
+        android:textSize="@dimen/sizesp14"
+        android:fontFamily="@font/font_poppins_regular"
+        android:textColor="@color/white"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rc_favorites"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_search"
+        android:layout_marginTop="@dimen/size30"
+        android:layout_marginStart="@dimen/size8"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        android:orientation="vertical"
+        tools:listitem="@layout/item_favorite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="@dimen/size20"
+        android:clipToPadding="false"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

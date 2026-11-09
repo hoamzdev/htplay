@@ -1,6 +1,7 @@
 package com.htdev.movie.htplay.domain.repository
 
 import com.htdev.movie.htplay.domain.entities.ContinueWatching
+import com.htdev.movie.htplay.domain.entities.Favorite
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -13,5 +14,10 @@ interface LocalStorageRepository {
 
     suspend fun saveContinueWatching(continueWatching: ContinueWatching)
     suspend fun deleteContinueWatching(id : Long)
-    suspend fun getListContinueWatching() : Flow<List<ContinueWatching>>
+    fun getListContinueWatching() : Flow<List<ContinueWatching>>
+
+    suspend fun saveFavorite(favorite: Favorite)
+    suspend fun deleteFavorite(id : Long)
+    fun getListFavorites() : Flow<List<Favorite>>
+
 }

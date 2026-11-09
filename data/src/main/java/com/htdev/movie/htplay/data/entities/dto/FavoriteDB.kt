@@ -1,0 +1,49 @@
+package com.htdev.movie.htplay.data.entities.dto
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.htdev.movie.htplay.domain.entities.DataMovieDetail
+import com.htdev.movie.htplay.domain.entities.Favorite
+
+
+@Entity(tableName = "favorite")
+data class FavoriteDB(
+    @PrimaryKey(autoGenerate = true)
+    val id : Long? = null,
+    val name : String,
+    val slugMovie : String,
+    val genre : String,
+    val posterUrl : String? = null,
+)
+
+
+// DataMovieDetail map to Favorite(domain)
+fun DataMovieDetail.mapToFavorite() : Favorite{
+    return Favorite(
+        id = null,
+        name = this.name,
+        posterUrl = this.posterUrl,
+        genre = this.genre,
+        slugMovie = this.slug
+    )
+}
+
+fun Favorite.mapToDB() : FavoriteDB{
+    return FavoriteDB(
+        id = id,
+        name = name,
+        posterUrl = posterUrl,
+        slugMovie = slugMovie,
+        genre = genre
+    )
+}
+
+fun FavoriteDB.mapToDomain() : Favorite{
+    return Favorite(
+        id = id,
+        name = name,
+        posterUrl = posterUrl,
+        slugMovie = slugMovie,
+        genre = genre
+    )
+}
