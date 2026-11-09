@@ -1,27 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:strokeWidth='@dimen/size1'
-    app:strokeColor="@color/primary_color"
-    app:cardCornerRadius="@dimen/size6"
-    android:layout_marginStart="@dimen/size5"
-    android:layout_marginTop="@dimen/size10"
-    app:cardBackgroundColor="@android:color/transparent"
-    android:clickable="true"
-    android:focusable="true">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tv_episode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:gravity="center"
-        android:layout_marginHorizontal="@dimen/size8"
-        android:layout_marginVertical="@dimen/size3"
-        android:textColor="@color/white"
-        android:fontFamily="@font/font_figtree_regular"
-        android:text="19" />
+    <TextView android:id="@+id/episode_1" style="@style/EpisodeButton" />
+    <TextView android:id="@+id/episode_2" style="@style/EpisodeButton" />
+    <TextView android:id="@+id/episode_3" style="@style/EpisodeButton" />
+    <TextView android:id="@+id/episode_4" style="@style/EpisodeButton" />
+    <TextView android:id="@+id/episode_5" style="@style/EpisodeButton" />
+    <TextView android:id="@+id/episode_6" style="@style/EpisodeButton" />
 
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

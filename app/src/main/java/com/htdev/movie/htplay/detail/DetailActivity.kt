@@ -12,7 +12,6 @@ import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.BundleCompat
 import androidx.core.text.HtmlCompat
-import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
@@ -25,8 +24,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.adapter.MovieAdapter
 import com.htdev.movie.htplay.base.BaseActivity
@@ -53,7 +51,6 @@ import kotlinx.coroutines.launch
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
     private val episodeAdapter = EpisodeAdapter()
-    private val episodePager = EpisodePager()
     private lateinit var headerBinding: ItemDetailHeaderBinding
     private lateinit var recommendationsBinding: ItemDetailRecommendationsBinding
     private var isShowingEpisodes = false
@@ -109,12 +106,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     override fun initView() {
         // Inflating sections with this RecyclerView as parent requires its LayoutManager first.
-        binding.scrollDetail.layoutManager = GridLayoutManager(this, EPISODE_COLUMNS).apply {
-            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int =
-                    if (position in 1..episodeAdapter.itemCount) 1 else EPISODE_COLUMNS
-            }
-        }
+        binding.scrollDetail.layoutManager = LinearLayoutManager(this)
         headerBinding = ItemDetailHeaderBinding.inflate(layoutInflater, binding.scrollDetail, false)
         recommendationsBinding = ItemDetailRecommendationsBinding.inflate(layoutInflater, binding.scrollDetail, false)
         binding.scrollDetail.apply {
@@ -124,11 +116,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 DetailSectionAdapter(recommendationsBinding.root),
             )
             itemAnimator = null
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy >= 0) loadMoreEpisodesIfNeeded()
-                }
-            })
+            setHasFixedSize(true)
         }
         recommendationsBinding.rcMoreLikeThis.adapter = moreLikeThisAdapter
         recommendationsBinding.rcMoreLikeThisCountry.adapter = countryMovieAdapter
@@ -188,25 +176,9 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun renderEpisodes() {
-        episodeAdapter.submitList(if (isShowingEpisodes) episodePager.visibleEpisodes else emptyList()) {
-            binding.scrollDetail.doOnNextLayout { loadMoreEpisodesIfNeeded() }
-        }
-    }
-
-    private fun loadMoreEpisodesIfNeeded() {
-        if (isDestroyed || !isShowingEpisodes || !binding.scrollDetail.isVisible || !episodePager.hasMore ||
-            episodeAdapter.itemCount != episodePager.loadedCount) return
-        val layout = binding.scrollDetail.layoutManager as? GridLayoutManager ?: return
-        // Include the header offset and start loading two rows before the last loaded episode.
-        val lastEpisodePosition = episodeAdapter.itemCount
-        if (layout.findLastVisibleItemPosition() >= lastEpisodePosition - EPISODE_COLUMNS * 2 &&
-            episodePager.loadMore()) {
-            // A fast fling can reach recommendations before the new batch is attached.
-            if (layout.findFirstVisibleItemPosition() > lastEpisodePosition) {
-                layout.scrollToPositionWithOffset(lastEpisodePosition, 0)
-            }
-            renderEpisodes()
-        }
+        // Recycle complete six-button rows without changing the list during a fling.
+        val episodes = (renderedState?.episodes as? Result.Success)?.data.orEmpty()
+        episodeAdapter.submitEpisodes(if (isShowingEpisodes) episodes else emptyList())
     }
 
     private fun updateContentExpansion() = with(headerBinding.tvContent) {
@@ -277,7 +249,6 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         mediaPlay.keepScreenOn = false
         progressBar.isVisible = true
         episodeAdapter.selectedEpisodeId = null
-        episodePager.submit(emptyList())
         episodeAdapter.submitList(emptyList())
         moreLikeThisAdapter.submitList(emptyList())
         countryMovieAdapter.submitList(emptyList())
@@ -325,7 +296,6 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             when (val result = state.episodes) {
                 is Result.Success -> {
                     val episodes = result.data
-                    episodePager.submit(episodes)
                     renderEpisodes()
                     val episode = episodes.firstOrNull {
                         it.id == selectedEpisode?.id && it.linkM3u8.isNotBlank()
@@ -529,7 +499,6 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     companion object {
-        private const val EPISODE_COLUMNS = 6
         const val EXTRA_MOVIE_SLUG = "movie_slug"
         private const val STATE_EPISODE = "detail_episode"
         private const val STATE_POSITION = "detail_position"
