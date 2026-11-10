@@ -38,6 +38,42 @@ class HomeViewModelTest {
     @Before fun setUp() { Dispatchers.setMain(StandardTestDispatcher()) }
     @After fun tearDown() { Dispatchers.resetMain() }
 
+    @Test fun returningFromDetailKeepsTheSelectedGenrePager() = runTest {
+        val repository = FakeMovieRepository()
+        var loads = 0
+        repository.genrePager = { slug ->
+            Pager(PagingConfig(pageSize = 20, enablePlaceholders = false)) {
+                object : PagingSource<Int, PosterMovie>() {
+                    override fun getRefreshKey(state: PagingState<Int, PosterMovie>): Int? = null
+                    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PosterMovie> {
+                        loads++
+                        return LoadResult.Page(listOf(movie(slug)), null, null)
+                    }
+                }
+            }.flow
+        }
+        val viewModel = createViewModel(repository)
+        viewModel.selectHomeGenre("hanh-dong")
+        fun presenter() = object : PagingDataPresenter<PosterMovie>() {
+            override suspend fun presentPagingDataEvent(event: PagingDataEvent<PosterMovie>) = Unit
+        }
+        val first = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.homeGenreMovies.collectLatest { presenter().collectFrom(it.movies) }
+        }
+        runCurrent()
+        assertEquals(1, loads)
+        first.cancel()
+        runCurrent()
+        advanceTimeBy(60_000)
+        val returned = presenter()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.homeGenreMovies.collectLatest { returned.collectFrom(it.movies) }
+        }
+        runCurrent()
+        assertEquals(listOf("hanh-dong"), returned.snapshot().items.map { it.slug })
+        assertEquals(1, loads)
+    }
+
     @Test
     fun homeGenreTabsUseApiGenresAndCanRetryLoadingThem() = runTest {
         val repository = FakeMovieRepository()

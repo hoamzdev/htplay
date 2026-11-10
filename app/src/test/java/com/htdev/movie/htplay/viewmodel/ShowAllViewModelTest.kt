@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.resetMain
@@ -41,6 +42,39 @@ import org.junit.Test
 class ShowAllViewModelTest {
     @Before fun setUp() { Dispatchers.setMain(StandardTestDispatcher()) }
     @After fun tearDown() { Dispatchers.resetMain() }
+
+    @Test fun returningFromDetailKeepsLoadedPagesAfterSubscriptionTimeout() = runTest {
+        val repository = FakeMovieRepository()
+        var loads = 0
+        repository.latestPager = {
+            Pager(PagingConfig(pageSize = 20, enablePlaceholders = false)) {
+                object : PagingSource<Int, PosterMovie>() {
+                    override fun getRefreshKey(state: PagingState<Int, PosterMovie>): Int? = null
+                    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PosterMovie> {
+                        loads++
+                        return LoadResult.Page(listOf(movie("cached")), null, null)
+                    }
+                }
+            }.flow
+        }
+        val viewModel = createViewModel(repository)
+        viewModel.initialize(HomeViewAllTarget.Latest)
+        val first = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.movies.collectLatest { presenter().collectFrom(it.movies) }
+        }
+        runCurrent()
+        assertEquals(1, loads)
+        first.cancel()
+        runCurrent()
+        advanceTimeBy(60_000)
+        val returned = presenter()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.movies.collectLatest { returned.collectFrom(it.movies) }
+        }
+        runCurrent()
+        assertEquals(listOf("cached"), returned.snapshot().items.map { it.slug })
+        assertEquals(1, loads)
+    }
 
     @Test fun recommendationsUseOnlyFavoriteTabsAndCancelPreviousPager() = runTest {
         val repository = FakeMovieRepository()

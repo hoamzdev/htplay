@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.paging.LoadState
@@ -52,18 +53,22 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
     }
 
     override fun observerData() {
+        // Keep the same presenter while detail is on top, including its scroll position.
+        lifecycleScope.launch {
+            viewModel.movies.collectLatest { movies ->
+                searchAdapter.submitData(movies)
+            }
+        }
+        var displayedQuery: String? = null
         launchRepeatOnStarted {
             launch {
                 viewModel.query.collect { query ->
+                    if (displayedQuery == query) return@collect
+                    displayedQuery = query
                     binding.tvSearch.setText(if (query.isBlank()) R.string.search_hot else R.string.search_results)
                     binding.lnEmptySearch.isVisible = false
                     searchAdapter.showRank = query.isBlank()
                     binding.rvSearch.scrollToPosition(0)
-                }
-            }
-            launch {
-                viewModel.movies.collectLatest { movies ->
-                    searchAdapter.submitData(movies)
                 }
             }
             launch {

@@ -3,6 +3,7 @@ package com.htdev.movie.htplay.home.home
 
 import android.content.Intent
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
@@ -260,7 +261,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     },
                 )
             }.collectLatest { sections ->
-                homeAdapter.submitList(sections)
+                if (homeAdapter.currentList != sections) homeAdapter.submitList(sections)
             }
         }
     }
@@ -277,7 +278,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     showHomeTab(slug)
                 }
         }
-        launchRepeatOnStarted {
+        // Cancel only when this view is destroyed, so back does not re-present cached pages.
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.homeGenreMovies.collectLatest { page ->
                 val slug = page.genreSlug ?: return@collectLatest
                 if (slug != viewModel.selectedHomeGenre.value) return@collectLatest

@@ -94,7 +94,8 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
+    // Keep the active pager cached while a detail screen covers this screen.
+    }.shareIn(viewModelScope, SharingStarted.Lazily, replay = 1)
 
     fun selectHomeGenre(slug: String?) {
         _selectedHomeGenre.value = slug

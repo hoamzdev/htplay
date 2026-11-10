@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.ViewGroup
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.paging.LoadState
@@ -177,7 +178,8 @@ class ShowAllMovieActivity : BaseActivity<ActivityShowAllMovieBinding>() {
         }
     }
 
-    private fun observeMovies() = launchRepeatOnStarted {
+    // Preserve the presenter's collection and loaded rows across stop/start on back.
+    private fun observeMovies() = lifecycleScope.launch {
         viewModel.movies.collectLatest { page ->
             if (!viewModel.isCurrentPage(page.target)) return@collectLatest
             if (displayedTarget != page.target) {
