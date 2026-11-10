@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.htdev.movie.htplay.R
+import com.htdev.movie.htplay.adapter.ContinueWatchingAdapter
 import com.htdev.movie.htplay.adapter.HomeGenreMovieAdapter
 import com.htdev.movie.htplay.adapter.HomeGenreStatusAdapter
 import com.htdev.movie.htplay.adapter.ShowAllCountryAdapter
-import com.htdev.movie.htplay.adapter.ContinueWatchingAdapter
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityShowAllMovieBinding
 import com.htdev.movie.htplay.detail.DetailActivity
@@ -22,15 +22,13 @@ import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.Country
 import com.htdev.movie.htplay.domain.entities.Genre
 import com.htdev.movie.htplay.entities.HomeViewAllTarget
-import com.htdev.movie.htplay.home.home.viewmodel.ShowAllViewModel
 import com.htdev.movie.htplay.home.home.viewmodel.ContinueWatchingViewModel
+import com.htdev.movie.htplay.home.home.viewmodel.ShowAllViewModel
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.HomeGenreTabsController
-import com.htdev.movie.htplay.widget.invisible
 import com.htdev.movie.htplay.widget.onClickListener
-import com.htdev.movie.htplay.widget.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +40,14 @@ class ShowAllMovieActivity : BaseActivity<ActivityShowAllMovieBinding>() {
     private val viewModel: ShowAllViewModel by viewModels()
     private val continueWatchingViewModel: ContinueWatchingViewModel by viewModels()
     private val continueWatchingAdapter = ContinueWatchingAdapter(
-        onClickCard = { movie -> startActivity(DetailActivity.createIntent(this, movie.slugMovie)) },
+        onClickCard = { movie ->
+            startActivity(
+                DetailActivity.createIntent(
+                    this,
+                    movie.slugMovie
+                )
+            )
+        },
         fillParentWidth = true,
         showMovieName = true,
     )
