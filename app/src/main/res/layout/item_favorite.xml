@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="190dp"
-    android:layout_height="250dp"
-    android:layout_marginStart="@dimen/size3"
-    android:layout_marginBottom="@dimen/size6"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/size6"
+    android:layout_marginBottom="@dimen/size12"
     app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="18dp"
     app:cardElevation="0dp"
     app:cardPreventCornerOverlap="false"
     app:cardUseCompatPadding="false"
-    app:layout_constraintDimensionRatio="138:215"
     app:strokeColor="#45516B"
     app:strokeWidth="2dp">
 
@@ -26,7 +25,7 @@
             android:contentDescription="@null"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher"
-            app:layout_constraintDimensionRatio="138:215"
+            app:layout_constraintDimensionRatio="H,19:25"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
