@@ -1,0 +1,12 @@
+package com.htdev.movie.htplay.domain.usecase.movie
+
+import com.htdev.movie.htplay.domain.repository.LocalStorageRepository
+import javax.inject.Inject
+
+
+class CheckMovieExistsInFavorite @Inject constructor(
+    private val localStorageRepository: LocalStorageRepository
+){
+    operator fun invoke(slug : String) =
+        localStorageRepository.isExistsInFavorite(slug)
+}

@@ -8,9 +8,8 @@ import com.htdev.movie.htplay.domain.entities.Favorite
 
 @Entity(tableName = "favorite")
 data class FavoriteDB(
-    @PrimaryKey(autoGenerate = true)
-    val id : Long? = null,
     val name : String,
+    @PrimaryKey
     val slugMovie : String,
     val genre : String,
     val posterUrl : String? = null,
@@ -20,7 +19,6 @@ data class FavoriteDB(
 // DataMovieDetail map to Favorite(domain)
 fun DataMovieDetail.mapToFavorite() : Favorite{
     return Favorite(
-        id = null,
         name = this.name,
         posterUrl = this.posterUrl,
         genre = this.genre,
@@ -30,7 +28,6 @@ fun DataMovieDetail.mapToFavorite() : Favorite{
 
 fun Favorite.mapToDB() : FavoriteDB{
     return FavoriteDB(
-        id = id,
         name = name,
         posterUrl = posterUrl,
         slugMovie = slugMovie,
@@ -40,7 +37,6 @@ fun Favorite.mapToDB() : FavoriteDB{
 
 fun FavoriteDB.mapToDomain() : Favorite{
     return Favorite(
-        id = id,
         name = name,
         posterUrl = posterUrl,
         slugMovie = slugMovie,

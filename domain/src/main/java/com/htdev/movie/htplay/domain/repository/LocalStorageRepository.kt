@@ -16,8 +16,11 @@ interface LocalStorageRepository {
     suspend fun deleteContinueWatching(id : Long)
     fun getListContinueWatching() : Flow<List<ContinueWatching>>
 
-    suspend fun saveFavorite(favorite: Favorite)
-    suspend fun deleteFavorite(id : Long)
+    suspend fun saveFavorite(favorite: Favorite): Boolean
+    suspend fun deleteFavorite(slug: String)
+    suspend fun toggleFavorite(favorite: Favorite): Boolean
     fun getListFavorites() : Flow<List<Favorite>>
+
+    fun isExistsInFavorite(slug : String) : Flow<Boolean>
 
 }

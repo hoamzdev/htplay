@@ -190,6 +190,34 @@
         app:layout_constraintTop_toBottomOf="@id/tv_about" />
 
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/server_tabs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size8"
+        android:layout_marginTop="@dimen/size8"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_land_1"
+        app:tabMode="fixed"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/secondary_color"
+        app:tabSelectedTextColor="@color/secondary_color"
+        app:tabTextColor="@color/white">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_server_original" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_server_dubbed" />
+    </com.google.android.material.tabs.TabLayout>
+
     <TextView
         android:id="@+id/tv_content"
         android:layout_width="match_parent"

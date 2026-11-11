@@ -24,7 +24,7 @@ class DataBaseModule {
             context,
             klass = AppRoomDataBase::class.java,
             name = "app_data_base"
-        ).build()
+        ).addMigrations(AppRoomDataBase.MIGRATION_1_2, AppRoomDataBase.MIGRATION_2_3).build()
     }
 
     @Provides

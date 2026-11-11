@@ -156,4 +156,9 @@
     <string name="search_no_results">No movies found.</string>
     <string name="no_result_found">No Result Found</string>
     <string name="we_can_t_find_any_item_matching_your_search">We can\'t find any item matching your search</string>
+    <string name="detail_favorite_added">Added movie to favorites</string>
+    <string name="detail_favorite_removed">Removed movie from favorites</string>
+    <string name="detail_favorite_error">Unable to update favorites. Please try again.</string>
+    <string name="detail_server_original">Original audio</string>
+    <string name="detail_server_dubbed">Dubbed</string>
 </resources>

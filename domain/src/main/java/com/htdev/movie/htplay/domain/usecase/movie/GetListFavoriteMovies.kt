@@ -6,6 +6,6 @@ import javax.inject.Inject
 class GetListFavoriteMovies @Inject constructor(
     private val localStorageRepository: LocalStorageRepository
 ) {
-    suspend operator fun invoke() =
+    operator fun invoke() =
         localStorageRepository.getListFavorites()
 }

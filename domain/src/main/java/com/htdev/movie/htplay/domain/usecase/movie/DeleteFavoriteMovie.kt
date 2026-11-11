@@ -6,6 +6,6 @@ import javax.inject.Inject
 class DeleteFavoriteMovie @Inject constructor(
     private val localStorageRepository: LocalStorageRepository
 ) {
-    suspend operator fun invoke(id: Long) =
-        localStorageRepository.deleteFavorite(id)
+    suspend operator fun invoke(slug: String) =
+        localStorageRepository.deleteFavorite(slug)
 }

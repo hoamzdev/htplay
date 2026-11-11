@@ -25,6 +25,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.adapter.MovieAdapter
 import com.htdev.movie.htplay.base.BaseActivity
@@ -46,6 +47,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -137,7 +139,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun initViewModel() {
-        viewModel.initialize(intent.getStringExtra(EXTRA_MOVIE_SLUG).orEmpty())
+        viewModel.initialize(intent.getStringExtra(EXTRA_MOVIE_SLUG).orEmpty(), resources.configuration.locales[0].language)
     }
 
     override fun handleClickEvent(): Unit = with(binding) {
@@ -147,6 +149,18 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         }
         headerBinding.tvAbout.setOnClickListener { selectTab(showEpisodes = false) }
         headerBinding.tvEpisodes.setOnClickListener { selectTab(showEpisodes = true) }
+        headerBinding.serverTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val server = if (tab.position == 1) EpisodeServer.DUBBED else EpisodeServer.ORIGINAL
+                if (renderedState?.selectedServer == server) return
+                persistContinueWatching()
+                savePlaybackState()
+                viewModel.selectEpisodeServer(server)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) = Unit
+            override fun onTabReselected(tab: TabLayout.Tab) = Unit
+        })
         headerBinding.tvContent.setOnClickListener {
             isContentExpanded = !isContentExpanded
             updateContentExpansion()
@@ -169,20 +183,17 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun onDownloadMovie(){
-
+        //tai video o day
     }
 
     private fun onFavoriteMovie(){
-        detailMovie?.let {
-            viewModel.saveFavoriteMovie(it)
-            headerBinding.ivFavorite.setImageResource(R.drawable.ic_checked_favorite)
-            showToastApp("Added movie to favorite")
-        }
+        viewModel.toggleFavorite()
     }
 
     private fun selectTab(showEpisodes: Boolean) = with(headerBinding) {
         isShowingEpisodes = showEpisodes
         tvContent.isVisible = !showEpisodes
+        renderServerTabs()
         renderEpisodes()
         tvAbout.isSelected = !showEpisodes
         tvEpisodes.isSelected = showEpisodes
@@ -198,6 +209,18 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         // Recycle complete six-button rows without changing the list during a fling.
         val episodes = (renderedState?.episodes as? Result.Success)?.data.orEmpty()
         episodeAdapter.submitEpisodes(if (isShowingEpisodes) episodes else emptyList())
+    }
+
+    private fun renderServerTabs() = with(headerBinding.serverTabs) {
+        val state = renderedState
+        isVisible = isShowingEpisodes && state?.showServerTabs == true
+        if (state?.showServerTabs != true) return@with
+        getTabAt(0)?.view?.apply {
+            isEnabled = state.episodeServers.vietsub.any { it.linkM3u8.isNotBlank() }
+            alpha = if (isEnabled) 1f else 0.5f
+        }
+        val selectedIndex = if (state.selectedServer == EpisodeServer.DUBBED) 1 else 0
+        if (selectedTabPosition != selectedIndex) selectTab(getTabAt(selectedIndex))
     }
 
     private fun updateContentExpansion() = with(headerBinding.tvContent) {
@@ -291,8 +314,6 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         recommendationsBinding.rcMoreLikeThisCountry.scrollToPosition(0)
     }
 
-    private var detailMovie : DataMovieDetail? = null
-
     override fun observerData() {
         launchRepeatOnStarted {
             viewModel.uiState.collect { state -> bindState(state) }
@@ -305,6 +326,23 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         // Reset and bind from the same snapshot, even when loading finishes before it is drawn.
         if (previous != null && movieChanged) resetMovieContent()
         renderedState = state
+        renderServerTabs()
+
+        headerBinding.ivFavorite.apply {
+            setImageResource(if (state.isMovieFavorite == true) R.drawable.ic_checked_favorite else R.drawable.iv_favo)
+            isEnabled = state.detail is Result.Success && state.isMovieFavorite != null && !state.isUpdatingFavorite
+        }
+        when (val change = state.favoriteChange) {
+            is Result.Success -> {
+                showToastApp(getString(if (change.data) R.string.detail_favorite_added else R.string.detail_favorite_removed))
+                viewModel.clearFavoriteChange()
+            }
+            is Result.Error -> {
+                showToastApp(getString(R.string.detail_favorite_error))
+                viewModel.clearFavoriteChange()
+            }
+            else -> Unit
+        }
 
         if (movieChanged || previous.detail != state.detail) {
             when (val result = state.detail) {
@@ -313,7 +351,8 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 Result.Idle, Result.Loading -> headerBinding.tvContent.setText(R.string.loading)
             }
         }
-        if (movieChanged || previous.episodes != state.episodes) {
+        val serverChanged = !movieChanged && previous?.selectedServer != state.selectedServer
+        if (movieChanged || serverChanged || previous.episodes != state.episodes) {
             when (val result = state.episodes) {
                 is Result.Success -> {
                     val episodes = result.data
@@ -330,8 +369,12 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                         showPlaybackMessage(R.string.detail_no_playable_episodes)
                     } else if (episode != selectedEpisode) {
                         val saved = state.continueWatching
-                        val resumePosition = if (selectedEpisode == null && saved != null &&
-                            episodes.getOrNull(saved.currentEpisode) == episode) saved.positionContinue else 0L
+                        val resumePosition = when {
+                            serverChanged && episode.id == selectedEpisode?.id -> playbackPosition
+                            selectedEpisode == null && saved != null &&
+                                episodes.getOrNull(saved.currentEpisode) == episode -> saved.positionContinue
+                            else -> 0L
+                        }
                         playEpisode(episode, resumePosition)
                     }
                     episodeAdapter.selectedEpisodeId = selectedEpisode?.id
@@ -368,7 +411,6 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun bindDetail(movie: DataMovieDetail) = with(binding) {
-        detailMovie = movie
         tvNameMovie.text = movie.name
         headerBinding.tvStar.text = movie.vote
         headerBinding.tvYear.text = movie.year.takeIf { it > 0 }?.toString().orEmpty()
@@ -461,7 +503,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         prepareSelectedEpisode()
         progressSaveJob = lifecycleScope.launch {
             while (isActive) {
-                delay(5_000)
+                delay(5_000.milliseconds)
                 if (player?.isPlaying == true) persistContinueWatching()
             }
         }

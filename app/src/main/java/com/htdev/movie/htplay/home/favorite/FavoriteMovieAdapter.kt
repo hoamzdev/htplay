@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.annotations.Until
 import com.htdev.movie.htplay.databinding.ItemFavoriteBinding
 import com.htdev.movie.htplay.domain.entities.Favorite
 import com.htdev.movie.htplay.util.loadPoster
@@ -13,7 +12,7 @@ import com.htdev.movie.htplay.widget.onClickListener
 
 class FavoriteMovieAdapter(
     val onClickMovie: (String) -> Unit,
-    val onDeleteFavorite: () -> Until
+    val onDeleteFavorite: (String) -> Unit
 ) :
     ListAdapter<Favorite, FavoriteMovieAdapter.FavoriteMovieViewHolder>(diffUtil) {
 
@@ -43,7 +42,10 @@ class FavoriteMovieAdapter(
                 onClickMovie.invoke(item.slugMovie)
             }
             binding.ivCheckedFavorite.onClickListener {
-                onDeleteFavorite()
+                val position = bindingAdapterPosition
+                if(position == RecyclerView.NO_POSITION) return@onClickListener
+                val item = getItem(position)
+                onDeleteFavorite.invoke(item.slugMovie)
             }
         }
 
@@ -60,7 +62,7 @@ class FavoriteMovieAdapter(
             override fun areItemsTheSame(
                 oldItem: Favorite,
                 newItem: Favorite
-            ) = newItem.id == oldItem.id
+            ) = newItem.slugMovie == oldItem.slugMovie
 
             override fun areContentsTheSame(
                 oldItem: Favorite,

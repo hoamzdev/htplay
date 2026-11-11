@@ -140,4 +140,9 @@
     <string name="hello_blank_fragment">Xin chào, fragment trống</string>
     <string name="no_result_found">Không tìm thấy kết quả</string>
     <string name="we_can_t_find_any_item_matching_your_search">Không tìm thấy phim nào phù hợp với tìm kiếm của bạn</string>
+    <string name="detail_favorite_added">Đã thêm phim vào yêu thích</string>
+    <string name="detail_favorite_removed">Đã bỏ phim khỏi yêu thích</string>
+    <string name="detail_favorite_error">Không thể cập nhật yêu thích. Vui lòng thử lại.</string>
+    <string name="detail_server_original">Không lồng tiếng</string>
+    <string name="detail_server_dubbed">Lồng tiếng</string>
 </resources>

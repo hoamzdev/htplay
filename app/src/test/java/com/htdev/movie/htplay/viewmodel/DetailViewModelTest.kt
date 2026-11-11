@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
 import com.htdev.movie.htplay.detail.DetailUiState
 import com.htdev.movie.htplay.detail.DetailViewModel
+import com.htdev.movie.htplay.detail.EpisodeServer
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.DataMovieDetail
 import com.htdev.movie.htplay.domain.entities.ContinueWatching
+import com.htdev.movie.htplay.domain.entities.Favorite
 import com.htdev.movie.htplay.domain.entities.DataMoviePlayer
 import com.htdev.movie.htplay.domain.entities.MoviePlayer
 import com.htdev.movie.htplay.domain.entities.PosterMovie
@@ -17,6 +19,8 @@ import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByCountry
 import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByGenres
 import com.htdev.movie.htplay.domain.usecase.movie.GetListContinueWatching
 import com.htdev.movie.htplay.domain.usecase.movie.SaveContinueWatching
+import com.htdev.movie.htplay.domain.usecase.movie.CheckMovieExistsInFavorite
+import com.htdev.movie.htplay.domain.usecase.movie.ToggleFavoriteMovie
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CompletableDeferred
@@ -524,6 +528,211 @@ class DetailViewModelTest {
         assertEquals(1_000L, storage.saved.single().positionContinue)
     }
 
+    @Test fun favoriteTracksDatabaseChangesAndTheMovieSelectedThroughBack() = runTest {
+        val storage = FakeLocalStorageRepository().apply {
+            favorites.value = listOf(Favorite(name = "First", slugMovie = "first", genre = ""))
+        }
+        val viewModel = viewModel(DetailRepository(), storage = storage)
+        viewModel.initialize("first")
+        advanceUntilIdle()
+        assertEquals(true, viewModel.uiState.value.isMovieFavorite)
+
+        viewModel.openMovie("second")
+        assertNull(viewModel.uiState.value.isMovieFavorite)
+        advanceUntilIdle()
+        assertEquals(false, viewModel.uiState.value.isMovieFavorite)
+        storage.favorites.value = emptyList()
+        advanceUntilIdle()
+        assertTrue(viewModel.goBack())
+        advanceUntilIdle()
+        assertEquals(false, viewModel.uiState.value.isMovieFavorite)
+
+        storage.favorites.value = listOf(Favorite(name = "First", slugMovie = "first", genre = ""))
+        advanceUntilIdle()
+        assertEquals(true, viewModel.uiState.value.isMovieFavorite)
+    }
+
+    @Test fun favoriteTogglesBySlugAndNeverWritesWhileNextMovieIsLoading() = runTest {
+        val storage = FakeLocalStorageRepository()
+        val viewModel = viewModel(DetailRepository(), storage = storage)
+        viewModel.initialize("current")
+        advanceUntilIdle()
+        viewModel.toggleFavorite()
+        viewModel.toggleFavorite()
+        advanceUntilIdle()
+        assertEquals(1, storage.favoriteToggles.size)
+        assertEquals("current", storage.favorites.value.single().slugMovie)
+        assertEquals(true, viewModel.uiState.value.isMovieFavorite)
+        assertEquals(Result.Success(true), viewModel.uiState.value.favoriteChange)
+        viewModel.clearFavoriteChange()
+        assertEquals(Result.Idle, viewModel.uiState.value.favoriteChange)
+
+        viewModel.toggleFavorite()
+        advanceUntilIdle()
+        assertTrue(storage.favorites.value.isEmpty())
+        assertEquals(2, storage.favoriteToggles.size)
+        assertEquals(false, viewModel.uiState.value.isMovieFavorite)
+        assertEquals(Result.Success(false), viewModel.uiState.value.favoriteChange)
+
+        viewModel.openMovie("next")
+        viewModel.toggleFavorite()
+        advanceUntilIdle()
+        assertEquals(2, storage.favoriteToggles.size)
+        assertEquals(false, viewModel.uiState.value.isMovieFavorite)
+    }
+
+    @Test fun favoriteDoesNotChangeOrReportSuccessWhenTheWriteFails() = runTest {
+        val storage = FakeLocalStorageRepository().apply {
+            toggle = { throw IllegalStateException("Database unavailable") }
+        }
+        val viewModel = viewModel(DetailRepository(), storage = storage)
+        viewModel.initialize("current")
+        advanceUntilIdle()
+        viewModel.toggleFavorite()
+        advanceUntilIdle()
+
+        assertEquals(false, viewModel.uiState.value.isMovieFavorite)
+        assertTrue(viewModel.uiState.value.favoriteChange is Result.Error)
+        assertFalse(viewModel.uiState.value.isUpdatingFavorite)
+        assertTrue(storage.favorites.value.isEmpty())
+    }
+
+    @Test fun pendingFavoriteWriteCannotChangeTheNextMoviesIconOrShowAnOldSuccess() = runTest {
+        val write = CompletableDeferred<Unit>()
+        val storage = FakeLocalStorageRepository()
+        val originalToggle = storage.toggle
+        storage.toggle = { favorite ->
+            write.await()
+            originalToggle(favorite)
+        }
+        val viewModel = viewModel(DetailRepository(), storage = storage)
+        viewModel.initialize("first")
+        advanceUntilIdle()
+        viewModel.toggleFavorite()
+        runCurrent()
+        assertTrue(viewModel.uiState.value.isUpdatingFavorite)
+        assertEquals(false, viewModel.uiState.value.isMovieFavorite)
+        viewModel.openMovie("second")
+        runCurrent()
+        assertTrue(viewModel.uiState.value.isUpdatingFavorite)
+        viewModel.toggleFavorite()
+        write.complete(Unit)
+        advanceUntilIdle()
+
+        assertEquals("first", storage.favoriteToggles.single().slugMovie)
+        assertEquals("first", storage.favorites.value.single().slugMovie)
+        assertEquals(false, viewModel.uiState.value.isMovieFavorite)
+        assertFalse(viewModel.uiState.value.isUpdatingFavorite)
+        assertEquals(Result.Idle, viewModel.uiState.value.favoriteChange)
+        assertTrue(viewModel.goBack())
+        advanceUntilIdle()
+        assertEquals(true, viewModel.uiState.value.isMovieFavorite)
+    }
+
+    @Test fun vietnameseCanSelectEachServerWithoutMixingTheirEpisodeLinks() = runTest {
+        val original = listOf(MoviePlayer("tap-1", "original-1"), MoviePlayer("tap-2", ""))
+        val dubbed = listOf(MoviePlayer("tap-1", "dubbed-1"), MoviePlayer("tap-2", "dubbed-2"))
+        val repository = DetailRepository().apply {
+            player = { Result.Success(DataMoviePlayer(vietsub = original, longtieng = dubbed)) }
+        }
+        val viewModel = viewModel(repository)
+        viewModel.initialize("current", "vi-VN")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.showServerTabs)
+        assertEquals(EpisodeServer.ORIGINAL, viewModel.uiState.value.selectedServer)
+        assertEquals(original, (viewModel.uiState.value.episodes as Result.Success).data)
+        viewModel.selectEpisodeServer(EpisodeServer.DUBBED)
+        assertEquals(dubbed, (viewModel.uiState.value.episodes as Result.Success).data)
+        assertEquals(EpisodeServer.DUBBED, viewModel.uiState.value.selectedServer)
+        viewModel.selectEpisodeServer(EpisodeServer.ORIGINAL)
+        assertEquals(original, (viewModel.uiState.value.episodes as Result.Success).data)
+        assertEquals(listOf("current"), repository.playerRequests)
+    }
+
+    @Test fun vietnameseHidesBothServerTabsWhenDubbedEpisodesAreMissingOrUnplayable() = runTest {
+        for (dubbed in listOf(emptyList(), listOf(MoviePlayer("tap-1", "  ")))) {
+            val original = listOf(MoviePlayer("tap-1", "original"))
+            val repository = DetailRepository().apply {
+                player = { Result.Success(DataMoviePlayer(vietsub = original, longtieng = dubbed)) }
+            }
+            val viewModel = viewModel(repository)
+            viewModel.initialize("current", "vi")
+            advanceUntilIdle()
+
+            assertFalse(viewModel.uiState.value.showServerTabs)
+            viewModel.selectEpisodeServer(EpisodeServer.DUBBED)
+            assertEquals(EpisodeServer.ORIGINAL, viewModel.uiState.value.selectedServer)
+            assertEquals(original, (viewModel.uiState.value.episodes as Result.Success).data)
+        }
+    }
+
+    @Test fun otherLanguagesKeepTheExistingEpisodeFallbackAndNeverShowServerTabs() = runTest {
+        for (language in listOf("en", "ko", "fr", "zh")) {
+            val original = MoviePlayer("tap-1", "original")
+            val dubbed = MoviePlayer("tap-2", "dubbed")
+            val repository = DetailRepository().apply {
+                player = {
+                    Result.Success(DataMoviePlayer(
+                        vietsub = listOf(original, MoviePlayer("tap-2", "")),
+                        longtieng = listOf(MoviePlayer("tap-1", "dubbed-1"), dubbed),
+                    ))
+                }
+            }
+            val viewModel = viewModel(repository)
+            viewModel.initialize("current", language)
+            advanceUntilIdle()
+
+            assertFalse(viewModel.uiState.value.showServerTabs)
+            viewModel.selectEpisodeServer(EpisodeServer.DUBBED)
+            assertEquals(listOf(original, dubbed), (viewModel.uiState.value.episodes as Result.Success).data)
+        }
+    }
+
+    @Test fun selectedServerIsRestoredButResetsWhenAnotherMovieIsOpened() = runTest {
+        val savedState = SavedStateHandle()
+        val repository = DetailRepository().apply {
+            player = { slug ->
+                Result.Success(DataMoviePlayer(
+                    vietsub = listOf(MoviePlayer("tap-1", "$slug-original")),
+                    longtieng = listOf(MoviePlayer("tap-1", "$slug-dubbed")),
+                ))
+            }
+        }
+        val original = viewModel(repository, savedState)
+        original.initialize("first", "vi")
+        advanceUntilIdle()
+        original.selectEpisodeServer(EpisodeServer.DUBBED)
+        val restoredState = SavedStateHandle(savedState.keys().associateWith { savedState.get<Any?>(it) })
+        val restored = viewModel(repository, restoredState)
+        restored.initialize("first", "vi")
+        advanceUntilIdle()
+
+        assertEquals(EpisodeServer.DUBBED, restored.uiState.value.selectedServer)
+        assertEquals("first-dubbed", (restored.uiState.value.episodes as Result.Success).data.single().linkM3u8)
+        restored.openMovie("second")
+        assertFalse(restored.uiState.value.showServerTabs)
+        advanceUntilIdle()
+        assertEquals(EpisodeServer.ORIGINAL, restored.uiState.value.selectedServer)
+        assertEquals("second-original", (restored.uiState.value.episodes as Result.Success).data.single().linkM3u8)
+    }
+
+    @Test fun vietnameseUsesDubbedWhenItIsTheOnlyPlayableServer() = runTest {
+        val dubbed = listOf(MoviePlayer("full", "dubbed"))
+        val repository = DetailRepository().apply {
+            player = { Result.Success(DataMoviePlayer(longtieng = dubbed)) }
+        }
+        val viewModel = viewModel(repository)
+        viewModel.initialize("current", "vi")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.showServerTabs)
+        assertEquals(EpisodeServer.DUBBED, viewModel.uiState.value.selectedServer)
+        viewModel.selectEpisodeServer(EpisodeServer.ORIGINAL)
+        assertEquals(dubbed, (viewModel.uiState.value.episodes as Result.Success).data)
+        assertEquals(EpisodeServer.DUBBED, viewModel.uiState.value.selectedServer)
+    }
+
     private fun viewModel(
         repository: MovieRepository,
         savedStateHandle: SavedStateHandle = SavedStateHandle(),
@@ -532,7 +741,7 @@ class DetailViewModelTest {
     ) = DetailViewModel(
         GetMovieDetail(repository), GetDataMoviePlayer(repository), GetMoviesByGenres(repository),
         GetMoviesByCountry(repository), savedStateHandle, GetListContinueWatching(storage),
-        SaveContinueWatching(storage), saveScope,
+        SaveContinueWatching(storage), ToggleFavoriteMovie(storage), CheckMovieExistsInFavorite(storage), saveScope,
     )
 
     private fun movie(slug: String) = PosterMovie(slug, "poster", slug, slug, "", "thumb")

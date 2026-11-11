@@ -27,6 +27,10 @@ class LocalStorageRepositoryImpl @Inject constructor(
             .getInt(ConstantKey.TAB_SEARCH_CURRENT, -1)
     }
 
+    override fun isExistsInFavorite(slug : String): Flow<Boolean> {
+        return favoriteDao.checkMovieExistsFavorite(slug)
+    }
+
     override fun saveCurrentTabSearch(idTab: Int) {
         sharedPreferences.edit {
             putInt(ConstantKey.TAB_SEARCH_CURRENT, idTab)
@@ -53,12 +57,16 @@ class LocalStorageRepositoryImpl @Inject constructor(
             .map { it -> it.map { it.mapToDomain() } }
     }
 
-    override suspend fun saveFavorite(favorite: Favorite) {
-        favoriteDao.saveFavoriteMovie(favorite.mapToDB())
+    override suspend fun saveFavorite(favorite: Favorite): Boolean {
+        return favoriteDao.saveFavoriteMovie(favorite.mapToDB()) != -1L
     }
 
-    override suspend fun deleteFavorite(id: Long) {
-        favoriteDao.deleteFavorite(id)
+    override suspend fun deleteFavorite(slug: String) {
+        favoriteDao.deleteFavorite(slug)
+    }
+
+    override suspend fun toggleFavorite(favorite: Favorite): Boolean {
+        return favoriteDao.toggleFavorite(favorite.mapToDB())
     }
 
     override fun getListFavorites(): Flow<List<Favorite>> {

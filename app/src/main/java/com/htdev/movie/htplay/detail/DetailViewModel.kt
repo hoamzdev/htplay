@@ -9,6 +9,7 @@ import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.common.map
 import com.htdev.movie.htplay.domain.entities.DataMovieDetail
 import com.htdev.movie.htplay.domain.entities.ContinueWatching
+import com.htdev.movie.htplay.domain.entities.DataMoviePlayer
 import com.htdev.movie.htplay.domain.entities.MoviePlayer
 import com.htdev.movie.htplay.domain.entities.PosterMovie
 import com.htdev.movie.htplay.domain.usecase.movie.GetDataMoviePlayer
@@ -18,7 +19,8 @@ import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByGenres
 import com.htdev.movie.htplay.domain.usecase.movie.GetListContinueWatching
 import com.htdev.movie.htplay.domain.usecase.movie.SaveContinueWatching
 import com.htdev.movie.htplay.di.ApplicationScope
-import com.htdev.movie.htplay.domain.usecase.movie.SaveFavoriteMovie
+import com.htdev.movie.htplay.domain.usecase.movie.CheckMovieExistsInFavorite
+import com.htdev.movie.htplay.domain.usecase.movie.ToggleFavoriteMovie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -27,18 +29,27 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+enum class EpisodeServer { ORIGINAL, DUBBED }
+
 data class DetailUiState(
     val movieSlug: String = "",
     val detail: Result<DataMovieDetail> = Result.Idle,
     val episodes: Result<List<MoviePlayer>> = Result.Idle,
+    val episodeServers: DataMoviePlayer = DataMoviePlayer(),
+    val selectedServer: EpisodeServer = EpisodeServer.ORIGINAL,
+    val showServerTabs: Boolean = false,
     val moreLikeThis: Result<List<PosterMovie>> = Result.Idle,
     val countryMovies: Result<List<PosterMovie>> = Result.Idle,
     val continueWatching: ContinueWatching? = null,
+    val isMovieFavorite: Boolean? = null,
+    val isUpdatingFavorite: Boolean = false,
+    val favoriteChange: Result<Boolean> = Result.Idle,
 )
 
 @HiltViewModel
@@ -50,23 +61,27 @@ class DetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getListContinueWatching: GetListContinueWatching,
     private val saveContinueWatching: SaveContinueWatching,
-    private val saveFavoriteMovie: SaveFavoriteMovie,
+    private val toggleFavoriteMovie: ToggleFavoriteMovie,
+    private val checkMovieExistsInFavorite: CheckMovieExistsInFavorite,
     @ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState = _uiState.asStateFlow()
 
     private var initialized = false
+    private var serverSelectionAllowed = false
     private var loadJob: Job? = null
     private var pendingSave: Job? = null
+    private var favoriteJob: Job? = null
     private var lastSavedProgress: ContinueWatching? = null
     private val currentSlug: String?
         get() = savedStateHandle[STATE_CURRENT_SLUG]
 
-    fun initialize(movieSlug: String) {
+    fun initialize(movieSlug: String, language: String = "en") {
         if (initialized) return
         initialized = true
-        loadMovie(currentSlug ?: movieSlug.trim())
+        serverSelectionAllowed = language.substringBefore('-').substringBefore('_').equals("vi", true)
+        loadMovie(currentSlug ?: movieSlug.trim(), restoreServer = true)
     }
 
     fun openMovie(movieSlug: String): Boolean {
@@ -121,8 +136,22 @@ class DetailViewModel @Inject constructor(
         }.also { pendingSave = it }
     }
 
-    private fun loadMovie(slug: String) {
+    fun selectEpisodeServer(server: EpisodeServer) {
+        val state = _uiState.value
+        if (!state.showServerTabs || state.selectedServer == server) return
+        val episodes = state.episodeServers.episodesFor(server)
+        if (episodes.none { it.linkM3u8.isNotBlank() }) return
+        savedStateHandle[STATE_CURRENT_SERVER] = server.name
+        _uiState.update { it.copy(selectedServer = server, episodes = Result.Success(episodes)) }
+    }
+
+    private fun loadMovie(slug: String, restoreServer: Boolean = false) {
         loadJob?.cancel()
+        val preferredServer = if (restoreServer) {
+            EpisodeServer.entries.firstOrNull { it.name == savedStateHandle.get<String>(STATE_CURRENT_SERVER) }
+                ?: EpisodeServer.ORIGINAL
+        } else EpisodeServer.ORIGINAL
+        savedStateHandle[STATE_CURRENT_SERVER] = preferredServer.name
         savedStateHandle[STATE_CURRENT_SLUG] = slug
         if (slug.isEmpty()) {
             val error = Result.Error(IllegalArgumentException("Missing movie slug"))
@@ -138,6 +167,7 @@ class DetailViewModel @Inject constructor(
 
         _uiState.value = DetailUiState(
             movieSlug = slug,
+            isUpdatingFavorite = favoriteJob?.isActive == true,
             detail = Result.Loading,
             episodes = Result.Loading,
             moreLikeThis = Result.Loading,
@@ -145,16 +175,42 @@ class DetailViewModel @Inject constructor(
         )
         loadJob = viewModelScope.launch {
             launch {
+                checkMovieExistsInFavorite(slug)
+                    .catch { error ->
+                        _uiState.update { it.copy(favoriteChange = Result.Error(error)) }
+                    }
+                    .collect { isFavorite ->
+                        _uiState.update { it.copy(isMovieFavorite = isFavorite) }
+                    }
+            }
+            launch {
                 pendingSave?.join()
                 val saved = request {
                     Result.Success(getListContinueWatching().first().firstOrNull { it.slugMovie == slug })
                 }
-                val episodes = request { getDataMoviePlayer(slug) }.map { player ->
-                    (player.vietsub + player.longtieng).groupBy { it.id }.values.map { versions ->
-                        versions.firstOrNull { it.linkM3u8.isNotBlank() } ?: versions.first()
-                    }
+                val playerResult = request { getDataMoviePlayer(slug) }.map { player ->
+                    player.copy(vietsub = player.vietsub.uniqueEpisodes(), longtieng = player.longtieng.uniqueEpisodes())
                 }
-                _uiState.update { it.copy(episodes = episodes, continueWatching = (saved as? Result.Success)?.data) }
+                val servers = (playerResult as? Result.Success)?.data ?: DataMoviePlayer()
+                val hasDubbed = servers.longtieng.any { it.linkM3u8.isNotBlank() }
+                val selectedServer = if (serverSelectionAllowed && hasDubbed &&
+                    (preferredServer == EpisodeServer.DUBBED || servers.vietsub.none { it.linkM3u8.isNotBlank() })) {
+                    EpisodeServer.DUBBED
+                } else EpisodeServer.ORIGINAL
+                val episodes = playerResult.map { player ->
+                    if (serverSelectionAllowed) player.episodesFor(selectedServer)
+                    else (player.vietsub + player.longtieng).uniqueEpisodes()
+                }
+                savedStateHandle[STATE_CURRENT_SERVER] = selectedServer.name
+                _uiState.update {
+                    it.copy(
+                        episodes = episodes,
+                        episodeServers = servers,
+                        selectedServer = selectedServer,
+                        showServerTabs = serverSelectionAllowed && hasDubbed,
+                        continueWatching = (saved as? Result.Success)?.data,
+                    )
+                }
             }
             val result = request { getMovieDetail(slug) }
             _uiState.update { it.copy(detail = result) }
@@ -202,6 +258,14 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    private fun DataMoviePlayer.episodesFor(server: EpisodeServer): List<MoviePlayer> =
+        if (server == EpisodeServer.DUBBED) longtieng else vietsub
+
+    private fun List<MoviePlayer>.uniqueEpisodes(): List<MoviePlayer> =
+        groupBy { it.id }.values.map { versions ->
+            versions.firstOrNull { it.linkM3u8.isNotBlank() } ?: versions.first()
+        }
+
     private fun List<PosterMovie>.otherMovies(movie: DataMovieDetail, requestedSlug: String): List<PosterMovie> =
         filterNot {
             it.slug == requestedSlug || (movie.slug.isNotBlank() && it.slug == movie.slug) ||
@@ -218,17 +282,33 @@ class DetailViewModel @Inject constructor(
     }
 
 
-    fun saveFavoriteMovie(detail : DataMovieDetail){
-        val favoriteModel = detail.mapToFavorite()
-        viewModelScope.launch {
-            saveFavoriteMovie.invoke(favoriteModel)
+    fun toggleFavorite() {
+        val state = _uiState.value
+        val movie = (state.detail as? Result.Success)?.data ?: return
+        if (state.isMovieFavorite == null || favoriteJob?.isActive == true) return
+        val favorite = movie.mapToFavorite().copy(slugMovie = state.movieSlug)
+        _uiState.update { it.copy(isUpdatingFavorite = true, favoriteChange = Result.Idle) }
+        favoriteJob = viewModelScope.launch {
+            try {
+                val result = request { Result.Success(toggleFavoriteMovie(favorite)) }
+                _uiState.update {
+                    if (it.movieSlug == state.movieSlug) it.copy(favoriteChange = result) else it
+                }
+            } finally {
+                _uiState.update { it.copy(isUpdatingFavorite = false) }
+            }
         }
+    }
+
+    fun clearFavoriteChange() {
+        _uiState.update { it.copy(favoriteChange = Result.Idle) }
     }
 
     private companion object {
         const val RELATED_MOVIES_LIMIT = 20
         const val HISTORY_LIMIT = 5 // Previous movies; the current movie is stored separately.
         const val STATE_CURRENT_SLUG = "detail_current_slug"
+        const val STATE_CURRENT_SERVER = "detail_current_server"
         const val STATE_HISTORY = "detail_history"
     }
 }
