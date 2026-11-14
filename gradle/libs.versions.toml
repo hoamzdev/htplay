@@ -45,6 +45,7 @@ navigationUiKtx = "2.10.2"
 fragment = "1.9.1"
 
 [libraries]
+androidx-media3-database = { module = "androidx.media3:media3-database", version.ref = "media3" }
 blurview-vversion310 = { module = "com.github.Dimezis:BlurView", version.ref = "blurviewVersion" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }

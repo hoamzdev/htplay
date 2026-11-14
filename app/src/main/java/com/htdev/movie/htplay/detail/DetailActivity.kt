@@ -37,6 +37,7 @@ import com.htdev.movie.htplay.domain.entities.DataMovieDetail
 import com.htdev.movie.htplay.domain.entities.MoviePlayer
 import com.htdev.movie.htplay.domain.entities.PosterMovie
 import com.htdev.movie.htplay.entities.ItemMovie
+import com.htdev.movie.htplay.home.download.DownloadViewModel
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
@@ -45,6 +46,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -53,6 +55,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @androidx.annotation.OptIn(UnstableApi::class)
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
+    private val downloadViewModel : DownloadViewModel by viewModels()
     private val episodeAdapter = EpisodeAdapter()
     private lateinit var headerBinding: ItemDetailHeaderBinding
     private lateinit var recommendationsBinding: ItemDetailRecommendationsBinding
@@ -182,8 +185,16 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         }
     }
 
-    private fun onDownloadMovie(){
-        //tai video o day
+    private fun onDownloadMovie() {
+        val episode = selectedEpisode ?: return
+        if (episode.linkM3u8.isBlank()) return
+        runCatching {
+            downloadViewModel.downloadEpisode(episode.linkM3u8.trim(), "${binding.tvNameMovie.text} - ${episode.id}")
+        }.onSuccess {
+            showToastApp("Đã thêm vào mục Tải xuống")
+        }.onFailure {
+            showToastApp("Không thể tải: ${it.message}")
+        }
     }
 
     private fun onFavoriteMovie(){
@@ -465,7 +476,11 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     override fun onStart() {
         super.onStart()
-        player = ExoPlayer.Builder(this).build().also { currentPlayer ->
+        player = ExoPlayer.Builder(this).setMediaSourceFactory(
+            androidx.media3.exoplayer.source.DefaultMediaSourceFactory(
+                com.htdev.movie.htplay.home.download.OfflineDownloads.dataSource(this)
+            )
+        ).build().also { currentPlayer ->
             currentPlayer.setAudioAttributes(
                 AudioAttributes.Builder()
                     .setUsage(C.USAGE_MEDIA)

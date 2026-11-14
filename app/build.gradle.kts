@@ -104,9 +104,11 @@ dependencies {
     implementation(libs.gson)
 
     // StoriesRecyclerView
+
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.exoplayer.hls)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.database)
     implementation(libs.koin.android)
 
     // ViewModel and LiveData

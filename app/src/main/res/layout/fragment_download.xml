@@ -1,14 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_color"
     tools:context=".home.download.DownloadFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/logo_app"
+        android:layout_width="@dimen/size28"
+        android:layout_height="@dimen/size28"
+        android:layout_marginStart="@dimen/size16"
+        android:layout_marginTop="@dimen/size50"
+        android:alpha="1"
+        app:cardCornerRadius="@dimen/size8"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.38"
+        app:strokeColor="@android:color/transparent"
+        app:strokeWidth="0dp">
+
+        <ImageView
+            android:layout_width="@dimen/size28"
+            android:layout_height="@dimen/size28"
+            android:contentDescription="@null"
+            android:src="@drawable/logo" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <TextView
+        android:id="@+id/tv_downloads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size20"
+        android:fontFamily="@font/font_figtree_regular"
+        android:includeFontPadding="false"
+        android:text="Download"
+        android:textColor="@color/white"
+        android:textSize="@dimen/size18"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/logo_app"
+        app:layout_constraintStart_toEndOf="@id/logo_app"
+        app:layout_constraintTop_toTopOf="@id/logo_app" />
+
+    <ImageView
+        android:id="@+id/iv_search"
+        android:layout_width="@dimen/size26"
+        android:layout_height="@dimen/size26"
+        android:layout_marginEnd="@dimen/size20"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_search"
+        app:layout_constraintBottom_toBottomOf="@id/logo_app"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/logo_app" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edt_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size10"
+        android:layout_marginEnd="@dimen/size8"
+        android:background="@drawable/bg_fr_search"
+        android:ellipsize="end"
+        android:fontFamily="@font/font_poppins_regular"
+        android:hint="@string/search_hint"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingHorizontal="@dimen/size14"
+        android:paddingVertical="@dimen/size10"
+        android:paddingStart="@dimen/size8"
+        android:paddingEnd="@dimen/size30"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/gray_color"
+        android:textSize="@dimen/sizesp14"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/logo_app"
+        app:layout_constraintEnd_toStartOf="@id/iv_search"
+        app:layout_constraintStart_toEndOf="@id/logo_app"
+        app:layout_constraintTop_toTopOf="@id/logo_app" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rc_download"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/size30"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:paddingBottom="@dimen/size20"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_search"
+        tools:listitem="@layout/item_download" />
+
+    <LinearLayout
+        android:id="@+id/ll_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/iv_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You're not download any movies yet."
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:fontFamily="@font/font_figtree_regular"
+            android:textSize="@dimen/size16"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_watch_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watch popular movies"
+            android:textAllCaps="false"
+            android:background="@drawable/bgr_buton_primary"
+            android:paddingHorizontal="@dimen/size16"
+            android:textColor="@color/white"
+            android:fontFamily="@font/font_figtree_bold"
+            android:textSize="@dimen/size16"
+            android:layout_marginTop="@dimen/size20"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ln_empty_search"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/background_color"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingBottom="@dimen/size50"
+        android:layout_marginTop="@dimen/size30"
+        app:layout_constraintTop_toBottomOf="@id/iv_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:layout_width="@dimen/size100"
+            android:layout_height="@dimen/size100"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_empty"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_result_found"
+            android:fontFamily="@font/font_poppins_regular"
+            android:textSize="@dimen/sizesp16"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/we_can_t_find_any_item_matching_your_search"
+            android:fontFamily="@font/font_figtree_medium"
+            android:textSize="@dimen/sizesp14"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pg_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/primary_color"
+        android:progressTint="@color/primary_color"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
