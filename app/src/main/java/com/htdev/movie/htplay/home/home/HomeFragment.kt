@@ -34,7 +34,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @AndroidEntryPoint
@@ -48,6 +50,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             updatePosterIndicator(position)
         }
     }
+
+    private var scrollToRight : Boolean = true
 
     private val posterHomeAdapter = PosterHomeAdapter(
         onMovieClick = { movie ->
@@ -139,6 +143,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 viewModel.fetchMoviesByPage()
             }
         }
+        autoScrollBanner()
         binding.rcMain.apply {
             layoutManager = GridLayoutManager(requireContext(), 3).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -158,6 +163,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
         binding.rcMain.itemAnimator = null
         homeAdapter.registerAdapterDataObserver(homeSectionsObserver)
+    }
+
+    private fun autoScrollBanner() {
+        launchRepeatOnStarted {
+            while (true) {
+                delay(3000.milliseconds)
+                val pager = binding.vpPoster
+                // The list loads asynchronously and can change after this loop starts.
+                val lastIndex = posterHomeAdapter.itemCount - 1
+                if (lastIndex < 1 || pager.scrollState != ViewPager2.SCROLL_STATE_IDLE) continue
+
+                val currentIndex = pager.currentItem.coerceIn(0, lastIndex)
+                scrollToRight = when (currentIndex) {
+                    0 -> true
+                    lastIndex -> false
+                    else -> scrollToRight
+                }
+                pager.setCurrentItem(currentIndex + if (scrollToRight) 1 else -1, true)
+            }
+        }
     }
 
     private fun handleNavToShowAllSector(source: HomeViewAllTarget){

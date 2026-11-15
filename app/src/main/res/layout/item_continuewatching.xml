@@ -37,7 +37,7 @@
                 android:progress="20"
                 android:max="100"
                 app:indicatorColor="@color/white"
-                app:trackColor="@android:color/transparent"
+                app:trackColor="@color/background_color"
                 app:trackThickness="@dimen/size4"
                 app:trackCornerRadius="@dimen/size10"
                 app:indicatorTrackGapSize="0dp"

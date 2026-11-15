@@ -2,6 +2,7 @@ package com.htdev.movie.htplay.home.download
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.htdev.movie.htplay.util.searchKey
 
 internal data class DownloadMetadata(
     val title: String,
@@ -9,6 +10,12 @@ internal data class DownloadMetadata(
     val movieSlug: String? = null,
     val posterUrl: String? = null,
 ) {
+    fun matchesSearch(query: String, episodeLabel: String): Boolean {
+        val key = query.searchKey()
+        return title.searchKey().contains(key) || movieSlug.orEmpty().searchKey().contains(key) ||
+            episodeLabel.searchKey().contains(key)
+    }
+
     fun toByteArray(): ByteArray = JsonObject().apply {
         addProperty("title", title)
         addProperty("episodeNumber", requireNotNull(episodeNumber).also { require(it > 0) })

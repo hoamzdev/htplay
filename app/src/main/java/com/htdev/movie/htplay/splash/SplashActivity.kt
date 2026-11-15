@@ -1,6 +1,7 @@
 package com.htdev.movie.htplay.splash
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.Choreographer
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -9,8 +10,10 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivitySplashBinding
+import com.htdev.movie.htplay.home.HomeRouterActivity
 import com.htdev.movie.htplay.intro.IntroActivity
 import com.htdev.movie.htplay.language.LanguageActivity
+import com.htdev.movie.htplay.util.SharePref
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +68,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         launchRepeatOnStarted {
             delay(5000.milliseconds)
             withContext(Dispatchers.Main){
-                newActivity(dist = LanguageActivity::class.java)
+                if(SharePref.init(this@SplashActivity).getOpenCountApp() == 0){
+                    newActivity(dist = LanguageActivity::class.java)
+                }
+                else{
+                    newActivity(HomeRouterActivity::class.java)
+                }
                 finishAffinity()
             }
         }

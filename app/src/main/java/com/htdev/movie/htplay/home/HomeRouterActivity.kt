@@ -9,6 +9,7 @@ import androidx.navigation.navOptions
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.AuthenticatedActivity
 import com.htdev.movie.htplay.databinding.ActivityHomeRouterBinding
+import com.htdev.movie.htplay.util.SharePref
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,6 +41,7 @@ class HomeRouterActivity : AuthenticatedActivity<ActivityHomeRouterBinding>() {
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHost.navController
         handleNavRouter()
+        SharePref.init(this).countOpenApp()
     }
 
     private fun handleNavRouter() {

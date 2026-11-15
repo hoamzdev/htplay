@@ -8,6 +8,7 @@ import com.htdev.movie.htplay.domain.common.map
 import com.htdev.movie.htplay.domain.entities.Favorite
 import com.htdev.movie.htplay.domain.usecase.movie.DeleteFavoriteMovie
 import com.htdev.movie.htplay.domain.usecase.movie.GetListFavoriteMovies
+import com.htdev.movie.htplay.util.searchKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,8 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import java.text.Normalizer
-import java.util.Locale
 
 data class FavoriteUiState(
     val favorites: Result<List<Favorite>> = Result.Loading,
@@ -84,14 +83,8 @@ class FavoriteMovieViewModel @Inject constructor(
         }
     }
 
-    private fun String.searchKey(): String = Normalizer.normalize(
-        lowercase(Locale.ROOT).replace('đ', 'd'), Normalizer.Form.NFD,
-    ).replace(DIACRITICS, "").replace('-', ' ').trim().replace(WHITESPACE, " ")
-
     private companion object {
         const val QUERY = "favorite_search_query"
         const val SEARCH_OPEN = "favorite_search_open"
-        val DIACRITICS = Regex("\\p{M}+")
-        val WHITESPACE = Regex("\\s+")
     }
 }
