@@ -140,4 +140,22 @@
     <string name="hello_blank_fragment">Hallo, leeres Fragment</string>
     <string name="no_result_found">Keine Ergebnisse gefunden</string>
     <string name="we_can_t_find_any_item_matching_your_search">Wir konnten keine Filme finden, die zu deiner Suche passen</string>
+    <string name="download_empty">Du hast noch keine Filme heruntergeladen.</string>
+    <string name="download_browse_movies">Beliebte Filme ansehen</string>
+    <string name="download_completed">Heruntergeladen</string>
+    <string name="download_failed">Download fehlgeschlagen</string>
+    <string name="download_progress">Wird heruntergeladen: %1$d%%</string>
+    <string name="download_removing">Wird gelöscht</string>
+    <string name="download_stopped">Angehalten</string>
+    <string name="download_queued">Wartet auf Download</string>
+    <string name="download_delete">Download löschen</string>
+    <string name="download_size_mb">%1$.1f MB</string>
+    <string name="download_added">Zu Downloads hinzugefügt</string>
+    <string name="download_start_error">Download konnte nicht gestartet werden. Bitte versuche es erneut.</string>
+    <string name="download_not_ready">Dieser Download ist noch nicht bereit.</string>
+    <string name="detail_favorite_added">Film zu Favoriten hinzugefügt</string>
+    <string name="detail_favorite_removed">Film aus Favoriten entfernt</string>
+    <string name="detail_favorite_error">Favoriten konnten nicht aktualisiert werden. Bitte versuche es erneut.</string>
+    <string name="detail_server_original">Originalton</string>
+    <string name="detail_server_dubbed">Synchronisiert</string>
 </resources>

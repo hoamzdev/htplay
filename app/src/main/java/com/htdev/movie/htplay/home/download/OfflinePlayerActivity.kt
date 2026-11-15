@@ -9,6 +9,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
+import com.htdev.movie.htplay.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,7 +35,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
             }
             if (!lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)) return@launch
             if (download?.state != Download.STATE_COMPLETED) {
-                Toast.makeText(this@OfflinePlayerActivity, "Bản tải chưa sẵn sàng", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@OfflinePlayerActivity, R.string.download_not_ready, Toast.LENGTH_SHORT).show()
                 finish()
                 return@launch
             }

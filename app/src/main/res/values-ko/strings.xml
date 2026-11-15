@@ -140,4 +140,22 @@
     <string name="hello_blank_fragment">안녕하세요, 빈 프래그먼트입니다</string>
     <string name="no_result_found">검색 결과가 없습니다</string>
     <string name="we_can_t_find_any_item_matching_your_search">검색어와 일치하는 영화를 찾을 수 없습니다</string>
+    <string name="download_empty">아직 다운로드한 영화가 없습니다.</string>
+    <string name="download_browse_movies">인기 영화 보기</string>
+    <string name="download_completed">다운로드 완료</string>
+    <string name="download_failed">다운로드 실패</string>
+    <string name="download_progress">다운로드 중 %1$d%%</string>
+    <string name="download_removing">삭제 중</string>
+    <string name="download_stopped">중지됨</string>
+    <string name="download_queued">다운로드 대기 중</string>
+    <string name="download_delete">다운로드 삭제</string>
+    <string name="download_size_mb">%1$.1f MB</string>
+    <string name="download_added">다운로드에 추가했습니다</string>
+    <string name="download_start_error">다운로드를 시작할 수 없습니다. 다시 시도해 주세요.</string>
+    <string name="download_not_ready">이 다운로드는 아직 준비되지 않았습니다.</string>
+    <string name="detail_favorite_added">영화를 즐겨찾기에 추가했습니다</string>
+    <string name="detail_favorite_removed">영화를 즐겨찾기에서 삭제했습니다</string>
+    <string name="detail_favorite_error">즐겨찾기를 업데이트할 수 없습니다. 다시 시도해 주세요.</string>
+    <string name="detail_server_original">원어 음성</string>
+    <string name="detail_server_dubbed">더빙</string>
 </resources>

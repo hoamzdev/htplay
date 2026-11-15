@@ -43,7 +43,7 @@
     <string name="mock_date_2" translatable="false">06/11/2026</string>
     <string name="mock_date_3" translatable="false">13/11/2026</string>
     <string name="mock_date_4" translatable="false">20/11/2026</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="detail_load_error">Unable to load movie details.</string>
     <string name="detail_more_from_country">More from %1$s</string>
     <string name="detail_episode_number">Episode %1$d</string>
@@ -150,7 +150,7 @@
     <string name="favorite_choose_at_least_one">Please choose at least one genre.</string>
     <string name="favorite_save_error">Unable to save your favorite genres. Please try again.</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="search_hint">Search here...</string>
+    <string name="search_hint">Search here…</string>
     <string name="search_hot">Trending searches</string>
     <string name="search_results">Search results</string>
     <string name="search_no_results">No movies found.</string>
@@ -161,4 +161,17 @@
     <string name="detail_favorite_error">Unable to update favorites. Please try again.</string>
     <string name="detail_server_original">Original audio</string>
     <string name="detail_server_dubbed">Dubbed</string>
+    <string name="download_empty">You haven\'t downloaded any movies yet.</string>
+    <string name="download_browse_movies">Watch popular movies</string>
+    <string name="download_completed">Downloaded</string>
+    <string name="download_failed">Download failed</string>
+    <string name="download_progress">Downloading %1$d%%</string>
+    <string name="download_removing">Removing</string>
+    <string name="download_stopped">Stopped</string>
+    <string name="download_queued">Waiting to download</string>
+    <string name="download_delete">Delete download</string>
+    <string name="download_size_mb">%1$.1f MB</string>
+    <string name="download_added">Added to Downloads</string>
+    <string name="download_start_error">Unable to start download. Please try again.</string>
+    <string name="download_not_ready">This download is not ready yet.</string>
 </resources>

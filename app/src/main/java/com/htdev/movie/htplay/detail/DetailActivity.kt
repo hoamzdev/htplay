@@ -15,6 +15,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -23,6 +24,8 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.offline.Download
+import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -38,17 +41,22 @@ import com.htdev.movie.htplay.domain.entities.MoviePlayer
 import com.htdev.movie.htplay.domain.entities.PosterMovie
 import com.htdev.movie.htplay.entities.ItemMovie
 import com.htdev.movie.htplay.home.download.DownloadViewModel
+import com.htdev.movie.htplay.home.download.DownloadMetadata
+import com.htdev.movie.htplay.home.download.OfflineDownloads
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.onClickListener
+import com.htdev.movie.htplay.widget.checkNetworkConnected
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
@@ -73,6 +81,11 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private var selectedEpisode: MoviePlayer? = null
     private var playbackPosition = 0L
     private var playWhenReady = true
+    private val downloadId: String? by lazy { intent.getStringExtra(EXTRA_DOWNLOAD_ID) }
+    private var downloadRequest: DownloadRequest? = null
+    private var isOfflineDownload = false
+    private var downloadResolved = false
+    private var pendingDownloadEpisodeNumber: Int? = null
     private var isFullscreen = false
     private var portraitPlayerHeight = 0
     private var deviceOrientation = Configuration.ORIENTATION_UNDEFINED
@@ -111,6 +124,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun initView() {
+        isOfflineDownload = downloadId != null && !checkNetworkConnected(this)
         // Inflating sections with this RecyclerView as parent requires its LayoutManager first.
         binding.scrollDetail.layoutManager = LinearLayoutManager(this)
         headerBinding = ItemDetailHeaderBinding.inflate(layoutInflater, binding.scrollDetail, false)
@@ -142,7 +156,47 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun initViewModel() {
-        viewModel.initialize(intent.getStringExtra(EXTRA_MOVIE_SLUG).orEmpty(), resources.configuration.locales[0].language)
+        val id = downloadId
+        if (id == null) {
+            initializeMovie(intent.getStringExtra(EXTRA_MOVIE_SLUG).orEmpty())
+            return
+        }
+        lifecycleScope.launch {
+            val download = withContext(Dispatchers.IO) {
+                OfflineDownloads.manager(this@DetailActivity).downloadIndex.getDownload(id)
+            }
+            if (download == null) {
+                showToastApp(getString(R.string.download_not_ready))
+                finish()
+                return@launch
+            }
+            val metadata = DownloadMetadata.fromByteArray(download.request.data)
+            val connected = checkNetworkConnected(this@DetailActivity)
+            val slug = if (connected) downloadViewModel.resolveMovieSlug(metadata) else null
+            isOfflineDownload = !connected || slug.isNullOrBlank()
+            downloadRequest = download.request
+            downloadResolved = true
+            if (selectedEpisode == null) {
+                selectedEpisode = MoviePlayer(download.request.id, download.request.uri.toString())
+                pendingDownloadEpisodeNumber = metadata.episodeNumber
+            }
+            binding.tvNameMovie.text = metadata.title
+            applyFullscreen(isFullscreen)
+            if (!isOfflineDownload) {
+                initializeMovie(requireNotNull(slug))
+            }
+            if (download.state != Download.STATE_COMPLETED && isOfflineDownload) {
+                selectedEpisode = null
+            }
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) startPlayer()
+            if (download.state != Download.STATE_COMPLETED && isOfflineDownload) {
+                showPlaybackMessage(R.string.download_not_ready)
+            }
+        }
+    }
+
+    private fun initializeMovie(slug: String) {
+        viewModel.initialize(slug, resources.configuration.locales[0].language)
     }
 
     override fun handleClickEvent(): Unit = with(binding) {
@@ -178,7 +232,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         mediaPlay.findViewById<View>(androidx.media3.ui.R.id.exo_error_message)?.setOnClickListener {
             player?.takeIf { it.playerError != null }?.let {
                 mediaPlay.setCustomErrorMessage(null)
-                progressBar.isVisible = true
+                progressBar.visibility = if (isOfflineDownload) View.INVISIBLE else View.VISIBLE
                 it.prepare()
                 it.play()
             }
@@ -188,12 +242,20 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private fun onDownloadMovie() {
         val episode = selectedEpisode ?: return
         if (episode.linkM3u8.isBlank()) return
+        val episodes = (renderedState?.episodes as? Result.Success)?.data.orEmpty()
+        val episodeIndex = episodes.indexOfFirst { it.id == episode.id }
+        if (episodeIndex < 0) return
+        val movie = (renderedState?.detail as? Result.Success)?.data ?: return
         runCatching {
-            downloadViewModel.downloadEpisode(episode.linkM3u8.trim(), "${binding.tvNameMovie.text} - ${episode.id}")
+            downloadViewModel.downloadEpisode(
+                episode.linkM3u8.trim(), binding.tvNameMovie.text.toString(), episodeIndex + 1,
+                renderedState?.movieSlug.orEmpty(),
+                movie.posterUrl.ifBlank { movie.thumbUrl },
+            )
         }.onSuccess {
-            showToastApp("Đã thêm vào mục Tải xuống")
+            showToastApp(getString(R.string.download_added))
         }.onFailure {
-            showToastApp("Không thể tải: ${it.message}")
+            showToastApp(getString(R.string.download_start_error))
         }
     }
 
@@ -252,7 +314,9 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         isFullscreen = fullscreen
         tvNameMovie.isVisible = !fullscreen
         updateCurrentEpisodeLabel()
-        scrollDetail.isVisible = !fullscreen
+        scrollDetail.visibility = if (isOfflineDownload) View.INVISIBLE else if (fullscreen) View.GONE else View.VISIBLE
+        ivDrop.visibility = if (isOfflineDownload) View.INVISIBLE else View.VISIBLE
+        if (isOfflineDownload) progressBar.visibility = View.INVISIBLE
         mediaPlay.updateLayoutParams<ConstraintLayout.LayoutParams> {
             height = if (fullscreen) ConstraintLayout.LayoutParams.MATCH_CONSTRAINT else portraitPlayerHeight
             bottomToBottom = if (fullscreen) ConstraintLayout.LayoutParams.PARENT_ID
@@ -282,7 +346,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         persistContinueWatching()
         when {
             isFullscreen -> requestFullscreen(false)
-            viewModel.goBack() -> Unit
+            !isOfflineDownload && viewModel.goBack() -> Unit
             else -> super.backDevice()
         }
     }
@@ -332,6 +396,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun bindState(state: DetailUiState) {
+        if (downloadId != null && (!downloadResolved || isOfflineDownload)) return
         val previous = renderedState
         val movieChanged = previous?.movieSlug != state.movieSlug
         // Reset and bind from the same snapshot, even when loading finishes before it is drawn.
@@ -367,9 +432,25 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             when (val result = state.episodes) {
                 is Result.Success -> {
                     val episodes = result.data
+                    if (pendingDownloadEpisodeNumber != null && state.showServerTabs) {
+                        val url = downloadRequest?.uri?.toString()
+                        val server = when {
+                            state.episodeServers.vietsub.any { it.linkM3u8.trim() == url } -> EpisodeServer.ORIGINAL
+                            state.episodeServers.longtieng.any { it.linkM3u8.trim() == url } -> EpisodeServer.DUBBED
+                            else -> state.selectedServer
+                        }
+                        if (server != state.selectedServer) {
+                            viewModel.selectEpisodeServer(server)
+                            return
+                        }
+                    }
                     renderEpisodes()
                     val episode = episodes.firstOrNull {
+                        it.linkM3u8.isNotBlank() && it.linkM3u8.trim() == selectedEpisode?.linkM3u8?.trim()
+                    } ?: episodes.firstOrNull {
                         it.id == selectedEpisode?.id && it.linkM3u8.isNotBlank()
+                    } ?: pendingDownloadEpisodeNumber?.let { number ->
+                        episodes.getOrNull(number - 1)?.takeIf { it.linkM3u8.isNotBlank() }
                     } ?: state.continueWatching?.let { saved ->
                         episodes.getOrNull(saved.currentEpisode)?.takeIf { it.linkM3u8.isNotBlank() }
                     } ?: episodes.firstOrNull { it.linkM3u8.isNotBlank() }
@@ -381,6 +462,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                     } else if (episode != selectedEpisode) {
                         val saved = state.continueWatching
                         val resumePosition = when {
+                            episode.linkM3u8.trim() == selectedEpisode?.linkM3u8?.trim() -> playbackPosition
                             serverChanged && episode.id == selectedEpisode?.id -> playbackPosition
                             selectedEpisode == null && saved != null &&
                                 episodes.getOrNull(saved.currentEpisode) == episode -> saved.positionContinue
@@ -389,6 +471,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                         playEpisode(episode, resumePosition)
                     }
                     episodeAdapter.selectedEpisodeId = selectedEpisode?.id
+                    pendingDownloadEpisodeNumber = null
                 }
                 is Result.Error -> if (selectedEpisode == null) {
                     showPlaybackMessage(R.string.detail_episodes_error)
@@ -415,6 +498,10 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun updateCurrentEpisodeLabel() = with(binding.tvCurrentEpisode) {
+        if (isOfflineDownload) {
+            visibility = View.INVISIBLE
+            return@with
+        }
         val episodes = (renderedState?.episodes as? Result.Success)?.data.orEmpty()
         val episodeIndex = episodes.indexOfFirst { it.id == selectedEpisode?.id }
         text = if (episodeIndex >= 0) getString(R.string.detail_episode_number, episodeIndex + 1) else ""
@@ -461,9 +548,9 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         val episode = selectedEpisode ?: return
         val currentPlayer = player ?: return
         binding.mediaPlay.setCustomErrorMessage(null)
-        binding.progressBar.isVisible = true
+        binding.progressBar.visibility = if (isOfflineDownload) View.INVISIBLE else View.VISIBLE
         currentPlayer.setMediaItem(
-            MediaItem.Builder()
+            if (isOfflineDownload) downloadRequest?.toMediaItem() ?: return else MediaItem.Builder()
                 .setMediaId(episode.id)
                 .setUri(episode.linkM3u8.trim())
                 .setMimeType(MimeTypes.APPLICATION_M3U8)
@@ -476,9 +563,15 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     override fun onStart() {
         super.onStart()
+        if (downloadId == null || downloadResolved) startPlayer()
+        if (orientationListener.canDetectOrientation()) orientationListener.enable()
+    }
+
+    private fun startPlayer() {
+        if (player != null) return
         player = ExoPlayer.Builder(this).setMediaSourceFactory(
             androidx.media3.exoplayer.source.DefaultMediaSourceFactory(
-                com.htdev.movie.htplay.home.download.OfflineDownloads.dataSource(this)
+                OfflineDownloads.dataSource(this, offlineOnly = isOfflineDownload)
             )
         ).build().also { currentPlayer ->
             currentPlayer.setAudioAttributes(
@@ -496,7 +589,8 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
-                    binding.progressBar.isVisible = playbackState == Player.STATE_BUFFERING
+                    binding.progressBar.visibility = if (isOfflineDownload) View.INVISIBLE
+                        else if (playbackState == Player.STATE_BUFFERING) View.VISIBLE else View.GONE
                     if (playbackState == Player.STATE_READY) binding.mediaPlay.setCustomErrorMessage(null)
                     if (playbackState == Player.STATE_ENDED) persistContinueWatching()
                 }
@@ -516,17 +610,16 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             binding.mediaPlay.player = currentPlayer
         }
         prepareSelectedEpisode()
-        progressSaveJob = lifecycleScope.launch {
+        if (!isOfflineDownload) progressSaveJob = lifecycleScope.launch {
             while (isActive) {
                 delay(5_000.milliseconds)
                 if (player?.isPlaying == true) persistContinueWatching()
             }
         }
-        if (orientationListener.canDetectOrientation()) orientationListener.enable()
     }
 
     private fun showPlaybackMessage(@androidx.annotation.StringRes message: Int) {
-        binding.progressBar.isVisible = false
+        binding.progressBar.visibility = if (isOfflineDownload) View.INVISIBLE else View.GONE
         binding.mediaPlay.setCustomErrorMessage(getString(message))
     }
 
@@ -538,6 +631,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun persistContinueWatching() {
+        if (isOfflineDownload) return
         val currentPlayer = player ?: return
         val episode = selectedEpisode ?: return
         if (currentPlayer.currentMediaItem?.localConfiguration?.uri?.toString() != episode.linkM3u8.trim()) return
@@ -580,10 +674,14 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     companion object {
         const val EXTRA_MOVIE_SLUG = "movie_slug"
         private const val STATE_EPISODE = "detail_episode"
+        private const val EXTRA_DOWNLOAD_ID = "download_id"
         private const val STATE_POSITION = "detail_position"
         private const val STATE_PLAY_WHEN_READY = "detail_play_when_ready"
 
         fun createIntent(context: Context, movieSlug: String): Intent =
             Intent(context, DetailActivity::class.java).putExtra(EXTRA_MOVIE_SLUG, movieSlug)
+
+        fun createDownloadIntent(context: Context, downloadId: String): Intent =
+            Intent(context, DetailActivity::class.java).putExtra(EXTRA_DOWNLOAD_ID, downloadId)
     }
 }

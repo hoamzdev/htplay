@@ -115,6 +115,7 @@
         android:layout_marginTop="@dimen/size10"
         android:contentDescription="@null"
         android:src="@drawable/ic_download"
+        app:tint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_star" />
 
@@ -127,7 +128,8 @@
         android:contentDescription="@null"
         android:src="@drawable/iv_favo"
         app:layout_constraintStart_toEndOf="@id/iv_download"
-        app:layout_constraintTop_toBottomOf="@id/iv_star" />
+        app:layout_constraintTop_toBottomOf="@id/iv_star"
+        app:tint="@color/white" />
 
 
     <TextView
