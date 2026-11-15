@@ -158,4 +158,9 @@
     <string name="detail_favorite_error">즐겨찾기를 업데이트할 수 없습니다. 다시 시도해 주세요.</string>
     <string name="detail_server_original">원어 음성</string>
     <string name="detail_server_dubbed">더빙</string>
+    <string name="home_ht_recommendation_title">HTPlay 추천</string>
+    <string name="home_watch_now">지금 보기</string>
+    <string name="home_add_to_favorites">즐겨찾기에 추가</string>
+    <string name="home_remove_from_favorites">즐겨찾기에서 삭제</string>
+    <string name="home_trailer_unavailable">이 영화의 예고편이 없습니다.</string>
 </resources>

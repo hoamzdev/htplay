@@ -158,4 +158,9 @@
     <string name="detail_favorite_error">Impossibile aggiornare i preferiti. Riprova.</string>
     <string name="detail_server_original">Audio originale</string>
     <string name="detail_server_dubbed">Doppiato</string>
+    <string name="home_ht_recommendation_title">HTPlay consiglia</string>
+    <string name="home_watch_now">Guarda ora</string>
+    <string name="home_add_to_favorites">Aggiungi ai preferiti</string>
+    <string name="home_remove_from_favorites">Rimuovi dai preferiti</string>
+    <string name="home_trailer_unavailable">Nessun trailer disponibile per questo film.</string>
 </resources>

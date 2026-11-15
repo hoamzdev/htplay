@@ -174,4 +174,9 @@
     <string name="download_added">Added to Downloads</string>
     <string name="download_start_error">Unable to start download. Please try again.</string>
     <string name="download_not_ready">This download is not ready yet.</string>
+    <string name="home_ht_recommendation_title">HTPlay recommends</string>
+    <string name="home_watch_now">Watch now</string>
+    <string name="home_add_to_favorites">Add to favorites</string>
+    <string name="home_remove_from_favorites">Remove from favorites</string>
+    <string name="home_trailer_unavailable">No trailer is available for this movie.</string>
 </resources>

@@ -40,6 +40,7 @@ fun buildHomeSections(
         recommendedTitle,
         HomeViewAllTarget.Recommended(home.selectedGenreSlugs),
     ))
+    add(HomeItem.TrailerSector(home.htRecommendation))
     add(home.chineseMovies.toMovieSector(HomeItem.CHINESE_MOVIES, chineseTitle, HomeViewAllTarget.ByCountry("trung-quoc")))
     add(home.koreanMovies.toMovieSector(HomeItem.KOREAN_MOVIES, koreanTitle, HomeViewAllTarget.ByCountry("han-quoc")))
     add(home.actionMovies.toMovieSector(HomeItem.ACTION_MOVIES, actionTitle, HomeViewAllTarget.ByGenre("hanh-dong")))

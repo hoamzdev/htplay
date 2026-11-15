@@ -158,4 +158,9 @@
     <string name="detail_favorite_error">无法更新收藏，请重试。</string>
     <string name="detail_server_original">原声</string>
     <string name="detail_server_dubbed">配音</string>
+    <string name="home_ht_recommendation_title">HTPlay 推荐</string>
+    <string name="home_watch_now">立即观看</string>
+    <string name="home_add_to_favorites">添加到收藏</string>
+    <string name="home_remove_from_favorites">移出收藏</string>
+    <string name="home_trailer_unavailable">此电影暂无预告片。</string>
 </resources>

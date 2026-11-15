@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_color"
+    android:paddingBottom="@dimen/sizesp20"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_ht_recommend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/size10"
+        android:text="@string/home_ht_recommendation_title"
+        android:layout_marginStart="@dimen/size8"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="@dimen/sizesp16"/>
+
+
+    <WebView
+        android:id="@+id/wb_trailer"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size200"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_ht_recommend"
+        android:layout_marginTop="@dimen/size10"
+        android:layout_marginStart="@dimen/size8"
+        android:layout_marginEnd="@dimen/size8"
+        tools:ignore="WebViewLayout" />
+
+    <TextView
+        android:id="@+id/tv_trailer_status"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/white"
+        android:text="@string/loading"
+        app:layout_constraintStart_toStartOf="@id/wb_trailer"
+        app:layout_constraintEnd_toEndOf="@id/wb_trailer"
+        app:layout_constraintTop_toTopOf="@id/wb_trailer"
+        app:layout_constraintBottom_toBottomOf="@id/wb_trailer" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_watch_now"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/wb_trailer"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_stroke"
+        android:layout_marginStart="@dimen/size8"
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@color/white"
+        app:layout_constraintEnd_toStartOf="@id/btn_favorite"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
+        android:textSize="@dimen/sizesp14"
+        android:fontFamily="@font/font_figtree_regular"
+        android:layout_marginEnd="@dimen/size8"
+        android:text="@string/home_watch_now" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_favorite"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/wb_trailer"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_stroke"
+        app:layout_constraintStart_toEndOf="@id/btn_watch_now"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAllCaps="false"
+        android:textSize="@dimen/sizesp14"
+        android:fontFamily="@font/font_figtree_regular"
+        android:layout_marginEnd="@dimen/size8"
+        android:text="@string/home_add_to_favorites" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.databinding.ItemContinueWatchingSectorBinding
 import com.htdev.movie.htplay.databinding.ItemMovieSectorBinding
+import com.htdev.movie.htplay.databinding.ItemHtRecommentBinding
 import com.htdev.movie.htplay.entities.HomeItem
 import com.htdev.movie.htplay.entities.HomeViewAllTarget
 import com.htdev.movie.htplay.entities.ContinueWatching
@@ -23,7 +24,11 @@ class HomeAdapter(
     private val onViewAllClick: (target: HomeViewAllTarget) -> Unit = {},
     private val onCountryClick: (Country) -> Unit = {},
     private val onRetryClick: (HomeItem) -> Unit = {},
+    private val onWatchRecommendation: (String) -> Unit = {},
+    private val onFavoriteRecommendation: () -> Unit = {},
 ) : ListAdapter<HomeItem, RecyclerView.ViewHolder>(DIFF_UTIL) {
+    private val trailerHolders = mutableSetOf<HomeTrailerViewHolder>()
+    private var trailersResumed = false
 
     private fun RecyclerView.setupRow(rowAdapter: RecyclerView.Adapter<*>) {
         layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
@@ -35,6 +40,7 @@ class HomeAdapter(
         return when(getItem(position)){
             is HomeItem.ContinueWatchingSector -> TYPE_CONTINUE
             is HomeItem.CountrySector -> TYPE_BROWSE
+            is HomeItem.TrailerSector -> TYPE_TRAILER
             else -> TYPE_NORMAL
         }
     }
@@ -50,6 +56,13 @@ class HomeAdapter(
                 ContinueWatchingSectorViewHolder(binding)
             }
             TYPE_BROWSE -> BrowseViewHolder(ItemMovieSectorBinding.inflate(inflate, parent, false))
+            TYPE_TRAILER -> HomeTrailerViewHolder(
+                ItemHtRecommentBinding.inflate(inflate, parent, false),
+                itemAt = { currentList.getOrNull(it) as? HomeItem.TrailerSector },
+                onWatchMovie = onWatchRecommendation,
+                onFavoriteMovie = onFavoriteRecommendation,
+                onRetry = onRetryClick,
+            ).also { trailerHolders.add(it) }
             else -> {
                 val binding = ItemMovieSectorBinding.inflate(inflate, parent, false)
                 MovieViewHolder(binding)
@@ -148,13 +161,46 @@ class HomeAdapter(
                 (holder as MovieViewHolder).bind(item)
             }
             is HomeItem.CountrySector -> (holder as BrowseViewHolder).bind(item)
+            is HomeItem.TrailerSector -> (holder as HomeTrailerViewHolder).bind(item, trailersResumed)
         }
+    }
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        (holder as? HomeTrailerViewHolder)?.setActive(trailersResumed)
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        (holder as? HomeTrailerViewHolder)?.setActive(false)
+        super.onViewDetachedFromWindow(holder)
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        (holder as? HomeTrailerViewHolder)?.recycle()
+        super.onViewRecycled(holder)
+    }
+
+    fun resumeTrailers() {
+        trailersResumed = true
+        trailerHolders.filter { it.itemView.isAttachedToWindow }.forEach { it.setActive(true) }
+    }
+
+    fun pauseTrailers() {
+        trailersResumed = false
+        trailerHolders.forEach { it.setActive(false) }
+    }
+
+    fun releaseTrailers() {
+        trailersResumed = false
+        trailerHolders.forEach { it.release() }
+        trailerHolders.clear()
     }
 
     companion object{
         private const val TYPE_CONTINUE = 0
         private const val TYPE_NORMAL = 2
         private const val TYPE_BROWSE = 3
+        private const val TYPE_TRAILER = 4
         val DIFF_UTIL = object : DiffUtil.ItemCallback<HomeItem>(){
             override fun areItemsTheSame(
                 oldItem: HomeItem,

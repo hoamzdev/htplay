@@ -5,18 +5,30 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
+import com.htdev.movie.htplay.home.home.HomeRecommendationSession
+import javax.inject.Inject
 import com.htdev.movie.htplay.language.LanguageHelper
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MovieApplication : Application(), Application.ActivityLifecycleCallbacks,
     DefaultLifecycleObserver {
+    @Inject lateinit var recommendationSession: HomeRecommendationSession
+    private var hasEnteredForeground = false
 
     override fun onCreate() {
         super<Application>.onCreate()
 
         LanguageHelper.clearLegacyFrameworkLocale(this)
         LanguageHelper.refreshApplicationLanguage(this)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        if (hasEnteredForeground) recommendationSession.startNewSession()
+        hasEnteredForeground = true
     }
 
     override fun attachBaseContext(base: Context) {

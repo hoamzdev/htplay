@@ -18,10 +18,12 @@ internal class FakeMovieRepository : MovieRepository {
     var countryPager: (String) -> Flow<PagingData<PosterMovie>> = { emptyFlow() }
     var latestPager: () -> Flow<PagingData<PosterMovie>> = { emptyFlow() }
     var countries: suspend () -> Result<List<Country>> = { Result.Success(listOf(Country("China", "trung-quoc"))) }
+    var latestMovies: suspend () -> Result<List<PosterMovie>> = { Result.Success(emptyList()) }
+    var movieDetail: suspend (String) -> Result<DataMovieDetail> = { Result.Success(DataMovieDetail()) }
 
     override suspend fun saveGenresFavorite(Genres: List<String>) = saveGenres(Genres)
     override suspend fun getSavedGenres() = Result.Success(savedGenres)
-    override suspend fun getMovies() = Result.Success(emptyList<PosterMovie>())
+    override suspend fun getMovies() = latestMovies()
     override suspend fun getMoviesByPage() = Result.Success(emptyList<PosterMovieHome>())
     override suspend fun getMoviesByGenre(Genre: String, limit: Int): Result<List<PosterMovie>> {
         requestedGenres += Genre
@@ -33,7 +35,7 @@ internal class FakeMovieRepository : MovieRepository {
         Result.Success(emptyList<PosterMovie>())
     override suspend fun getCountries() = countries()
     override suspend fun getGenres() = genres()
-    override suspend fun getMovieDetail(slug: String) = Result.Success(DataMovieDetail())
+    override suspend fun getMovieDetail(slug: String) = movieDetail(slug)
     override suspend fun getDataMoviePlayer(slug: String) = Result.Success(DataMoviePlayer())
     override fun getMoviesPager(): Flow<PagingData<PosterMovie>> = latestPager()
     override fun getMoviesByCountryPager(countrySlug: String, limit: Int): Flow<PagingData<PosterMovie>> = countryPager(countrySlug)

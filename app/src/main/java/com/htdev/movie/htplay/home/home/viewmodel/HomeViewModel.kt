@@ -19,6 +19,11 @@ import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesByPage
 import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesLatest
 import com.htdev.movie.htplay.domain.usecase.movie.GetMoviesSeries
 import com.htdev.movie.htplay.domain.usecase.movie.GetSavedGenres
+import com.htdev.movie.htplay.domain.usecase.movie.CheckMovieExistsInFavorite
+import com.htdev.movie.htplay.domain.usecase.movie.ToggleFavoriteMovie
+import com.htdev.movie.htplay.data.entities.dto.mapToFavorite
+import com.htdev.movie.htplay.home.home.HomeRecommendationSession
+import com.htdev.movie.htplay.entities.HomeRecommendation
 import com.htdev.movie.htplay.domain.usecase.movie.pager.GetMoviesByGenrePager
 import com.htdev.movie.htplay.domain.usecase.movie.pager.GetMoviesBySearch
 import com.htdev.movie.htplay.domain.usecase.movie.pager.GetMoviesPager
@@ -42,6 +47,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
@@ -63,6 +70,9 @@ class HomeViewModel @Inject constructor(
     private val getSavedGenres: GetSavedGenres,
     private val getCountries: GetCountries,
     private val getGenres: GetGenres,
+    private val recommendationSession: HomeRecommendationSession,
+    private val checkMovieExistsInFavorite: CheckMovieExistsInFavorite,
+    private val toggleFavoriteMovie: ToggleFavoriteMovie,
 ) : ViewModel() {
 
     private val _genres = MutableStateFlow<Result<List<Genre>>>(Result.Loading)
@@ -110,6 +120,9 @@ class HomeViewModel @Inject constructor(
 
     private val _homeData = MutableStateFlow(HomeData())
     val homeData: StateFlow<HomeData> = _homeData.asStateFlow()
+    private val _recommendationFavoriteChange = MutableStateFlow<Result<Boolean>>(Result.Idle)
+    val recommendationFavoriteChange = _recommendationFavoriteChange.asStateFlow()
+    private var recommendationFavoriteJob: Job? = null
 
     private val _moviesByPage = MutableStateFlow<Result<List<PosterMovieHome>>>(Result.Idle)
     val moviesByPage: StateFlow<Result<List<PosterMovieHome>>> = _moviesByPage.asStateFlow()
@@ -147,8 +160,11 @@ class HomeViewModel @Inject constructor(
     private var genresJob: Job? = null
 
     init {
+        observeRecommendation()
         fetchMoviesByPage()
-        fetchMovieLastest()
+        viewModelScope.launch {
+            recommendationSession.sessionId.collect { fetchMovieLastest() }
+        }
         fetchRecommendedMovies()
         fetchChineseMovies()
         fetchKoreanMovies()
@@ -157,6 +173,50 @@ class HomeViewModel @Inject constructor(
         fetchFamilyMovies()
         fetchCountries()
         fetchGenres()
+    }
+
+    private fun observeRecommendation() {
+        viewModelScope.launch {
+            recommendationSession.movie.collectLatest { result ->
+                val movie = (result as? Result.Success)?.data
+                _homeData.update {
+                    it.copy(htRecommendation = HomeRecommendation(
+                        movie = movie,
+                        isLoading = result is Result.Loading || result is Result.Idle,
+                        hasError = result is Result.Error,
+                    ))
+                }
+                if (movie != null) {
+                    checkMovieExistsInFavorite(movie.slug)
+                        .catch { /* Watch Now and the trailer remain available if favorites cannot be read. */ }
+                        .collect { favorite ->
+                            _homeData.update { it.copy(htRecommendation = it.htRecommendation.copy(isFavorite = favorite)) }
+                        }
+                }
+            }
+        }
+    }
+
+    fun toggleRecommendationFavorite() {
+        val recommendation = _homeData.value.htRecommendation
+        val movie = recommendation.movie ?: return
+        if (recommendation.isFavorite == null || recommendationFavoriteJob?.isActive == true) return
+        _homeData.update { it.copy(htRecommendation = it.htRecommendation.copy(isUpdatingFavorite = true)) }
+        recommendationFavoriteJob = viewModelScope.launch {
+            try {
+                _recommendationFavoriteChange.value = Result.Success(toggleFavoriteMovie(movie.mapToFavorite()))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _recommendationFavoriteChange.value = Result.Error(error)
+            } finally {
+                _homeData.update { it.copy(htRecommendation = it.htRecommendation.copy(isUpdatingFavorite = false)) }
+            }
+        }
+    }
+
+    fun clearRecommendationFavoriteChange() {
+        _recommendationFavoriteChange.value = Result.Idle
     }
 
     fun fetchRecommendedMovies() {
@@ -248,11 +308,15 @@ class HomeViewModel @Inject constructor(
             HomeItem.ROMANCE_MOVIES -> fetchRomanceMovies()
             HomeItem.FAMILY_MOVIES -> fetchFamilyMovies()
             HomeItem.COUNTRIES -> fetchCountries()
+            HomeItem.HT_RECOMMENDATION -> if (!recommendationSession.retry()) fetchMovieLastest()
         }
     }
 
     fun fetchMovieLastest() {
-        latestMoviesJob = loadMovies(_movies, latestMoviesJob) {
+        latestMoviesJob = loadList(latestMoviesJob, { result ->
+            _movies.value = result
+            recommendationSession.updateLatest(result)
+        }) {
             getMovieLastest()
         }
     }

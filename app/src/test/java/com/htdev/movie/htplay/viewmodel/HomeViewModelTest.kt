@@ -17,6 +17,9 @@ import com.htdev.movie.htplay.entities.ContinueWatching
 import com.htdev.movie.htplay.entities.HomeItem
 import com.htdev.movie.htplay.favorite.FavoriteViewModel
 import com.htdev.movie.htplay.home.home.viewmodel.HomeViewModel
+import com.htdev.movie.htplay.home.home.HomeRecommendationSession
+import com.htdev.movie.htplay.domain.entities.DataMovieDetail
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -288,7 +291,34 @@ class HomeViewModelTest {
 
     private fun movie(id: String) = PosterMovie(id, "poster", id, id, "Episode 1")
 
-    private fun createViewModel(repository: FakeMovieRepository) = HomeViewModel(
+    @Test fun recommendationUsesOneLatestMovieAndItsFavoriteButtonUpdatesThatSameMovie() = runTest {
+        val repository = FakeMovieRepository()
+        val detailRequests = mutableListOf<String>()
+        repository.latestMovies = { Result.Success(listOf(movie("picked"))) }
+        repository.movieDetail = { slug ->
+            detailRequests += slug
+            Result.Success(DataMovieDetail(slug = slug, name = "Picked movie", trailerUrl = "https://youtu.be/abcdefghijk"))
+        }
+        val storage = FakeLocalStorageRepository()
+        val viewModel = createViewModel(repository, storage)
+        advanceUntilIdle()
+        assertEquals("picked", viewModel.homeData.value.htRecommendation.movie?.slug)
+        assertEquals(false, viewModel.homeData.value.htRecommendation.isFavorite)
+        viewModel.toggleRecommendationFavorite()
+        advanceUntilIdle()
+        assertEquals("picked", storage.favoriteToggles.single().slugMovie)
+        assertEquals(true, viewModel.homeData.value.htRecommendation.isFavorite)
+        repository.latestMovies = { Result.Success(listOf(movie("replacement"))) }
+        viewModel.fetchMovieLastest()
+        advanceUntilIdle()
+        assertEquals(listOf("picked"), detailRequests)
+        assertEquals("picked", viewModel.homeData.value.htRecommendation.movie?.slug)
+    }
+
+    private fun createViewModel(
+        repository: FakeMovieRepository,
+        storage: FakeLocalStorageRepository = FakeLocalStorageRepository(),
+    ) = HomeViewModel(
         GetMoviesLatest(repository),
         GetMoviesByPage(repository),
         GetMoviesByGenres(repository),
@@ -302,5 +332,8 @@ class HomeViewModelTest {
         GetSavedGenres(repository),
         GetCountries(repository),
         GetGenres(repository),
+        HomeRecommendationSession(GetMovieDetail(repository), CoroutineScope(Dispatchers.Main)),
+        CheckMovieExistsInFavorite(storage),
+        ToggleFavoriteMovie(storage),
     )
 }

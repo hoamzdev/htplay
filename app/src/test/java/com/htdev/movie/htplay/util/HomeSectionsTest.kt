@@ -4,6 +4,8 @@ import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.entities.PosterMovie
 import com.htdev.movie.htplay.entities.HomeData
 import com.htdev.movie.htplay.entities.HomeItem
+import com.htdev.movie.htplay.entities.HomeRecommendation
+import com.htdev.movie.htplay.domain.entities.DataMovieDetail
 import com.htdev.movie.htplay.entities.ContinueWatching
 import org.junit.Assert.*
 import org.junit.Test
@@ -18,11 +20,23 @@ class HomeSectionsTest {
             koreanMovies = Result.Success(listOf(movie)),
         ))
 
-        assertEquals(listOf(2, 3, 4, 5, 8, 9, 10, 7), sections.map { it.id })
+        assertEquals(listOf(2, 3, 11, 4, 5, 8, 9, 10, 7), sections.map { it.id })
         assertTrue((sections.first { it.id == HomeItem.CHINESE_MOVIES } as HomeItem.MovieSector).hasError)
         assertEquals("movie", (sections.first { it.id == HomeItem.KOREAN_MOVIES } as HomeItem.MovieSector).movies.single().slug)
         assertTrue((sections.last() as HomeItem.CountrySector).isLoading)
         assertFalse(sections.any { it is HomeItem.ContinueWatchingSector })
+    }
+
+    @Test fun trailerCardIsInsideTheHomeListBetweenForYouAndChineseMovies() {
+        val recommendation = HomeRecommendation(
+            movie = DataMovieDetail(slug = "picked", trailerUrl = "https://youtu.be/abcdefghijk"),
+            isLoading = false,
+        )
+        val sections = sections(HomeData(htRecommendation = recommendation))
+        val position = sections.indexOfFirst { it is HomeItem.TrailerSector }
+        assertEquals(HomeItem.SELECTED_FOR_YOU, sections[position - 1].id)
+        assertEquals(HomeItem.CHINESE_MOVIES, sections[position + 1].id)
+        assertEquals(recommendation, (sections[position] as HomeItem.TrailerSector).recommendation)
     }
 
     @Test

@@ -8,6 +8,7 @@ data class HomeData(
     val continueWatching: List<ContinueWatching> = emptyList(),
     val selectedGenreSlugs: List<String> = emptyList(),
     val recommendedMovies: Result<List<PosterMovie>> = Result.Loading,
+    val htRecommendation: HomeRecommendation = HomeRecommendation(),
     val chineseMovies: Result<List<PosterMovie>> = Result.Loading,
     val koreanMovies: Result<List<PosterMovie>> = Result.Loading,
     val actionMovies: Result<List<PosterMovie>> = Result.Loading,

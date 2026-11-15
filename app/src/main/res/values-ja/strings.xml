@@ -158,4 +158,9 @@
     <string name="detail_favorite_error">お気に入りを更新できません。もう一度お試しください。</string>
     <string name="detail_server_original">オリジナル音声</string>
     <string name="detail_server_dubbed">吹き替え</string>
+    <string name="home_ht_recommendation_title">HTPlayのおすすめ</string>
+    <string name="home_watch_now">今すぐ見る</string>
+    <string name="home_add_to_favorites">お気に入りに追加</string>
+    <string name="home_remove_from_favorites">お気に入りから削除</string>
+    <string name="home_trailer_unavailable">この映画の予告編はありません。</string>
 </resources>

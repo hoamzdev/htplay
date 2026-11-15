@@ -158,4 +158,9 @@
     <string name="download_added">Đã thêm vào mục Tải xuống</string>
     <string name="download_start_error">Không thể bắt đầu tải xuống. Vui lòng thử lại.</string>
     <string name="download_not_ready">Bản tải chưa sẵn sàng.</string>
+    <string name="home_ht_recommendation_title">HTPlay đề xuất</string>
+    <string name="home_watch_now">Xem ngay</string>
+    <string name="home_add_to_favorites">Thêm vào yêu thích</string>
+    <string name="home_remove_from_favorites">Bỏ khỏi yêu thích</string>
+    <string name="home_trailer_unavailable">Phim này chưa có trailer.</string>
 </resources>

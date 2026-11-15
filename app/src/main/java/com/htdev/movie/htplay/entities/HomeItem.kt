@@ -4,7 +4,7 @@ import com.htdev.movie.htplay.domain.entities.Country
 
 sealed class HomeItem {
     abstract val id : Int
-    abstract val viewAllTarget: HomeViewAllTarget
+    abstract val viewAllTarget: HomeViewAllTarget?
 
     data class ContinueWatchingSector(override val id: Int, val movies: List<ContinueWatching>) : HomeItem() {
         override val viewAllTarget: HomeViewAllTarget = HomeViewAllTarget.ContinueWatching
@@ -27,6 +27,11 @@ sealed class HomeItem {
         override val viewAllTarget: HomeViewAllTarget = HomeViewAllTarget.Countries
     }
 
+    data class TrailerSector(val recommendation: HomeRecommendation) : HomeItem() {
+        override val id: Int = HT_RECOMMENDATION
+        override val viewAllTarget: HomeViewAllTarget? = null
+    }
+
     companion object {
         const val CONTINUE_WATCHING = 1
         const val LATEST_MOVIES = 2
@@ -37,5 +42,6 @@ sealed class HomeItem {
         const val ACTION_MOVIES = 8
         const val ROMANCE_MOVIES = 9
         const val FAMILY_MOVIES = 10
+        const val HT_RECOMMENDATION = 11
     }
 }

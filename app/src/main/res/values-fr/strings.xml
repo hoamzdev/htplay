@@ -158,4 +158,9 @@
     <string name="detail_favorite_error">Impossible de mettre à jour les favoris. Veuillez réessayer.</string>
     <string name="detail_server_original">Version originale</string>
     <string name="detail_server_dubbed">Version doublée</string>
+    <string name="home_ht_recommendation_title">HTPlay recommande</string>
+    <string name="home_watch_now">Regarder</string>
+    <string name="home_add_to_favorites">Ajouter aux favoris</string>
+    <string name="home_remove_from_favorites">Retirer des favoris</string>
+    <string name="home_trailer_unavailable">Aucune bande-annonce disponible pour ce film.</string>
 </resources>

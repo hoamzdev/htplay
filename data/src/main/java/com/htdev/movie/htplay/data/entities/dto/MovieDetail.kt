@@ -44,7 +44,9 @@ data class MovieDetail (
     val quality: String,
     val year: Long,
     val category: List<Category>?,
-    val country: List<Country>?
+    val country: List<Country>?,
+    @SerializedName("trailer_url")
+    val trailerUrl: String? = null,
 )
 
 fun MovieDetail.mapToDataMovieDetail() : DataMovieDetail{
@@ -60,7 +62,8 @@ fun MovieDetail.mapToDataMovieDetail() : DataMovieDetail{
         vote = String.format(java.util.Locale.US, "%.1f", this.tmdb.voteAverage ?: 0.0),
         genreSlug = if(this.category.isNullOrEmpty()) "Unknown" else this.category[0].slug,
         slug = this.slug,
-        thumbUrl = this.thumbUrl.toImageUrl()
+        thumbUrl = this.thumbUrl.toImageUrl(),
+        trailerUrl = this.trailerUrl?.trim().orEmpty(),
     )
 }
 

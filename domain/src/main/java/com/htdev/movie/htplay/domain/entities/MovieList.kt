@@ -46,6 +46,7 @@ data class DataMovieDetail(
     val genreSlug : String = "",
     val genre : String = "",
     val vote : String = "",
+    val trailerUrl: String = "",
 ) : Parcelable
 
 @Parcelize

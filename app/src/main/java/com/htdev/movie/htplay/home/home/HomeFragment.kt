@@ -84,6 +84,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             startActivity(ShowAllMovieActivity.countryIntent(requireContext(), country))
         },
         onRetryClick = { viewModel.retryHomeSection(it.id) },
+        onWatchRecommendation = { slug -> navToMovieDetail(slug) },
+        onFavoriteRecommendation = { viewModel.toggleRecommendationFavorite() },
     )
 
     private var genreTabsController: HomeGenreTabsController? = null
@@ -264,6 +266,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun bindViewModel() {
         launchRepeatOnStarted {
+            viewModel.recommendationFavoriteChange.collect { change ->
+                when (change) {
+                    is Result.Success -> {
+                        showRecommendationMessage(if (change.data) R.string.detail_favorite_added else R.string.detail_favorite_removed)
+                        viewModel.clearRecommendationFavoriteChange()
+                    }
+                    is Result.Error -> {
+                        showRecommendationMessage(R.string.detail_favorite_error)
+                        viewModel.clearRecommendationFavoriteChange()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+        launchRepeatOnStarted {
             continueWatchingViewModel.movies.collect { viewModel.updateContinueWatching(it) }
         }
         observePosterBanner()
@@ -396,12 +413,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
     }
 
+    private fun showRecommendationMessage(@androidx.annotation.StringRes message: Int) {
+        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        homeAdapter.resumeTrailers()
+    }
+
+    override fun onPause() {
+        homeAdapter.pauseTrailers()
+        super.onPause()
+    }
+
     override fun onDestroyView() {
         binding.appBar.removeOnOffsetChangedListener(appBarOffsetListener)
         binding.vpPoster.unregisterOnPageChangeCallback(posterPageChangeCallback)
         binding.vpPoster.adapter = null
         homeAdapter.unregisterAdapterDataObserver(homeSectionsObserver)
         binding.rcMain.adapter = null
+        homeAdapter.releaseTrailers()
         genreTabsController = null
         genreMovieAdapter?.let { mainAdapter.removeAdapter(it) }
         genreMovieAdapter = null

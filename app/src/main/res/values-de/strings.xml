@@ -158,4 +158,9 @@
     <string name="detail_favorite_error">Favoriten konnten nicht aktualisiert werden. Bitte versuche es erneut.</string>
     <string name="detail_server_original">Originalton</string>
     <string name="detail_server_dubbed">Synchronisiert</string>
+    <string name="home_ht_recommendation_title">HTPlay empfiehlt</string>
+    <string name="home_watch_now">Jetzt ansehen</string>
+    <string name="home_add_to_favorites">Zu Favoriten hinzufügen</string>
+    <string name="home_remove_from_favorites">Aus Favoriten entfernen</string>
+    <string name="home_trailer_unavailable">Für diesen Film ist kein Trailer verfügbar.</string>
 </resources>
