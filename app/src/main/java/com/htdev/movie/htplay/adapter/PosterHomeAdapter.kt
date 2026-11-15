@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.adapter
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -28,8 +30,8 @@ class PosterHomeAdapter(
 
         val context = binding.root.context
         init {
-            binding.root.setOnClickListener { currentMovie()?.let(onMovieClick) }
-            binding.btnPlay.setOnClickListener { currentMovie()?.let(onMovieClick) }
+            binding.root.onClickListener { currentMovie()?.let(onMovieClick) }
+            binding.btnPlay.onClickListener { currentMovie()?.let(onMovieClick) }
         }
 
         private fun currentMovie(): PosterMovieHome? =

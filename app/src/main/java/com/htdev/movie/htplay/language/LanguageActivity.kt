@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.language
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.app.Dialog
 import android.graphics.Color
 import android.view.ViewGroup
@@ -92,8 +94,8 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
     }
 
     override fun handleClickEvent() {
-        binding.btnSaveLanguage.setOnClickListener {
-            if (changeLanguageJob?.isActive == true) return@setOnClickListener
+        binding.btnSaveLanguage.onClickListener {
+            if (changeLanguageJob?.isActive == true) return@onClickListener
             LanguageHelper.saveLocale(this, languageViewModel.selectedLanguageCode)
             newActivity(IntroActivity::class.java)
             finish()

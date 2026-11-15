@@ -134,7 +134,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.appBar.addOnOffsetChangedListener(appBarOffsetListener)
         binding.vpPoster.adapter = posterHomeAdapter
         binding.vpPoster.registerOnPageChangeCallback(posterPageChangeCallback)
-        binding.posterStatus.setOnClickListener {
+        binding.posterStatus.onClickListener {
             if (viewModel.moviesByPage.value is Result.Error) {
                 viewModel.fetchMoviesByPage()
             }

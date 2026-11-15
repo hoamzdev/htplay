@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.favorite
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -69,9 +71,9 @@ class ChooseFavoriteAdapter :
 
 
         init {
-            binding.root.setOnClickListener {
+            binding.root.onClickListener {
                 val position = bindingAdapterPosition
-                if (position == RecyclerView.NO_POSITION) return@setOnClickListener
+                if (position == RecyclerView.NO_POSITION) return@onClickListener
                 val item = getItem(position)
                 if (!selectedIds.remove(item.uuid)) {
                     selectedIds.add(item.uuid)

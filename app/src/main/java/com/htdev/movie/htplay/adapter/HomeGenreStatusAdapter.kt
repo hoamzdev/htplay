@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.adapter
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -32,6 +34,6 @@ class HomeGenreStatusAdapter(private val onRetry: () -> Unit) : RecyclerView.Ada
         holder.text.isFocusable = canRetry
     }
     inner class ViewHolder(val text: TextView) : RecyclerView.ViewHolder(text) {
-        init { text.setOnClickListener { if (canRetry) onRetry() } }
+        init { text.onClickListener { if (canRetry) onRetry() } }
     }
 }

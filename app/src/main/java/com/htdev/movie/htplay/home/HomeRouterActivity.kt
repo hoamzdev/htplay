@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.home
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -46,7 +48,7 @@ class HomeRouterActivity : AuthenticatedActivity<ActivityHomeRouterBinding>() {
 
     override fun handleClickEvent() {
         bottomTabs.forEach { (destinationId, tab) ->
-            tab.setOnClickListener {
+            tab.onClickListener {
                 if (navController.currentDestination?.id != destinationId) {
                     navController.navigate(destinationId, null, navOptions {
                         launchSingleTop = true

@@ -33,7 +33,7 @@ class HomeGenreTabsController(
             override fun onTabUnselected(tab: TabLayout.Tab) = Unit
             override fun onTabReselected(tab: TabLayout.Tab) = Unit
         })
-        binding.status.setOnClickListener { if (genres is Result.Error) onRetry() }
+        binding.status.onClickListener { if (genres is Result.Error) onRetry() }
     }
 
     private fun bind() {

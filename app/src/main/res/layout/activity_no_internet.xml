@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    tools:context=".nointernet.NoInternetActivity">
+
+
+    <TextView
+        android:id="@+id/tv_no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size50"
+        android:fontFamily="@font/font_figtree_regular"
+        android:gravity="center_horizontal"
+        android:text="No Internet"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sizesp20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/iv_no_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size60"
+        android:contentDescription="@null"
+        android:src="@drawable/iv_no_connect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_no_internet" />
+
+
+    <TextView
+        android:id="@+id/tv_no_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size40"
+        android:fontFamily="@font/font_figtree_regular"
+        android:gravity="center_horizontal"
+        android:text="No Internet Connection"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sizesp22"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_no_internet" />
+
+
+    <TextView
+        android:id="@+id/tv_no_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size20"
+        android:fontFamily="@font/font_figtree_regular"
+        android:gravity="center_horizontal"
+        android:text="No internet connection available due to network or service issue."
+        android:textColor="@color/white"
+        android:textSize="@dimen/sizesp16"
+        android:layout_marginHorizontal="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_no_1" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_try_again"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size40"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:background="@drawable/bgr_buton_primary"
+        android:fontFamily="@font/font_figtree_regular"
+        android:text="Try Again"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:paddingVertical="@dimen/size15"
+        android:textSize="@dimen/sizesp18"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="@dimen/size50"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.detail
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
@@ -53,7 +55,7 @@ internal class EpisodeAdapter : ListAdapter<EpisodeRow, EpisodeAdapter.EpisodeVi
 
         init {
             buttons.forEachIndexed { column, button ->
-                button.setOnClickListener {
+                button.onClickListener {
                     bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }?.let { position ->
                         getItem(position).episodes.getOrNull(column)
                             ?.takeIf { it.linkM3u8.isNotBlank() }?.let(onEpisodeClick)

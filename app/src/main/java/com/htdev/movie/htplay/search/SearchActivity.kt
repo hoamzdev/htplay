@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.search
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.content.Context
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -35,18 +37,18 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
     }
 
     override fun handleClickEvent() {
-        binding.icBack.setOnClickListener {
+        binding.icBack.onClickListener {
             finish()
         }
         binding.edtSearch.doAfterTextChanged { viewModel.setQuery(it?.toString().orEmpty()) }
-        binding.icSearch.setOnClickListener { dismissKeyboard() }
+        binding.icSearch.onClickListener { dismissKeyboard() }
         binding.edtSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 dismissKeyboard()
                 true
             } else false
         }
-        binding.tvSearchStatus.setOnClickListener {
+        binding.tvSearchStatus.onClickListener {
             if (viewModel.query.value.isBlank()) viewModel.retryLatest()
             else searchAdapter.retry()
         }

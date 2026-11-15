@@ -200,12 +200,12 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun handleClickEvent(): Unit = with(binding) {
-        ivDrop.setOnClickListener { backDevice() }
+        ivDrop.onClickListener { backDevice() }
         mediaPlay.setFullscreenButtonClickListener { fullscreen ->
             if (fullscreen != isFullscreen) requestFullscreen(fullscreen)
         }
-        headerBinding.tvAbout.setOnClickListener { selectTab(showEpisodes = false) }
-        headerBinding.tvEpisodes.setOnClickListener { selectTab(showEpisodes = true) }
+        headerBinding.tvAbout.onClickListener { selectTab(showEpisodes = false) }
+        headerBinding.tvEpisodes.onClickListener { selectTab(showEpisodes = true) }
         headerBinding.serverTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val server = if (tab.position == 1) EpisodeServer.DUBBED else EpisodeServer.ORIGINAL
@@ -218,7 +218,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             override fun onTabUnselected(tab: TabLayout.Tab) = Unit
             override fun onTabReselected(tab: TabLayout.Tab) = Unit
         })
-        headerBinding.tvContent.setOnClickListener {
+        headerBinding.tvContent.onClickListener {
             isContentExpanded = !isContentExpanded
             updateContentExpansion()
         }
@@ -229,7 +229,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             onFavoriteMovie()
         }
         episodeAdapter.onEpisodeClick = { episode -> playEpisode(episode) }
-        mediaPlay.findViewById<View>(androidx.media3.ui.R.id.exo_error_message)?.setOnClickListener {
+        mediaPlay.findViewById<View>(androidx.media3.ui.R.id.exo_error_message)?.onClickListener {
             player?.takeIf { it.playerError != null }?.let {
                 mediaPlay.setCustomErrorMessage(null)
                 progressBar.visibility = if (isOfflineDownload) View.INVISIBLE else View.VISIBLE

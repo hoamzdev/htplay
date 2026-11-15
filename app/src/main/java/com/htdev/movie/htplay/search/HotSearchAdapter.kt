@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.search
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -58,8 +60,8 @@ class HotSearchAdapter(
         private val imageRequests = Glide.with(binding.ivThumbnail)
 
         init {
-            binding.root.setOnClickListener { onItemClick() }
-            binding.btnPlay.setOnClickListener { onItemClick() }
+            binding.root.onClickListener { onItemClick() }
+            binding.btnPlay.onClickListener { onItemClick() }
         }
 
         private fun onItemClick() {

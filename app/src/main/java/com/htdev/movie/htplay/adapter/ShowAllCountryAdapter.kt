@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.adapter
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -21,7 +23,7 @@ class ShowAllCountryAdapter(
 
     inner class ViewHolder(val binding: ItemShowAllCountryBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.countryName.setOnClickListener {
+            binding.countryName.onClickListener {
                 bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }
                     ?.let { onClick(getItem(it)) }
             }

@@ -1,9 +1,11 @@
 package com.htdev.movie.htplay.widget
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.view.View
+import com.htdev.movie.htplay.nointernet.NoInternetActivity
 
 
 fun View.onClickListener(block: () -> Unit) {
@@ -16,7 +18,10 @@ fun View.onClickListener(block: () -> Unit) {
             lastClickTime = System.currentTimeMillis()
             block()
         }
-        else return@setOnClickListener
+        else {
+            val intent = Intent(context, NoInternetActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 }
 

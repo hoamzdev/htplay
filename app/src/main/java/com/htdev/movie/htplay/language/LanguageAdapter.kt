@@ -1,5 +1,7 @@
 package com.htdev.movie.htplay.language
 
+import com.htdev.movie.htplay.widget.onClickListener
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,9 +43,9 @@ class LanguageAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.root.setOnClickListener {
+            binding.root.onClickListener {
                 val position = bindingAdapterPosition
-                if(position == RecyclerView.NO_POSITION || position == currentPositionSelected) return@setOnClickListener
+                if(position == RecyclerView.NO_POSITION || position == currentPositionSelected) return@onClickListener
                 val code = getItem(position).code
                 selectLanguage(code)
                 onSelectedLanguage(code)
