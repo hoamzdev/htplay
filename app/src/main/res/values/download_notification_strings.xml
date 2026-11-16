@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_notification_channel">Movie downloads</string>
+    <string name="download_notification_downloading">Downloading…</string>
+    <string name="download_notification_waiting_network">Waiting for network</string>
+    <string name="download_notification_count">%1$d downloads</string>
+    <string name="notification_permission_title">Enable download notifications</string>
+    <string name="notification_permission_message">Allow notifications in system settings to see movie posters and download progress.</string>
+    <string name="notification_open_settings">Open settings</string>
+</resources>

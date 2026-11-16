@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_notification_channel">Tải phim</string>
+    <string name="download_notification_downloading">Đang tải…</string>
+    <string name="download_notification_waiting_network">Đang chờ kết nối mạng</string>
+    <string name="download_notification_count">%1$d bản tải xuống</string>
+    <string name="notification_permission_title">Bật thông báo tải phim</string>
+    <string name="notification_permission_message">Cho phép thông báo trong cài đặt hệ thống để xem poster và tiến độ tải phim.</string>
+    <string name="notification_open_settings">Mở cài đặt</string>
+</resources>
