@@ -3,6 +3,7 @@ package com.htdev.movie.htplay.home.settings
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -22,6 +23,7 @@ import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import androidx.core.net.toUri
 
 
 @AndroidEntryPoint
@@ -102,7 +104,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                 if (!isChecked) miniPlayer.close()
             }
             itemPolicy.onClickListener {
-                //pending
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    "https://hoamzdev.github.io/htplay-privacy/privacy-policy.html?v=2".toUri()
+                )
+                startActivity(intent)
             }
         }
     }
