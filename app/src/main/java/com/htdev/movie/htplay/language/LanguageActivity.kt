@@ -1,38 +1,42 @@
 package com.htdev.movie.htplay.language
 
-import com.htdev.movie.htplay.widget.onClickListener
-
 import android.app.Dialog
 import android.graphics.Color
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.core.graphics.drawable.toDrawable
+import androidx.lifecycle.lifecycleScope
 import com.htdev.movie.htplay.R
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivityLanguageBinding
+import com.htdev.movie.htplay.home.HomeRouterActivity
 import com.htdev.movie.htplay.intro.IntroActivity
+import com.htdev.movie.htplay.widget.onClickListener
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.drawable.toDrawable
-import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
-class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
-    private val languageViewModel : LanguageViewModel by viewModels()
-    private val languageAdapter : LanguageAdapter by lazy { LanguageAdapter{ code ->
-        handleSelectedLanguage(code)
-    } }
+class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
+    private val languageViewModel: LanguageViewModel by viewModels()
+    private val languageAdapter: LanguageAdapter by lazy {
+        LanguageAdapter { code ->
+            handleSelectedLanguage(code)
+        }
+    }
 
-    private var translateDialog : Dialog? = null
+    private var translateDialog: Dialog? = null
     private var changeLanguageJob: Job? = null
 
     override fun createViewBinding(): ActivityLanguageBinding {
         return ActivityLanguageBinding.inflate(layoutInflater)
     }
+
+    private val isModeSetting: Boolean by lazy { intent.getIntExtra("LANGUAGE_SETTING", 0) == 1712 }
 
     override fun initView() {
         binding.apply {
@@ -42,11 +46,12 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
                 itemAnimator = null
             }
         }
+
         LanguageHelper.applyLocaleTemporarily(languageViewModel.selectedLanguageCode)
         updateLanguageUi()
     }
 
-    private fun showTranslating(){
+    private fun showTranslating() {
         if (isFinishing || isDestroyed || translateDialog?.isShowing == true) return
 
         translateDialog = Dialog(this).apply {
@@ -55,7 +60,8 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
             val localized = LanguageHelper.localizedContext(
                 this@LanguageActivity, languageViewModel.selectedLanguageCode
             )
-            findViewById<TextView>(R.id.tv_translating).text = localized.getString(R.string.language_translating)
+            findViewById<TextView>(R.id.tv_translating).text =
+                localized.getString(R.string.language_translating)
             setCancelable(false)
             setCanceledOnTouchOutside(false)
             setOnDismissListener { translateDialog = null }
@@ -71,7 +77,7 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
         handleChangeLanguage()
     }
 
-    private fun handleChangeLanguage(){
+    private fun handleChangeLanguage() {
         binding.btnSaveLanguage.isEnabled = false
         changeLanguageJob = lifecycleScope.launch {
             try {
@@ -87,7 +93,8 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
     }
 
     private fun updateLanguageUi() {
-        val localized = LanguageHelper.localizedContext(this, languageViewModel.selectedLanguageCode)
+        val localized =
+            LanguageHelper.localizedContext(this, languageViewModel.selectedLanguageCode)
         binding.tvChooseLanguage.text = localized.getString(R.string.language_choose)
         binding.btnSaveLanguage.text = localized.getString(R.string.language_save)
         binding.root.layoutDirection = localized.resources.configuration.layoutDirection
@@ -97,7 +104,12 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
         binding.btnSaveLanguage.onClickListener {
             if (changeLanguageJob?.isActive == true) return@onClickListener
             LanguageHelper.saveLocale(this, languageViewModel.selectedLanguageCode)
-            newActivity(IntroActivity::class.java)
+            if (!isModeSetting) {
+                newActivity(IntroActivity::class.java)
+            }
+            else{
+                newActivity(HomeRouterActivity::class.java)
+            }
             finish()
         }
     }
@@ -108,7 +120,7 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>(){
         }
     }
 
-    private fun handleSelectedLanguage(code : String){
+    private fun handleSelectedLanguage(code: String) {
         languageViewModel.selectLanguage(code)
         showTranslating()
     }

@@ -19,6 +19,7 @@ import com.htdev.movie.htplay.favorite.FavoriteViewModel
 import com.htdev.movie.htplay.home.home.viewmodel.HomeViewModel
 import com.htdev.movie.htplay.home.home.HomeRecommendationSession
 import com.htdev.movie.htplay.domain.entities.DataMovieDetail
+import com.htdev.movie.htplay.domain.entities.PosterMovieHome
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -290,6 +291,55 @@ class HomeViewModelTest {
     }
 
     private fun movie(id: String) = PosterMovie(id, "poster", id, id, "Episode 1")
+
+    @Test fun trailerCanComeFromEveryHomeMovieSectionWhenLatestHasNoTrailer() = runTest {
+        for (source in listOf("recommended", "trung-quoc", "han-quoc", "hanh-dong", "tinh-cam", "gia-dinh", "banner", "continue")) {
+            val repository = FakeMovieRepository()
+            repository.savedGenres = listOf("phieu-luu")
+            repository.latestMovies = { Result.Success(listOf(movie("latest-without-trailer"))) }
+            repository.GenreMovies = { genre ->
+                Result.Success(if (genre == source || source == "recommended" && genre == "phieu-luu") listOf(movie(source)) else emptyList())
+            }
+            repository.countryMovies = { country ->
+                Result.Success(if (country == source) listOf(movie(source)) else emptyList())
+            }
+            repository.bannerMovies = {
+                Result.Success(if (source == "banner") listOf(PosterMovieHome(source, "poster", source, "", source, "", 2026, "")) else emptyList())
+            }
+            repository.movieDetail = { slug ->
+                Result.Success(DataMovieDetail(slug = slug, trailerUrl = if (slug == source) "https://youtu.be/abcdefghijk" else " \t"))
+            }
+            val viewModel = createViewModel(repository)
+            if (source == "continue") {
+                viewModel.updateContinueWatching(listOf(ContinueWatching(slugMovie = source, totalProgress = 100, currentProgress = 40)))
+            }
+            advanceUntilIdle()
+            assertEquals(source, source, viewModel.homeData.value.htRecommendation.movie?.slug)
+        }
+    }
+
+    @Test fun trailerWaitsForSlowerSectionsAndDeduplicatesMoviesAcrossSources() = runTest {
+        val repository = FakeMovieRepository()
+        val pending = CompletableDeferred<Result<List<PosterMovie>>>()
+        val requests = mutableListOf<String>()
+        repository.latestMovies = { Result.Success(listOf(movie("shared"))) }
+        repository.GenreMovies = { Result.Success(listOf(movie("shared"))) }
+        repository.countryMovies = { country ->
+            if (country == "han-quoc") pending.await() else Result.Error(IllegalStateException("offline"))
+        }
+        repository.movieDetail = { slug ->
+            requests += slug
+            Result.Success(DataMovieDetail(slug = slug, trailerUrl = if (slug == "slow") "https://youtu.be/abcdefghijk" else ""))
+        }
+        val viewModel = createViewModel(repository)
+        runCurrent()
+        assertTrue(requests.isEmpty())
+        assertTrue(viewModel.homeData.value.htRecommendation.isLoading)
+        pending.complete(Result.Success(listOf(movie("shared"), movie("slow"))))
+        advanceUntilIdle()
+        assertEquals("slow", viewModel.homeData.value.htRecommendation.movie?.slug)
+        assertEquals(requests.distinct(), requests)
+    }
 
     @Test fun recommendationUsesOneLatestMovieAndItsFavoriteButtonUpdatesThatSameMovie() = runTest {
         val repository = FakeMovieRepository()

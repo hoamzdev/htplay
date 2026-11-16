@@ -128,4 +128,13 @@ class AuthenticationRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun logout(): Result<Boolean> {
+        return try {
+            auth.signOut()
+            Result.Success(true)
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.Error(AppException.UnknownException())
+        }
+    }
 }

@@ -19,12 +19,13 @@ internal class FakeMovieRepository : MovieRepository {
     var latestPager: () -> Flow<PagingData<PosterMovie>> = { emptyFlow() }
     var countries: suspend () -> Result<List<Country>> = { Result.Success(listOf(Country("China", "trung-quoc"))) }
     var latestMovies: suspend () -> Result<List<PosterMovie>> = { Result.Success(emptyList()) }
+    var bannerMovies: suspend () -> Result<List<PosterMovieHome>> = { Result.Success(emptyList()) }
     var movieDetail: suspend (String) -> Result<DataMovieDetail> = { Result.Success(DataMovieDetail()) }
 
     override suspend fun saveGenresFavorite(Genres: List<String>) = saveGenres(Genres)
     override suspend fun getSavedGenres() = Result.Success(savedGenres)
     override suspend fun getMovies() = latestMovies()
-    override suspend fun getMoviesByPage() = Result.Success(emptyList<PosterMovieHome>())
+    override suspend fun getMoviesByPage() = bannerMovies()
     override suspend fun getMoviesByGenre(Genre: String, limit: Int): Result<List<PosterMovie>> {
         requestedGenres += Genre
         return GenreMovies(Genre)

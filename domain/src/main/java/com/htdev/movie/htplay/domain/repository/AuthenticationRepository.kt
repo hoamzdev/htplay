@@ -11,4 +11,6 @@ interface AuthenticationRepository {
     suspend fun signInWithGoogle(credential: Credential) : Result<User>
     suspend fun signInAnonymously() : Result<User>
     suspend fun getUserSignIn() : Result<User>
+
+    suspend fun logout() : Result<Boolean>
 }

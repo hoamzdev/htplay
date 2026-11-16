@@ -1,7 +1,6 @@
 package com.htdev.movie.htplay.favorite
 
 import androidx.activity.viewModels
-import com.htdev.movie.htplay.MainActivity
 import com.htdev.movie.htplay.base.AuthenticatedActivity
 import com.htdev.movie.htplay.data.db.LocalMovieCatalog
 import com.htdev.movie.htplay.databinding.ActivityChooseFavotireBinding

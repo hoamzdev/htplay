@@ -16,6 +16,7 @@
         android:contentDescription="@null"
         android:background="@color/black"
         app:resize_mode="fit"
+        app:surface_type="texture_view"
         app:use_controller="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

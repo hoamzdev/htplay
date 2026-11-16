@@ -1,14 +1,337 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     tools:context=".home.settings.SettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size30"
+        android:fontFamily="@font/font_figtree_regular"
+        android:gravity="center_horizontal"
+        android:text="Settings"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sizesp20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/item_language"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size30"
+        android:background="@drawable/bgr_item_setting"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size10"
+        android:paddingVertical="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_setting">
+
+        <ImageView
+            android:id="@+id/iv_item"
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            android:contentDescription="@null"
+            android:src="@drawable/item_language" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size10"
+            android:fontFamily="@font/font_figtree_regular"
+            android:text="Language"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizesp16" />
+
+    </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_item_setting"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size10"
+        android:paddingVertical="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_language">
+
+        <ImageView
+            android:id="@+id/iv1"
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_setting_notification" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size10"
+            android:fontFamily="@font/font_figtree_regular"
+            android:text="Notification"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/iv1"
+            android:textSize="@dimen/sizesp16" />
+
+        <Switch
+            android:id="@+id/sw_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/size10"
+            android:trackTint="@color/secondary_color"
+            android:thumbTint="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_auto_next_episode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_item_setting"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size10"
+        android:paddingVertical="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_notification">
+
+        <ImageView
+            android:id="@+id/iv2"
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_setting_auto_next" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size10"
+            android:fontFamily="@font/font_figtree_regular"
+            android:layout_gravity="center_vertical"
+            android:text="Auto to next episode"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/iv2"
+            android:textSize="@dimen/sizesp16" />
+
+        <Switch
+            android:id="@+id/sw_auto_next_episode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/size10"
+            android:trackTint="@color/secondary_color"
+            android:thumbTint="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_pip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_item_setting"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size10"
+        android:paddingVertical="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_auto_next_episode">
+
+        <ImageView
+            android:id="@+id/iv3"
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_setting_pip" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size10"
+            android:fontFamily="@font/font_figtree_regular"
+            android:text="Picture in picture"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/iv3"
+            android:textSize="@dimen/sizesp16" />
+
+        <Switch
+            android:id="@+id/sw_pip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/size10"
+            android:trackTint="@color/secondary_color"
+            android:thumbTint="@color/white"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <LinearLayout
+        android:id="@+id/item_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_item_setting"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size10"
+        android:paddingVertical="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_pip">
+
+        <ImageView
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_setting_share" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size10"
+            android:fontFamily="@font/font_figtree_regular"
+            android:text="Share"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizesp16" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/item_policy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_item_setting"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size10"
+        android:paddingVertical="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_share">
+
+        <ImageView
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_setting_policy" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size10"
+            android:fontFamily="@font/font_figtree_regular"
+            android:text="Policy"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizesp16" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/item_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size10"
+        android:background="@drawable/bgr_item_setting"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size10"
+        android:paddingVertical="@dimen/size16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_policy">
+
+        <ImageView
+            android:layout_width="@dimen/size24"
+            android:layout_height="@dimen/size24"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_setting_logout" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size10"
+            android:fontFamily="@font/font_figtree_regular"
+            android:text="Logout"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizesp16" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size10"
+        android:fontFamily="@font/font_figtree_regular"
+        android:text="Version: 1.0.0"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/sizesp20"
+        app:layout_constraintTop_toBottomOf="@id/item_logout"
+        android:textSize="@dimen/sizesp16" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

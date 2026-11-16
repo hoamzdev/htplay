@@ -3,6 +3,7 @@ package com.htdev.movie.htplay.base
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +17,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.viewbinding.ViewBinding
 import com.htdev.movie.htplay.widget.CustomToast
 import com.htdev.movie.htplay.language.LanguageHelper
+import com.htdev.movie.htplay.MovieApplication
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected lateinit var binding: VB
@@ -52,6 +54,22 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         if (hasFocus) hideSystemBars()
     }
 
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        (application as MovieApplication).miniPlayer.onUserLeaveHint(this)
+    }
+
+    override fun startActivity(intent: Intent, options: Bundle?) {
+        // Internal navigation keeps the in-app mini player instead of triggering legacy system PiP.
+        if (intent.component?.packageName == packageName) intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
+        super.startActivity(intent, options)
+    }
+
+    override fun onPictureInPictureModeChanged(inPip: Boolean, newConfig: Configuration) {
+        super.onPictureInPictureModeChanged(inPip, newConfig)
+        (application as MovieApplication).miniPlayer.onSystemPipChanged(this, inPip)
+    }
+
     open fun newActivity(dist : Class<*>, bundle: Bundle? = null) {
         val intent = Intent(this, dist)
         intent.apply {
@@ -61,6 +79,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     }
 
     open fun backDevice() {
+        if (isTaskRoot && (application as MovieApplication).miniPlayer.enterSystemPip(this)) return
         finish()
     }
 

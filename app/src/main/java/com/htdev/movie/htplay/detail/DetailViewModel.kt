@@ -77,10 +77,11 @@ class DetailViewModel @Inject constructor(
     private val currentSlug: String?
         get() = savedStateHandle[STATE_CURRENT_SLUG]
 
-    fun initialize(movieSlug: String, language: String = "en") {
+    fun initialize(movieSlug: String, language: String = "en", server: EpisodeServer? = null) {
         if (initialized) return
         initialized = true
         serverSelectionAllowed = language.substringBefore('-').substringBefore('_').equals("vi", true)
+        if (server != null) savedStateHandle[STATE_CURRENT_SERVER] = server.name
         loadMovie(currentSlug ?: movieSlug.trim(), restoreServer = true)
     }
 

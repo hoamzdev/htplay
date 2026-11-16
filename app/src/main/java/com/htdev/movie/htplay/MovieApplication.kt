@@ -8,6 +8,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.htdev.movie.htplay.home.home.HomeRecommendationSession
+import com.htdev.movie.htplay.player.InAppMiniPlayer
 import javax.inject.Inject
 import com.htdev.movie.htplay.language.LanguageHelper
 import dagger.hilt.android.HiltAndroidApp
@@ -16,6 +17,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MovieApplication : Application(), Application.ActivityLifecycleCallbacks,
     DefaultLifecycleObserver {
     @Inject lateinit var recommendationSession: HomeRecommendationSession
+    @Inject lateinit var miniPlayer: InAppMiniPlayer
     private var hasEnteredForeground = false
 
     override fun onCreate() {
@@ -24,11 +26,17 @@ class MovieApplication : Application(), Application.ActivityLifecycleCallbacks,
         LanguageHelper.clearLegacyFrameworkLocale(this)
         LanguageHelper.refreshApplicationLanguage(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        registerActivityLifecycleCallbacks(this)
     }
 
     override fun onStart(owner: LifecycleOwner) {
+        miniPlayer.onAppForeground()
         if (hasEnteredForeground) recommendationSession.startNewSession()
         hasEnteredForeground = true
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        miniPlayer.onAppBackground()
     }
 
     override fun attachBaseContext(base: Context) {
@@ -40,11 +48,11 @@ class MovieApplication : Application(), Application.ActivityLifecycleCallbacks,
         savedInstanceState: Bundle?
     ) = Unit
 
-    override fun onActivityDestroyed(activity: Activity) = Unit
+    override fun onActivityDestroyed(activity: Activity) = miniPlayer.onActivityStopped(activity)
 
     override fun onActivityPaused(activity: Activity) = Unit
 
-    override fun onActivityResumed(activity: Activity) = Unit
+    override fun onActivityResumed(activity: Activity) = miniPlayer.attach(activity)
 
     override fun onActivitySaveInstanceState(
         activity: Activity,
@@ -53,5 +61,5 @@ class MovieApplication : Application(), Application.ActivityLifecycleCallbacks,
 
     override fun onActivityStarted(activity: Activity) = Unit
 
-    override fun onActivityStopped(activity: Activity) = Unit
+    override fun onActivityStopped(activity: Activity) = miniPlayer.onActivityStopped(activity)
 }

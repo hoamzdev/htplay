@@ -4,15 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.RectF
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.OrientationEventListener
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.BundleCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
+import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Lifecycle
@@ -43,12 +46,17 @@ import com.htdev.movie.htplay.entities.ItemMovie
 import com.htdev.movie.htplay.home.download.DownloadViewModel
 import com.htdev.movie.htplay.home.download.DownloadMetadata
 import com.htdev.movie.htplay.home.download.OfflineDownloads
+import com.htdev.movie.htplay.player.InAppMiniPlayer
+import com.htdev.movie.htplay.player.MiniPlayback
+import com.htdev.movie.htplay.player.SystemPictureInPicture
+import com.htdev.movie.htplay.util.SharePref
 import com.htdev.movie.htplay.util.getCountryName
 import com.htdev.movie.htplay.util.getGenreName
 import com.htdev.movie.htplay.util.launchRepeatOnStarted
 import com.htdev.movie.htplay.widget.onClickListener
 import com.htdev.movie.htplay.widget.checkNetworkConnected
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import java.util.UUID
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +70,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @AndroidEntryPoint
 @androidx.annotation.OptIn(UnstableApi::class)
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
+    @Inject lateinit var miniPlayer: InAppMiniPlayer
     private val viewModel: DetailViewModel by viewModels()
     private val downloadViewModel : DownloadViewModel by viewModels()
     private val episodeAdapter = EpisodeAdapter()
@@ -77,6 +86,9 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private var isContentExpanded = false
     private var renderedState: DetailUiState? = null
     private var player: ExoPlayer? = null
+    private var playbackListener: Player.Listener? = null
+    private var pendingExpandBounds: RectF? = null
+    private var finishExpandAnimation: (() -> Unit)? = null
     private var progressSaveJob: Job? = null
     private var selectedEpisode: MoviePlayer? = null
     private var playbackPosition = 0L
@@ -93,6 +105,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     private val orientationListener by lazy {
         object : OrientationEventListener(this) {
             override fun onOrientationChanged(orientation: Int) {
+                if (isInPictureInPictureMode) return
                 val physicalOrientation = when (orientation) {
                     in 0..30, in 150..210, in 330..359 -> Configuration.ORIENTATION_PORTRAIT
                     in 60..120, in 240..300 -> Configuration.ORIENTATION_LANDSCAPE
@@ -153,9 +166,32 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         updateContentExpansion()
         portraitPlayerHeight = binding.mediaPlay.layoutParams.height
         applyFullscreen(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        binding.mediaPlay.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            updateSystemPip()
+        }
     }
 
     override fun initViewModel() {
+        val restored = miniPlayer.take(intent.getStringExtra(EXTRA_MINI_PLAYER_ID))
+        if (restored != null) {
+            pendingExpandBounds = restored.expandBounds
+            player = restored.player
+            selectedEpisode = restored.episode
+            playbackPosition = restored.player.currentPosition
+            playWhenReady = restored.player.playWhenReady
+            isOfflineDownload = restored.isOffline
+            downloadRequest = restored.downloadRequest
+            downloadResolved = true
+            binding.tvNameMovie.text = restored.title
+            applyFullscreen(isFullscreen)
+            if (pendingExpandBounds != null) {
+                binding.mediaPlay.alpha = 0f
+                setDetailControlsAlpha(0f)
+            }
+            if (!isOfflineDownload) initializeMovie(restored.movieSlug, restored.state?.selectedServer)
+            return
+        }
+        miniPlayer.close()
         val id = downloadId
         if (id == null) {
             initializeMovie(intent.getStringExtra(EXTRA_MOVIE_SLUG).orEmpty())
@@ -195,8 +231,8 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         }
     }
 
-    private fun initializeMovie(slug: String) {
-        viewModel.initialize(slug, resources.configuration.locales[0].language)
+    private fun initializeMovie(slug: String, server: EpisodeServer? = null) {
+        viewModel.initialize(slug, resources.configuration.locales[0].language, server)
     }
 
     override fun handleClickEvent(): Unit = with(binding) {
@@ -312,17 +348,19 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     private fun applyFullscreen(fullscreen: Boolean) = with(binding) {
         isFullscreen = fullscreen
-        tvNameMovie.isVisible = !fullscreen
+        val inPip = isInPictureInPictureMode
+        tvNameMovie.isVisible = !fullscreen && !inPip
         updateCurrentEpisodeLabel()
-        scrollDetail.visibility = if (isOfflineDownload) View.INVISIBLE else if (fullscreen) View.GONE else View.VISIBLE
-        ivDrop.visibility = if (isOfflineDownload) View.INVISIBLE else View.VISIBLE
+        scrollDetail.visibility = if (inPip || fullscreen) View.GONE else if (isOfflineDownload) View.INVISIBLE else View.VISIBLE
+        ivDrop.visibility = if (isOfflineDownload || inPip) View.INVISIBLE else View.VISIBLE
         if (isOfflineDownload) progressBar.visibility = View.INVISIBLE
         mediaPlay.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            height = if (fullscreen) ConstraintLayout.LayoutParams.MATCH_CONSTRAINT else portraitPlayerHeight
-            bottomToBottom = if (fullscreen) ConstraintLayout.LayoutParams.PARENT_ID
+            height = if (fullscreen || inPip) ConstraintLayout.LayoutParams.MATCH_CONSTRAINT else portraitPlayerHeight
+            bottomToBottom = if (fullscreen || inPip) ConstraintLayout.LayoutParams.PARENT_ID
                 else ConstraintLayout.LayoutParams.UNSET
         }
         mediaPlay.setFullscreenButtonState(fullscreen)
+        mediaPlay.useController = !inPip && finishExpandAnimation == null && pendingExpandBounds == null
     }
 
     private fun releasePortraitOrientationLock() {
@@ -334,6 +372,8 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        finishExpandAnimation?.invoke()
+        if (isInPictureInPictureMode) return
         applyFullscreen(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
         if (isFullscreen && deviceOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             canExitFullscreenOnPortrait = true
@@ -342,13 +382,125 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         }
     }
 
+    private fun updateSystemPip() {
+        SystemPictureInPicture.update(this, player, binding.mediaPlay)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateSystemPip()
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        SystemPictureInPicture.onUserLeaveHint(this, player, binding.mediaPlay)
+    }
+
+    override fun onPictureInPictureModeChanged(inPip: Boolean, newConfig: Configuration) {
+        super.onPictureInPictureModeChanged(inPip, newConfig)
+        finishExpandAnimation?.invoke()
+        if (inPip) {
+            orientationListener.disable()
+            binding.mediaPlay.hideController()
+        } else if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) && orientationListener.canDetectOrientation()) {
+            orientationListener.enable()
+        }
+        applyFullscreen(if (inPip) isFullscreen else newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+    }
+
+    private fun setDetailControlsAlpha(alpha: Float) = with(binding) {
+        scrollDetail.alpha = alpha
+        tvNameMovie.alpha = alpha
+        tvCurrentEpisode.alpha = alpha
+        ivDrop.alpha = alpha
+        progressBar.alpha = alpha
+    }
+
+    private fun animatePlayerExpansion() {
+        val source = pendingExpandBounds ?: return
+        pendingExpandBounds = null
+        val video = binding.mediaPlay
+        val originalElevation = video.elevation
+        val finish = {
+            video.animate().withEndAction(null).cancel()
+            video.scaleX = 1f
+            video.scaleY = 1f
+            video.translationX = 0f
+            video.translationY = 0f
+            video.alpha = 1f
+            video.elevation = originalElevation
+            video.useController = !isInPictureInPictureMode
+            setDetailControlsAlpha(1f)
+            finishExpandAnimation = null
+            updateSystemPip()
+        }
+        finishExpandAnimation = finish
+        video.useController = false
+        video.doOnLayout {
+            if (finishExpandAnimation !== finish) return@doOnLayout
+            if (isFinishing || isDestroyed || video.width == 0 || video.height == 0) {
+                finish()
+                return@doOnLayout
+            }
+            val location = IntArray(2)
+            video.getLocationOnScreen(location)
+            video.pivotX = 0f
+            video.pivotY = 0f
+            video.scaleX = source.width() / video.width
+            video.scaleY = source.height() / video.height
+            video.translationX = source.left - location[0]
+            video.translationY = source.top - location[1]
+            video.elevation = 16f * resources.displayMetrics.density
+            video.alpha = 1f
+            video.animate().scaleX(1f).scaleY(1f).translationX(0f).translationY(0f)
+                .setDuration(280L).setInterpolator(DecelerateInterpolator())
+                .withEndAction { finish() }.start()
+        }
+    }
+
     override fun backDevice() {
         persistContinueWatching()
         when {
+            minimizePlayer() -> Unit
             isFullscreen -> requestFullscreen(false)
             !isOfflineDownload && viewModel.goBack() -> Unit
             else -> super.backDevice()
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun minimizePlayer(): Boolean {
+        if (!SharePref.init(this).isEnablePip()) return false
+        val currentPlayer = player ?: return false
+        val episode = selectedEpisode ?: return false
+        if (currentPlayer.currentMediaItem == null || currentPlayer.playerError != null ||
+            currentPlayer.playbackState == Player.STATE_ENDED ||
+            currentPlayer.playbackState == Player.STATE_IDLE) return false
+        finishExpandAnimation?.invoke()
+        SystemPictureInPicture.update(this, null, null, enabled = false)
+        progressSaveJob?.cancel()
+        progressSaveJob = null
+        playbackListener?.let(currentPlayer::removeListener)
+        playbackListener = null
+        miniPlayer.show(
+            MiniPlayback(
+                player = currentPlayer,
+                movieSlug = renderedState?.movieSlug.orEmpty(),
+                title = binding.tvNameMovie.text.toString(),
+                episode = episode,
+                state = renderedState,
+                downloadId = downloadId,
+                downloadRequest = downloadRequest,
+                isOffline = isOfflineDownload,
+            ),
+            binding.mediaPlay,
+        )
+        player = null
+        binding.mediaPlay.keepScreenOn = false
+        if (isTaskRoot) startActivity(Intent(this, com.htdev.movie.htplay.home.HomeRouterActivity::class.java))
+        finish()
+        overridePendingTransition(0, 0)
+        return true
     }
 
     private fun openMovie(slug: String) {
@@ -498,7 +650,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun updateCurrentEpisodeLabel() = with(binding.tvCurrentEpisode) {
-        if (isOfflineDownload) {
+        if (isOfflineDownload || isInPictureInPictureMode) {
             visibility = View.INVISIBLE
             return@with
         }
@@ -544,6 +696,17 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         prepareSelectedEpisode()
     }
 
+    private fun playNextEpisodeIfEnabled() {
+        if (isOfflineDownload || !SharePref.init(this).isNextEpisode()) return
+        val episode = selectedEpisode ?: return
+        val episodes = (renderedState?.episodes as? Result.Success)?.data ?: return
+        val currentIndex = episodes.indexOf(episode)
+        if (currentIndex < 0) return
+        val nextEpisode = episodes.drop(currentIndex + 1)
+            .firstOrNull { it.linkM3u8.isNotBlank() } ?: return
+        playEpisode(nextEpisode)
+    }
+
     private fun prepareSelectedEpisode() {
         val episode = selectedEpisode ?: return
         val currentPlayer = player ?: return
@@ -568,12 +731,12 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun startPlayer() {
-        if (player != null) return
-        player = ExoPlayer.Builder(this).setMediaSourceFactory(
+        if (player != null && binding.mediaPlay.player === player) return
+        player = (player ?: ExoPlayer.Builder(applicationContext).setMediaSourceFactory(
             androidx.media3.exoplayer.source.DefaultMediaSourceFactory(
-                OfflineDownloads.dataSource(this, offlineOnly = isOfflineDownload)
+                OfflineDownloads.dataSource(applicationContext, offlineOnly = isOfflineDownload)
             )
-        ).build().also { currentPlayer ->
+        ).build()).also { currentPlayer ->
             currentPlayer.setAudioAttributes(
                 AudioAttributes.Builder()
                     .setUsage(C.USAGE_MEDIA)
@@ -582,7 +745,11 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 true,
             )
             currentPlayer.setHandleAudioBecomingNoisy(true)
-            currentPlayer.addListener(object : Player.Listener {
+            val listener = object : Player.Listener {
+                override fun onEvents(player: Player, events: Player.Events) {
+                    updateSystemPip()
+                }
+
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     binding.mediaPlay.keepScreenOn = isPlaying
                     if (!isPlaying) persistContinueWatching()
@@ -592,7 +759,10 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                     binding.progressBar.visibility = if (isOfflineDownload) View.INVISIBLE
                         else if (playbackState == Player.STATE_BUFFERING) View.VISIBLE else View.GONE
                     if (playbackState == Player.STATE_READY) binding.mediaPlay.setCustomErrorMessage(null)
-                    if (playbackState == Player.STATE_ENDED) persistContinueWatching()
+                    if (playbackState == Player.STATE_ENDED) {
+                        persistContinueWatching()
+                        playNextEpisodeIfEnabled()
+                    }
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
@@ -606,10 +776,19 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 ) {
                     if (reason == Player.DISCONTINUITY_REASON_SEEK) persistContinueWatching()
                 }
-            })
+            }
+            playbackListener = listener
+            currentPlayer.addListener(listener)
             binding.mediaPlay.player = currentPlayer
+            binding.mediaPlay.keepScreenOn = currentPlayer.isPlaying
+            binding.progressBar.visibility = if (isOfflineDownload) View.INVISIBLE
+                else if (currentPlayer.playbackState == Player.STATE_BUFFERING ||
+                    currentPlayer.playbackState == Player.STATE_IDLE) View.VISIBLE else View.GONE
+            if (currentPlayer.playerError != null) showPlaybackMessage(R.string.detail_playback_error)
         }
-        prepareSelectedEpisode()
+        if (player?.currentMediaItem == null) prepareSelectedEpisode()
+        animatePlayerExpansion()
+        updateSystemPip()
         if (!isOfflineDownload) progressSaveJob = lifecycleScope.launch {
             while (isActive) {
                 delay(5_000.milliseconds)
@@ -652,12 +831,15 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun onStop() {
+        finishExpandAnimation?.invoke()
         progressSaveJob?.cancel()
         progressSaveJob = null
         persistContinueWatching()
         orientationListener.disable()
         savePlaybackState()
         binding.mediaPlay.player = null
+        playbackListener?.let { player?.removeListener(it) }
+        playbackListener = null
         player?.release()
         player = null
         binding.mediaPlay.keepScreenOn = false
@@ -675,6 +857,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         const val EXTRA_MOVIE_SLUG = "movie_slug"
         private const val STATE_EPISODE = "detail_episode"
         private const val EXTRA_DOWNLOAD_ID = "download_id"
+        const val EXTRA_MINI_PLAYER_ID = "mini_player_id"
         private const val STATE_POSITION = "detail_position"
         private const val STATE_PLAY_WHEN_READY = "detail_play_when_ready"
 

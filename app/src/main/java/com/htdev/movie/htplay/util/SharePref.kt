@@ -23,4 +23,31 @@ class SharePref {
 
     fun getOpenCountApp() : Int = sharePreference.getInt("open_count", 0)
 
+
+    fun setAutoNextEpisode(ok : Boolean){
+        sharePreference.edit {
+            putBoolean("auto_next_episode", ok)
+        }
+    }
+
+    fun isNextEpisode() : Boolean = sharePreference.getBoolean("auto_next_episode", false)
+
+
+    fun enableNotification(ok : Boolean){
+        sharePreference.edit{
+            putBoolean("notification", ok)
+        }
+    }
+
+    fun isEnableNotification() = sharePreference.getBoolean("notification", false)
+
+
+    fun enablePictureInPicture(ok : Boolean){
+        sharePreference.edit {
+            putBoolean("pip", ok)
+        }
+    }
+
+    fun isEnablePip() = sharePreference.getBoolean("pip", false)
+
 }
