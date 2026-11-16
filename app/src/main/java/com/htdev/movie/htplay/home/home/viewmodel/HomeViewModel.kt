@@ -47,8 +47,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
@@ -161,6 +163,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         observeRecommendation()
+        observeRecommendationCandidates()
         fetchMoviesByPage()
         viewModelScope.launch {
             recommendationSession.sessionId.collect { fetchMovieLastest() }
@@ -173,6 +176,36 @@ class HomeViewModel @Inject constructor(
         fetchFamilyMovies()
         fetchCountries()
         fetchGenres()
+    }
+
+    private fun observeRecommendationCandidates() {
+        viewModelScope.launch {
+            combine(movies, moviesByPage, homeData) { latest, banners, home ->
+                val sections = listOf(
+                    latest, home.recommendedMovies, home.chineseMovies, home.koreanMovies,
+                    home.actionMovies, home.romanceMovies, home.familyMovies,
+                )
+                // Wait for all Home sources so a fast section cannot monopolize the pick.
+                if (sections.any { it is Result.Loading || it is Result.Idle } ||
+                    banners is Result.Loading || banners is Result.Idle) {
+                    Result.Loading
+                } else {
+                    val candidates = sections.flatMap { (it as? Result.Success)?.data.orEmpty() } +
+                        (banners as? Result.Success)?.data.orEmpty().map {
+                            PosterMovie(it.id, it.posterUrl, it.name, it.slug, "", it.thumbUrl, it.year)
+                        } + home.continueWatching.map {
+                            PosterMovie(it.slugMovie, it.urlThumbnail.orEmpty(), it.name, it.slugMovie, "")
+                        }
+                    if (candidates.isEmpty()) {
+                        sections.filterIsInstance<Result.Error>().firstOrNull()
+                            ?: (banners as? Result.Error)
+                            ?: Result.Success(emptyList())
+                    } else {
+                        Result.Success(candidates.filter { it.slug.isNotBlank() }.distinctBy { it.slug })
+                    }
+                }
+            }.distinctUntilChanged().collect { recommendationSession.updateMovies(it) }
+        }
     }
 
     private fun observeRecommendation() {
@@ -315,7 +348,6 @@ class HomeViewModel @Inject constructor(
     fun fetchMovieLastest() {
         latestMoviesJob = loadList(latestMoviesJob, { result ->
             _movies.value = result
-            recommendationSession.updateLatest(result)
         }) {
             getMovieLastest()
         }

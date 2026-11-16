@@ -31,11 +31,13 @@ class HomeRecommendationSession @Inject constructor(
     private var loadJob: Job? = null
 
     @Synchronized
-    fun updateLatest(result: Result<List<PosterMovie>>) {
+    fun updateMovies(result: Result<List<PosterMovie>>) {
         if (selectedMovie != null) return
         when (result) {
             is Result.Success -> {
                 remainingMovies.clear()
+                // The first valid trailer in a random permutation is a uniform pick from
+                // all valid trailers, without requesting every movie detail up front.
                 remainingMovies.addAll(result.data.filter { it.slug.isNotBlank() }.distinctBy { it.slug }.shuffled())
                 selectedMovie = remainingMovies.removeFirstOrNull()
                 if (selectedMovie == null) _movie.value = Result.Success(null) else loadSelectedMovie()
@@ -84,6 +86,10 @@ class HomeRecommendationSession @Inject constructor(
                 if (result is Result.Success && result.data.trailerUrl.isNullOrBlank()) {
                     // Try each candidate once so a list without trailers cannot loop forever.
                     selectedMovie = remainingMovies.removeFirstOrNull()
+                    continue
+                }
+                if (result is Result.Error && remainingMovies.isNotEmpty()) {
+                    selectedMovie = remainingMovies.removeFirst()
                     continue
                 }
                 _movie.value = result
