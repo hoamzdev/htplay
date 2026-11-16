@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="224dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/mini_video_container"
+        android:layout_width="match_parent"
+        android:layout_height="126dp">
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/mini_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/mini_player_expand"
+            android:clickable="true"
+            android:focusable="true"
+            app:surface_type="texture_view"
+            app:resize_mode="fit"
+            app:use_controller="false" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/mini_controls"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:background="@color/background_color"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/mini_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/mini_play_pause"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="14dp"
+            android:src="@android:drawable/ic_media_pause"
+            android:tint="@android:color/white"
+            android:contentDescription="@string/mini_player_pause" />
+
+        <ImageButton
+            android:id="@+id/mini_close"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="14dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="@android:color/white"
+            android:contentDescription="@string/mini_player_close" />
+    </LinearLayout>
+</LinearLayout>

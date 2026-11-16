@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mini_player_expand">Mở lớn video</string>
+    <string name="mini_player_close">Đóng video</string>
+    <string name="mini_player_play">Phát video</string>
+    <string name="mini_player_pause">Tạm dừng video</string>
+</resources>
