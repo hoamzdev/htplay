@@ -41,11 +41,11 @@ internal class DownloadAdapter(
 
     inner class DownloadViewHolder(private val binding: ItemDownloadBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.onClickListener {
+            binding.root.onClickListener(requiresNetwork = false) {
                 bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }
                     ?.let { onClickDownload(getItem(it).id) }
             }
-            binding.ivDelete.onClickListener {
+            binding.ivDelete.onClickListener(requiresNetwork = false) {
                 bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }
                     ?.let { onDeleteDownload(getItem(it).id) }
             }

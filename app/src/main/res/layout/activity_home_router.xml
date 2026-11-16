@@ -18,8 +18,7 @@
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/home_nav_router" />
+        app:defaultNavHost="true" />
 
 
     <include

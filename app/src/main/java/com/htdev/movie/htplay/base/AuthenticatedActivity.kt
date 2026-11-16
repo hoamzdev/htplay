@@ -8,7 +8,9 @@ import com.htdev.movie.htplay.auth.SessionViewModel
 import com.htdev.movie.htplay.auth.login.LoginActivity
 import com.htdev.movie.htplay.domain.common.Result
 import com.htdev.movie.htplay.domain.common.SessionExpiredException
+import com.htdev.movie.htplay.nointernet.NoInternetActivity
 import com.htdev.movie.htplay.util.getLocalizedErrorMessage
+import com.htdev.movie.htplay.widget.checkNetworkConnected
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -18,6 +20,16 @@ abstract class AuthenticatedActivity<VB : ViewBinding> : BaseActivity<VB>() {
 
     override fun onResume() {
         super.onResume()
+        if (!checkNetworkConnected(this)) {
+            // A cached login can use local downloads without Firebase's network reload.
+            if (!sessionViewModel.isLoggedInLocally()) {
+                startActivity(NoInternetActivity.createStartupIntent(this).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                finish()
+            }
+            return
+        }
         sessionCheck = lifecycleScope.launch {
             val result = sessionViewModel.validateSession()
             if (result is Result.Error) {

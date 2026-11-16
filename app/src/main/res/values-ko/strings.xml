@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">movie</string>
+    <string name="app_name">HTPlay</string>
     <string name="continue_watching">이어 보기</string>
     <string name="mock_home_banner">영화\n새로운 이야기를 만나보세요</string>
     <string name="mock_selection">데모: %1$s</string>

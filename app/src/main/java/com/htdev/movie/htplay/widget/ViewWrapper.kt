@@ -8,10 +8,10 @@ import android.view.View
 import com.htdev.movie.htplay.nointernet.NoInternetActivity
 
 
-fun View.onClickListener(block: () -> Unit) {
+fun View.onClickListener(requiresNetwork: Boolean = true, block: () -> Unit) {
     var lastClickTime = 0L
     setOnClickListener {
-        if(checkNetworkConnected(context)) {
+        if (!requiresNetwork || checkNetworkConnected(context)) {
             if (System.currentTimeMillis() - lastClickTime < 500L) {
                 return@setOnClickListener
             }

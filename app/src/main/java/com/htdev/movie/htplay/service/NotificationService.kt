@@ -2,6 +2,8 @@ package com.htdev.movie.htplay.service
 
 import android.annotation.SuppressLint
 import android.app.Notification
+import android.app.PendingIntent
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.core.app.NotificationCompat
@@ -10,7 +12,6 @@ import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.media3.exoplayer.scheduler.Scheduler
 import androidx.media3.exoplayer.offline.DownloadNotificationHelper
-import androidx.navigation.NavDeepLinkBuilder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -28,9 +29,14 @@ class NotificationService : DownloadService(1001, 1000L, DownloadNotifications.C
     private var poster: Bitmap? = null
     private var posterTarget: CustomTarget<Bitmap>? = null
     private val openDownloads by lazy {
-        NavDeepLinkBuilder(this).setComponentName(HomeRouterActivity::class.java)
-            .setGraph(R.navigation.home_nav_router).setDestination(R.id.downloadFragment)
-            .createPendingIntent()
+        PendingIntent.getActivity(
+            this,
+            1001,
+            HomeRouterActivity.createDownloadsIntent(this).addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP,
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     }
 
     override fun onCreate() {

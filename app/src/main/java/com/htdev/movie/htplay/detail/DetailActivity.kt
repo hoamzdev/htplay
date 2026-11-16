@@ -236,7 +236,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun handleClickEvent(): Unit = with(binding) {
-        ivDrop.onClickListener { backDevice() }
+        ivDrop.onClickListener(requiresNetwork = false) { backDevice() }
         mediaPlay.setFullscreenButtonClickListener { fullscreen ->
             if (fullscreen != isFullscreen) requestFullscreen(fullscreen)
         }
@@ -265,7 +265,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             onFavoriteMovie()
         }
         episodeAdapter.onEpisodeClick = { episode -> playEpisode(episode) }
-        mediaPlay.findViewById<View>(androidx.media3.ui.R.id.exo_error_message)?.onClickListener {
+        mediaPlay.findViewById<View>(androidx.media3.ui.R.id.exo_error_message)?.onClickListener(requiresNetwork = false) {
             player?.takeIf { it.playerError != null }?.let {
                 mediaPlay.setCustomErrorMessage(null)
                 progressBar.visibility = if (isOfflineDownload) View.INVISIBLE else View.VISIBLE

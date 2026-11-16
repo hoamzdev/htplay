@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">movie</string>
+    <string name="app_name">HTPlay</string>
     <string name="continue_watching">Continue Watching</string>
     <string name="mock_home_banner">Movie\nDiscover your next story</string>
     <string name="mock_selection">Mock: %1$s</string>

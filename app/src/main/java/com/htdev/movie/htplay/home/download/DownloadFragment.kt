@@ -85,7 +85,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadBinding>() {
 
     override fun handleClickEvent() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, searchBackCallback)
-        binding.ivSearch.onClickListener {
+        binding.ivSearch.onClickListener(requiresNetwork = false) {
             if (downloadViewModel.isSearchOpen.value) {
                 dismissKeyboard()
             } else {
@@ -101,7 +101,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadBinding>() {
                 }
             }
         }
-        binding.logoApp.onClickListener { closeSearch() }
+        binding.logoApp.onClickListener(requiresNetwork = false) { closeSearch() }
         binding.edtSearch.doAfterTextChanged { downloadViewModel.setQuery(it?.toString().orEmpty()) }
         binding.edtSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {

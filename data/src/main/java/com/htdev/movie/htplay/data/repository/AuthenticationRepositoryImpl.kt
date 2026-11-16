@@ -25,6 +25,9 @@ class AuthenticationRepositoryImpl @Inject constructor(
     private val authProvider: Lazy<FirebaseAuth>,
 ) : AuthenticationRepository {
     private val auth: FirebaseAuth get() = authProvider.get()
+
+    override fun hasCachedSession(): Boolean = auth.currentUser != null
+
     override suspend fun createAccountWithEmailPasswd(
         username: String, email: String, passwd: String
     ): Result<User> {

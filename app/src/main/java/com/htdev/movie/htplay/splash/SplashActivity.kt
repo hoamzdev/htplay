@@ -7,18 +7,19 @@ import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.htdev.movie.htplay.base.BaseActivity
 import com.htdev.movie.htplay.databinding.ActivitySplashBinding
 import com.htdev.movie.htplay.home.HomeRouterActivity
-import com.htdev.movie.htplay.intro.IntroActivity
 import com.htdev.movie.htplay.language.LanguageActivity
+import com.htdev.movie.htplay.nointernet.NoInternetActivity
 import com.htdev.movie.htplay.util.SharePref
-import com.htdev.movie.htplay.util.launchRepeatOnStarted
+import com.htdev.movie.htplay.widget.checkNetworkConnected
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.hypot
 import kotlin.time.Duration.Companion.milliseconds
@@ -39,6 +40,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private var lastFrameNanos = 0L
     private var pendingScrollPx = 0f
+    private var navigationJob: Job? = null
+    private var hasNavigated = false
     private val scrollFrame = object : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
             if (lastFrameNanos != 0L) {
@@ -61,25 +64,35 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         super.onResume()
         lastFrameNanos = 0L
         Choreographer.getInstance().postFrameCallback(scrollFrame)
-        navToIntro()
+        scheduleNavigation()
     }
 
-    private fun navToIntro(){
-        launchRepeatOnStarted {
+    private fun scheduleNavigation() {
+        if (hasNavigated || navigationJob?.isActive == true) return
+        navigationJob = lifecycleScope.launch {
             delay(5000.milliseconds)
-            withContext(Dispatchers.Main){
-                if(SharePref.init(this@SplashActivity).getOpenCountApp() == 0){
-                    newActivity(dist = LanguageActivity::class.java)
+            // Recheck at the end so losing the connection during the splash is handled too.
+            val destination = when {
+                !checkNetworkConnected(this@SplashActivity) -> {
+                    if (splashViewModel.isLoggedInLocally()) {
+                        HomeRouterActivity.createDownloadsIntent(this@SplashActivity)
+                    } else {
+                        NoInternetActivity.createStartupIntent(this@SplashActivity)
+                    }
                 }
-                else{
-                    newActivity(HomeRouterActivity::class.java)
-                }
-                finishAffinity()
+                SharePref.init(this@SplashActivity).getOpenCountApp() == 0 ->
+                    Intent(this@SplashActivity, LanguageActivity::class.java)
+                else -> Intent(this@SplashActivity, HomeRouterActivity::class.java)
             }
+            hasNavigated = true
+            startActivity(destination)
+            finish()
         }
     }
 
     override fun onPause() {
+        navigationJob?.cancel()
+        navigationJob = null
         Choreographer.getInstance().removeFrameCallback(scrollFrame)
         lastFrameNanos = 0L
         super.onPause()

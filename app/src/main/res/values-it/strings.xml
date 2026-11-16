@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">movie</string>
+    <string name="app_name">HTPlay</string>
     <string name="continue_watching">Continua a guardare</string>
     <string name="mock_home_banner">Cinema\nScopri la tua prossima storia</string>
     <string name="mock_selection">Demo: %1$s</string>

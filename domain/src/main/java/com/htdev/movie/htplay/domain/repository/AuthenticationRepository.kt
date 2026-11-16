@@ -5,6 +5,9 @@ import com.htdev.movie.htplay.domain.entities.User
 import com.htdev.movie.htplay.domain.common.Result
 
 interface AuthenticationRepository {
+    /** Checks persisted authentication state without refreshing the user over the network. */
+    fun hasCachedSession(): Boolean
+
     suspend fun createAccountWithEmailPasswd(username : String,email : String,passwd : String) : Result<User>
     suspend fun loginWithEmailPasswd(email : String,passwd: String) : Result<User>
     suspend fun resetPassword(email : String) : Result<String>
