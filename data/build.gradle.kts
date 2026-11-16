@@ -4,8 +4,14 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+@Suppress("UNCHECKED_CAST")
+val movieApiConfig = gradle.extra["movieApiConfig"] as Map<String, String>
+
 android {
     namespace = "com.htdev.movie.htplay.data"
+    buildFeatures {
+        buildConfig = true
+    }
     compileSdk {
         version = release(37)
     }
@@ -15,6 +21,11 @@ android {
         consumerProguardFiles("consumer-rules.keep")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        //noinspection WrongGradleMethod
+        movieApiConfig.forEach { (name, value) ->
+            buildConfigField("String", name, "\"$value\"")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

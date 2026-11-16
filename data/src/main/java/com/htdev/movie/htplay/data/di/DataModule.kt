@@ -3,7 +3,7 @@ package com.htdev.movie.htplay.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.htdev.movie.htplay.data.api.MovieService
-import com.htdev.movie.htplay.data.common.Api
+import com.htdev.movie.htplay.data.BuildConfig
 import com.htdev.movie.htplay.data.common.DispatcherProvideImpl
 import com.htdev.movie.htplay.data.repository.AuthenticationRepositoryImpl
 import com.htdev.movie.htplay.data.repository.LocalStorageRepositoryImpl
@@ -55,7 +55,7 @@ object DataModule {
     @Provides
     @Singleton
     fun movieService(client: OkHttpClient): MovieService = Retrofit.Builder()
-        .baseUrl(Api.BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL)
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
