@@ -5,7 +5,7 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.Locale
 
-internal fun trailerHtml(trailerUrl: String, appId: String): String? {
+internal fun trailerHtml(trailerUrl: String, appId: String, playerTitle: String = ""): String? {
     val uri = runCatching { URI(trailerUrl.trim().let { if (it.startsWith("//")) "https:$it" else it }) }.getOrNull()
         ?: return null
     val host = uri.host?.lowercase(Locale.ROOT) ?: return null
@@ -31,12 +31,14 @@ internal fun trailerHtml(trailerUrl: String, appId: String): String? {
     }
     val escaped = source.replace("&", "&amp;").replace("\"", "&quot;")
         .replace("<", "&lt;").replace(">", "&gt;").replace("'", "&#39;")
+    val escapedTitle = playerTitle.replace("&", "&amp;").replace("\"", "&quot;")
+        .replace("<", "&lt;").replace(">", "&gt;").replace("'", "&#39;")
     val player = if (host !in YOUTUBE_HOSTS && uri.path.orEmpty().lowercase(Locale.ROOT).let {
             it.endsWith(".mp4") || it.endsWith(".webm")
         }) {
-        """<video autoplay loop playsinline preload="auto" src="$escaped"></video>"""
+        """<video autoplay loop playsinline preload="auto" src="$escaped" aria-label="$escapedTitle"></video>"""
     } else {
-        """<iframe src="$escaped" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>"""
+        """<iframe src="$escaped" title="$escapedTitle" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>"""
     }
     return """<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><style>html,body{margin:0;width:100%;height:100%;background:#000}iframe,video{display:block;width:100%;height:100%;border:0}</style></head><body>$player</body></html>"""
 }

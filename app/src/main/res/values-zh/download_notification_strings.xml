@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_notification_channel">电影下载</string>
+    <string name="download_notification_downloading">正在下载…</string>
+    <string name="download_notification_waiting_network">等待网络连接</string>
+    <string name="download_notification_count">%1$d 个下载任务</string>
+    <string name="notification_permission_title">启用下载通知</string>
+    <string name="notification_permission_message">请在系统设置中允许通知，以查看电影海报和下载进度。</string>
+    <string name="notification_open_settings">打开设置</string>
+</resources>

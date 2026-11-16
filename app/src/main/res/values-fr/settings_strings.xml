@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language">Langue</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_auto_next_episode">Lire automatiquement l\'épisode suivant</string>
+    <string name="settings_picture_in_picture">Image dans l\'image</string>
+    <string name="settings_share">Partager</string>
+    <string name="settings_policy">Politique de confidentialité</string>
+    <string name="settings_logout">Se déconnecter</string>
+    <string name="settings_version">Version : %1$s</string>
+    <string name="share_chooser_title">Partager via</string>
+    <string name="no_internet_title">Pas d\'Internet</string>
+    <string name="no_internet_heading">Aucune connexion Internet</string>
+    <string name="no_internet_description">Connexion impossible. Vérifiez votre réseau et réessayez.</string>
+    <string name="action_try_again">Réessayer</string>
+    <string name="favorite_empty">Vous n\'avez pas encore ajouté de films aux favoris.</string>
+    <string name="metadata_unknown">Inconnu</string>
+    <string name="trailer_player_title">Bande-annonce de %1$s</string>
+</resources>

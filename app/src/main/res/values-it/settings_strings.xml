@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language">Lingua</string>
+    <string name="settings_notifications">Notifiche</string>
+    <string name="settings_auto_next_episode">Riproduci automaticamente il prossimo episodio</string>
+    <string name="settings_picture_in_picture">Picture-in-picture</string>
+    <string name="settings_share">Condividi</string>
+    <string name="settings_policy">Informativa sulla privacy</string>
+    <string name="settings_logout">Esci</string>
+    <string name="settings_version">Versione: %1$s</string>
+    <string name="share_chooser_title">Condividi tramite</string>
+    <string name="no_internet_title">Nessuna connessione</string>
+    <string name="no_internet_heading">Nessuna connessione Internet</string>
+    <string name="no_internet_description">Impossibile connettersi. Controlla la rete e riprova.</string>
+    <string name="action_try_again">Riprova</string>
+    <string name="favorite_empty">Non hai ancora aggiunto film ai preferiti.</string>
+    <string name="metadata_unknown">Sconosciuto</string>
+    <string name="trailer_player_title">Trailer di %1$s</string>
+</resources>

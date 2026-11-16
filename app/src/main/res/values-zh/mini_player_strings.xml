@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mini_player_expand">展开视频</string>
+    <string name="mini_player_close">关闭视频</string>
+    <string name="mini_player_play">播放视频</string>
+    <string name="mini_player_pause">暂停视频</string>
+</resources>

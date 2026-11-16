@@ -1,0 +1,16 @@
+# Copy this file to api.local.properties and fill in all values before Gradle sync.
+# BASE_URL must end with a slash. Keep the path placeholders shown below.
+BASE_URL=
+BASE_URL_IMAGE=
+BASE_URL_IMAGE_FULL=
+ENDPOINT_ALL_FILM=
+ENDPOINT_FILM_SERIES=
+ENDPOINT_FILM_GENRES=
+ENDPOINT_FILM_COUNTRY=
+ENDPOINT_SEARCH_FILM=
+ENDPOINT_MOVIE_DETAIL=
+ENDPOINT_COUNTRY=
+ENDPOINT_GENRES=
+# Required placeholders:
+# ENDPOINT_FILM_SERIES, ENDPOINT_FILM_GENRES, ENDPOINT_FILM_COUNTRY: {type_list}
+# ENDPOINT_MOVIE_DETAIL: {slug}

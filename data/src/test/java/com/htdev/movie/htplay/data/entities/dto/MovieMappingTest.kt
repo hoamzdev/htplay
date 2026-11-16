@@ -1,6 +1,7 @@
 package com.htdev.movie.htplay.data.entities.dto
 
 import com.htdev.movie.htplay.data.common.toImageUrl
+import com.htdev.movie.htplay.data.BuildConfig
 import com.google.gson.Gson
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -17,7 +18,7 @@ class MovieMappingTest {
     @Test
     fun imageUrlsHandleAbsoluteRelativeAndMissingPaths() {
         assertEquals("https://cdn.example.com/poster.jpg", "https://cdn.example.com/poster.jpg".toImageUrl())
-        assertEquals("https://phimimg.com/poster.jpg", "/poster.jpg".toImageUrl())
+        assertEquals("${BuildConfig.BASE_URL_IMAGE.trimEnd('/')}/poster.jpg", "/poster.jpg".toImageUrl())
         assertEquals("https://cdn.example.com/a.jpg", "//cdn.example.com/a.jpg".toImageUrl())
         assertEquals("", (null as String?).toImageUrl())
         assertEquals("", "  ".toImageUrl())
@@ -41,7 +42,7 @@ class MovieMappingTest {
         assertEquals("", detail.countrySlug)
         assertEquals("Unknown", detail.genreSlug)
         assertEquals("0.0", detail.vote)
-        assertEquals("https://phimimg.com/poster.jpg", detail.posterUrl)
+        assertEquals("${BuildConfig.BASE_URL_IMAGE.trimEnd('/')}/poster.jpg", detail.posterUrl)
         assertEquals("", detail.trailerUrl)
         assertEquals("https://youtu.be/abcdefghijk", movie.copy(trailerUrl = " https://youtu.be/abcdefghijk ").mapToDataMovieDetail().trailerUrl)
     }

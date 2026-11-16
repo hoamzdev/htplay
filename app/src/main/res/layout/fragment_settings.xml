@@ -15,7 +15,7 @@
         android:layout_marginTop="@dimen/size30"
         android:fontFamily="@font/font_figtree_regular"
         android:gravity="center_horizontal"
-        android:text="Settings"
+        android:text="@string/nav_settings"
         android:textColor="@color/white"
         android:textSize="@dimen/sizesp20"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size10"
             android:fontFamily="@font/font_figtree_regular"
-            android:text="Language"
+            android:text="@string/settings_language"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
             android:textSize="@dimen/sizesp16" />
@@ -83,11 +83,13 @@
 
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size10"
             android:fontFamily="@font/font_figtree_regular"
-            android:text="Notification"
+            android:text="@string/settings_notifications"
+            android:layout_marginEnd="@dimen/size10"
+            app:layout_constraintEnd_toStartOf="@id/sw_notification"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_gravity="center_vertical"
@@ -97,6 +99,7 @@
 
         <Switch
             android:id="@+id/sw_notification"
+            android:contentDescription="@string/settings_notifications"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -136,12 +139,14 @@
 
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size10"
             android:fontFamily="@font/font_figtree_regular"
             android:layout_gravity="center_vertical"
-            android:text="Auto to next episode"
+            android:text="@string/settings_auto_next_episode"
+            android:layout_marginEnd="@dimen/size10"
+            app:layout_constraintEnd_toStartOf="@id/sw_auto_next_episode"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:textColor="@color/white"
@@ -150,6 +155,7 @@
 
         <Switch
             android:id="@+id/sw_auto_next_episode"
+            android:contentDescription="@string/settings_auto_next_episode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -189,11 +195,13 @@
 
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size10"
             android:fontFamily="@font/font_figtree_regular"
-            android:text="Picture in picture"
+            android:text="@string/settings_picture_in_picture"
+            android:layout_marginEnd="@dimen/size10"
+            app:layout_constraintEnd_toStartOf="@id/sw_pip"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -203,6 +211,7 @@
 
         <Switch
             android:id="@+id/sw_pip"
+            android:contentDescription="@string/settings_picture_in_picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -243,7 +252,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size10"
             android:fontFamily="@font/font_figtree_regular"
-            android:text="Share"
+            android:text="@string/settings_share"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
             android:textSize="@dimen/sizesp16" />
@@ -277,7 +286,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size10"
             android:fontFamily="@font/font_figtree_regular"
-            android:text="Policy"
+            android:text="@string/settings_policy"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
             android:textSize="@dimen/sizesp16" />
@@ -311,7 +320,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size10"
             android:fontFamily="@font/font_figtree_regular"
-            android:text="Logout"
+            android:text="@string/settings_logout"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
             android:textSize="@dimen/sizesp16" />
@@ -324,7 +333,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size10"
         android:fontFamily="@font/font_figtree_regular"
-        android:text="Version: 1.0.0"
+        tools:text="Version: 1.0.0"
         android:textColor="@color/white"
         android:gravity="center_horizontal"
         app:layout_constraintStart_toStartOf="parent"

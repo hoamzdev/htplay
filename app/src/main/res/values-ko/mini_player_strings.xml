@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mini_player_expand">동영상 확대</string>
+    <string name="mini_player_close">동영상 닫기</string>
+    <string name="mini_player_play">동영상 재생</string>
+    <string name="mini_player_pause">동영상 일시 정지</string>
+</resources>

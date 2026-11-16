@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language">语言</string>
+    <string name="settings_notifications">通知</string>
+    <string name="settings_auto_next_episode">自动播放下一集</string>
+    <string name="settings_picture_in_picture">画中画</string>
+    <string name="settings_share">分享</string>
+    <string name="settings_policy">隐私政策</string>
+    <string name="settings_logout">退出登录</string>
+    <string name="settings_version">版本：%1$s</string>
+    <string name="share_chooser_title">分享方式</string>
+    <string name="no_internet_title">无网络连接</string>
+    <string name="no_internet_heading">无法连接到互联网</string>
+    <string name="no_internet_description">无法连接。请检查网络后重试。</string>
+    <string name="action_try_again">重试</string>
+    <string name="favorite_empty">你还没有收藏任何电影。</string>
+    <string name="metadata_unknown">未知</string>
+    <string name="trailer_player_title">《%1$s》预告片</string>
+</resources>

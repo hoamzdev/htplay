@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language">Language</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_auto_next_episode">Auto-play next episode</string>
+    <string name="settings_picture_in_picture">Picture-in-picture</string>
+    <string name="settings_share">Share</string>
+    <string name="settings_policy">Privacy policy</string>
+    <string name="settings_logout">Log out</string>
+    <string name="settings_version">Version: %1$s</string>
+    <string name="share_chooser_title">Share via</string>
+    <string name="no_internet_title">No internet</string>
+    <string name="no_internet_heading">No internet connection</string>
+    <string name="no_internet_description">Unable to connect. Please check your network and try again.</string>
+    <string name="action_try_again">Try again</string>
+    <string name="favorite_empty">You haven\'t added any movies to favorites yet.</string>
+    <string name="metadata_unknown">Unknown</string>
+    <string name="trailer_player_title">Trailer for %1$s</string>
+    <string name="share_app_name" translatable="false">HTPlay</string>
+    <!-- Native language names stay recognizable regardless of the selected app language. -->
+    <string name="language_name_english" translatable="false">English</string>
+    <string name="language_name_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="language_name_french" translatable="false">Français</string>
+    <string name="language_name_german" translatable="false">Deutsch</string>
+    <string name="language_name_italian" translatable="false">Italiano</string>
+    <string name="language_name_chinese" translatable="false">中文</string>
+    <string name="language_name_japanese" translatable="false">日本語</string>
+    <string name="language_name_korean" translatable="false">한국어</string>
+</resources>

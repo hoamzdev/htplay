@@ -59,7 +59,10 @@ internal class HomeTrailerViewHolder(
     fun bind(item: HomeItem.TrailerSector, resumed: Boolean) = with(binding) {
         val recommendation = item.recommendation
         val movie = recommendation.movie
-        pendingHtml = movie?.let { trailerHtml(it.trailerUrl, root.context.packageName) }
+        pendingHtml = movie?.let {
+            trailerHtml(it.trailerUrl, root.context.packageName,
+                root.context.getString(R.string.trailer_player_title, it.name))
+        }
         tvTrailerStatus.isVisible = recommendation.isLoading || recommendation.hasError || pendingHtml == null
         tvTrailerStatus.setText(when {
             recommendation.isLoading -> R.string.loading

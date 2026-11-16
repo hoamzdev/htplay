@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language">言語</string>
+    <string name="settings_notifications">通知</string>
+    <string name="settings_auto_next_episode">次のエピソードを自動再生</string>
+    <string name="settings_picture_in_picture">ピクチャーインピクチャー</string>
+    <string name="settings_share">共有</string>
+    <string name="settings_policy">プライバシーポリシー</string>
+    <string name="settings_logout">ログアウト</string>
+    <string name="settings_version">バージョン：%1$s</string>
+    <string name="share_chooser_title">共有方法</string>
+    <string name="no_internet_title">インターネット未接続</string>
+    <string name="no_internet_heading">インターネットに接続されていません</string>
+    <string name="no_internet_description">接続できません。ネットワークを確認して、もう一度お試しください。</string>
+    <string name="action_try_again">再試行</string>
+    <string name="favorite_empty">お気に入りに追加した映画はまだありません。</string>
+    <string name="metadata_unknown">不明</string>
+    <string name="trailer_player_title">「%1$s」の予告編</string>
+</resources>

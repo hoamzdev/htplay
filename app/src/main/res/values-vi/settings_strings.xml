@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_notifications">Thông báo</string>
+    <string name="settings_auto_next_episode">Tự phát tập tiếp theo</string>
+    <string name="settings_picture_in_picture">Hình trong hình</string>
+    <string name="settings_share">Chia sẻ</string>
+    <string name="settings_policy">Chính sách quyền riêng tư</string>
+    <string name="settings_logout">Đăng xuất</string>
+    <string name="settings_version">Phiên bản: %1$s</string>
+    <string name="share_chooser_title">Chia sẻ qua</string>
+    <string name="no_internet_title">Mất kết nối mạng</string>
+    <string name="no_internet_heading">Không có kết nối Internet</string>
+    <string name="no_internet_description">Không thể kết nối. Vui lòng kiểm tra mạng và thử lại.</string>
+    <string name="action_try_again">Thử lại</string>
+    <string name="favorite_empty">Bạn chưa thêm phim nào vào danh sách yêu thích.</string>
+    <string name="metadata_unknown">Chưa rõ</string>
+    <string name="trailer_player_title">Trailer phim %1$s</string>
+</resources>

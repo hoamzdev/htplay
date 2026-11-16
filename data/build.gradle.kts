@@ -1,11 +1,32 @@
+import java.io.StringReader
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
 
-@Suppress("UNCHECKED_CAST")
-val movieApiConfig = gradle.extra["movieApiConfig"] as Map<String, String>
+val apiConfigFile = rootProject.layout.projectDirectory.file("api.local.properties")
+val apiConfigText = providers.fileContents(apiConfigFile).asText.orNull
+    ?: throw GradleException("Missing api.local.properties. Copy api.local.properties.example and fill in your API configuration.")
+val apiProperties = Properties().apply { load(StringReader(apiConfigText)) }
+val movieApiConfig = listOf(
+    "BASE_URL",
+    "BASE_URL_IMAGE",
+    "BASE_URL_IMAGE_FULL",
+    "ENDPOINT_ALL_FILM",
+    "ENDPOINT_FILM_SERIES",
+    "ENDPOINT_FILM_GENRES",
+    "ENDPOINT_FILM_COUNTRY",
+    "ENDPOINT_SEARCH_FILM",
+    "ENDPOINT_MOVIE_DETAIL",
+    "ENDPOINT_COUNTRY",
+    "ENDPOINT_GENRES",
+).associateWith { key ->
+    apiProperties.getProperty(key)?.trim()?.takeIf { it.isNotEmpty() }
+        ?: throw GradleException("Missing $key in api.local.properties.")
+}
 
 android {
     namespace = "com.htdev.movie.htplay.data"
@@ -24,7 +45,8 @@ android {
 
         //noinspection WrongGradleMethod
         movieApiConfig.forEach { (name, value) ->
-            buildConfigField("String", name, "\"$value\"")
+            val escapedValue = value.replace("\\", "\\\\").replace("\"", "\\\"")
+            buildConfigField("String", name, "\"$escapedValue\"")
         }
     }
     compileOptions {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mini_player_expand">Agrandir la vidéo</string>
+    <string name="mini_player_close">Fermer la vidéo</string>
+    <string name="mini_player_play">Lire la vidéo</string>
+    <string name="mini_player_pause">Mettre la vidéo en pause</string>
+</resources>

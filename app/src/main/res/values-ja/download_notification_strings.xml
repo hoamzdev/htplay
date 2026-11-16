@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_notification_channel">映画のダウンロード</string>
+    <string name="download_notification_downloading">ダウンロード中…</string>
+    <string name="download_notification_waiting_network">ネットワーク接続を待機中</string>
+    <string name="download_notification_count">%1$d 件のダウンロード</string>
+    <string name="notification_permission_title">ダウンロード通知を有効にする</string>
+    <string name="notification_permission_message">映画のポスターとダウンロードの進行状況を表示するには、システム設定で通知を許可してください。</string>
+    <string name="notification_open_settings">設定を開く</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mini_player_expand">動画を拡大</string>
+    <string name="mini_player_close">動画を閉じる</string>
+    <string name="mini_player_play">動画を再生</string>
+    <string name="mini_player_pause">動画を一時停止</string>
+</resources>

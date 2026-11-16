@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.htdev.movie.htplay.auth.login.LoginActivity
 import com.htdev.movie.htplay.R
+import com.htdev.movie.htplay.BuildConfig
 import com.htdev.movie.htplay.base.BaseFragment
 import com.htdev.movie.htplay.databinding.FragmentSettingsBinding
 import com.htdev.movie.htplay.domain.common.Result
@@ -52,6 +53,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     override fun initView() {
         binding.apply {
+            tvVersion.text = getString(R.string.settings_version, BuildConfig.VERSION_NAME)
             swPip.isChecked = SharePref.init(requireContext()).isEnablePip()
             DownloadNotifications.createChannel(requireContext())
             swNotification.isChecked = SharePref.init(requireContext()).isEnableNotification() &&
@@ -157,9 +159,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     private fun share(){
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, "HTPlay")
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_app_name))
             putExtra(Intent.EXTRA_TEXT, "https://apkpure.com/htplay/com.htdev.movie.htplay")
         }
-        startActivity(Intent.createChooser(intent, "Share via"))
+        startActivity(Intent.createChooser(intent, getString(R.string.share_chooser_title)))
     }
 }

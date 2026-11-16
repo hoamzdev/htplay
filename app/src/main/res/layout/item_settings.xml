@@ -23,7 +23,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Language"
+        android:text="@string/settings_language"
         android:textSize="@dimen/sizesp16"
         android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@id/iv_item"

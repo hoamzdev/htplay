@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_notification_channel">Download dei film</string>
+    <string name="download_notification_downloading">Download in corso…</string>
+    <string name="download_notification_waiting_network">In attesa della rete</string>
+    <string name="download_notification_count">%1$d download</string>
+    <string name="notification_permission_title">Attiva le notifiche di download</string>
+    <string name="notification_permission_message">Consenti le notifiche nelle impostazioni di sistema per vedere le locandine e l\'avanzamento dei download.</string>
+    <string name="notification_open_settings">Apri impostazioni</string>
+</resources>
