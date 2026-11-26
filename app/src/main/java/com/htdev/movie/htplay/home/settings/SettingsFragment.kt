@@ -108,7 +108,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             itemPolicy.onClickListener {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
-                    "https://hoamzdev.github.io/htplay-privacy/privacy-policy.html?v=2".toUri()
+                    "https://hoamzdev.github.io/htplay-privacy/".toUri()
                 )
                 startActivity(intent)
             }
